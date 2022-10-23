@@ -1,4 +1,2 @@
-Mock System
+Mock tool
 ==================
-
-# mock-tool
