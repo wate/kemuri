@@ -48,22 +48,26 @@ const globalTemplateVarFile = path.join(path.dirname(srcDir), 'vars.yml');
 if (fs.existsSync(globalTemplateVarFile)) {
   globalTemplateVars = YAML.parse(fs.readFileSync(globalTemplateVarFile, 'utf8'));
 }
+const nunjucksOptions = {
+  autoescape: true,
+  // tags: {
+  //   blockStart: '<%',
+  //   blockEnd: '%>',
+  //   variableStart: '<$',
+  //   variableEnd: '$>',
+  //   commentStart: '<#',
+  //   commentEnd: '#>'
+  // }
+};
 
-nunjucks.configure(srcDir);
+nunjucks.configure(srcDir, nunjucksOptions);
 const srcFileKeys = glob.sync(filePattern, { cwd: srcDir });
 const urls = [];
 const loadedLocalVarFiles = {};
 srcFileKeys
   .filter((templateFile) => {
-    const pathParts = templateFile.split(path.sep);
-    const hasUnderscore = pathParts.some(parts => parts.match(/^_/));
-    if (
-      pathParts[0] === 'element'
-      ||
-      pathParts[0] === 'layout'
-      ||
-      hasUnderscore
-    ) {
+    const hasUnderscore = templateFile.split(path.sep).some(parts => parts.match(/^_/));
+    if (hasUnderscore) {
       return false;
     }
     return true;
