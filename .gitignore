@@ -1,0 +1,61 @@
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+### WebStorm / PhpStorm ###
+
+.idea/
+
+### Node ###
+# Logs
+logs
+*.log
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+
+### direnv ###
+.direnv
+.envrc
+
+### dotenv ###
+.env
+
+### app ###
+
+url_list.json
+**/vars.yml
+/src/*
+!/src/.gitkeep
+/dist/*
+!/dist/.gitkeep
+/test_output/*
+!/test_output/.gitkeep
+/screenshot/*
+!/screenshot/.gitkeep
+

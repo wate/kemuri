@@ -1,0 +1,40 @@
+{
+  "name": "mock-tool",
+  "version": "1.0.0",
+  "description": "Mock Tool",
+  "scripts": {
+    "server": "npm run watch:dist",
+    "watch": "run-p watch:**",
+    "watch:nunjucks": "onchange 'src/**/*.{njk,twig,html,yml}' 'vars.yml' -- npm run build:html",
+    "watch:scss": "sass --watch src/scss:dist/css",
+    "watch:js": "onchange 'src/**/*.js' -- npm run build:js",
+    "watch:dist": "browser-sync dist --watch",
+    "build": "run-s clean:dist build:**",
+    "build:html": "node build_html.js",
+    "build:css": "sass src/scss:dist/css",
+    "build:js": "node build_js.js",
+    "clean": "run-p clean:**",
+    "clean:dist": "rimraf dist/*",
+    "clean:screenshot": "rimraf screenshot/*",
+    "screenshot": "run-s clean build && run-p screenshot:** ",
+    "screenshot:server": "browser-sync dist --no-notify --no-ui --no-open --port 8080",
+    "screenshot:device:desktop": "codeceptjs run tests/screenshot/desktop.js",
+    "screenshot:device:tablet": "codeceptjs run tests/screenshot/tablet.js",
+    "screenshot:device:mobile": "codeceptjs run tests/screenshot/mobile.js"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.27.10",
+    "codeceptjs": "^3.3.6",
+    "editorconfig": "^1.0.0",
+    "glob": "^8.0.3",
+    "js-beautify": "^1.14.6",
+    "npm-run-all": "^4.1.5",
+    "nunjucks": "^3.2.3",
+    "onchange": "^7.1.0",
+    "playwright": "^1.27.1",
+    "rimraf": "^3.0.2",
+    "sanitize-filename": "^1.6.3",
+    "sass": "^1.55.0",
+    "yaml": "^2.1.3"
+  }
+}
