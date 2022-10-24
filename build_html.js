@@ -63,6 +63,7 @@ const nunjucksOptions = {
 nunjucks.configure(srcDir, nunjucksOptions);
 const srcFileKeys = glob.sync(filePattern, { cwd: srcDir });
 const urls = [];
+const nunjucksDebug = {};
 const loadedLocalVarFiles = {};
 srcFileKeys
   .filter((templateFile) => {
@@ -92,6 +93,7 @@ srcFileKeys
         file: url,
         variables: templateVars
       };
+      nunjucksDebug[url] = templateVars;
       console.log(JSON.stringify(debugInfo, null, 2));
     }
     if (!fs.existsSync(path.dirname(outFilePath))) {
@@ -102,3 +104,8 @@ srcFileKeys
 fs.writeFileSync('url_list.json', JSON.stringify(urls.sort(), null, 2), (err) => {
   if (err) throw err;
 });
+if (process.env.NUNJUCKS_DEBUG) {
+  fs.writeFileSync('nunjucks_debug.json', JSON.stringify(nunjucksDebug, null, 2), (err) => {
+    if (err) throw err;
+  });
+}
