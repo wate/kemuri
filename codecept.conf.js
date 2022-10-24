@@ -1,4 +1,5 @@
 const { setHeadlessWhen, setCommonPlugins } = require('@codeceptjs/configure');
+require('dotenv').config();
 
 setHeadlessWhen(process.env.SCREENSHOT_HEADLESS);
 

@@ -5,6 +5,7 @@ const glob = require('glob');
 const path = require('path');
 const beautify = require('js-beautify');
 const editorconfig = require('editorconfig');
+require('dotenv').config();
 
 const srcDir = process.env.SOURCE_HTML_DIR || 'src';
 const filePattern = process.env.BUILD_HTML_FILE_PATTERN || "**/*.{njk,twig,html}";
@@ -59,7 +60,6 @@ const nunjucksOptions = {
   //   commentEnd: '#>'
   // }
 };
-
 nunjucks.configure(srcDir, nunjucksOptions);
 const srcFileKeys = glob.sync(filePattern, { cwd: srcDir });
 const urls = [];
@@ -87,6 +87,13 @@ srcFileKeys
     urls.push(url);
     const templateVars = Object.assign(globalTemplateVars, localTemplateVars);
     const html = nunjucks.render(templateFile, templateVars);
+    if (process.env.NUNJUCKS_DEBUG) {
+      const debugInfo = {
+        file: url,
+        variables: templateVars
+      };
+      console.log(JSON.stringify(debugInfo, null, 2));
+    }
     if (!fs.existsSync(path.dirname(outFilePath))) {
       fs.mkdirSync(path.dirname(outFilePath), { recursive: true }, (err) => { if (err) throw err; });
     }

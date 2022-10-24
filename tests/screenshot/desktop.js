@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const sanitize = require('sanitize-filename');
+require('dotenv').config();
 
 const outputDir = process.env.SCREENSHOT_OUTPUT_DIR || 'screenshot';
 const outputFilePrefix = process.env.SCREENSHOT_DESKTOP_OUTPUT_FILE_PREFIX || '';
