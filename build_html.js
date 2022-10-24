@@ -13,7 +13,7 @@ const outDir = process.env.OUTPUT_HTML_DIR || 'dist';
 
 const beautifyOption = {};
 //editorconfigの設定をjs-beautifyの設定に反映
-const eConfig = editorconfig.parseSync('sample.html')
+const eConfig = editorconfig.parseSync('dummy.html')
 if (eConfig.indent_style === 'tab') {
   beautifyOption.indent_with_tabs = true;
 } else if (eConfig.indent_style === 'space') {
