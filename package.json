@@ -6,13 +6,13 @@
     "server": "npm run watch:dist",
     "watch": "run-p watch:**",
     "watch:nunjucks": "onchange 'src/**/*.{njk,twig,html,yml}' 'vars.yml' -- npm run build:html",
-    "watch:scss": "sass --watch src/scss:dist/css",
-    "watch:js": "onchange 'src/**/*.js' -- npm run build:js",
+    "watch:scss": "sass --watch src/scss:dist/assets/css",
+    "watch:js": "tsc --watch",
     "watch:dist": "browser-sync dist --watch",
     "build": "run-s clean:dist build:**",
     "build:html": "node build_html.js",
-    "build:css": "sass src/scss:dist/css",
-    "build:js": "node build_js.js",
+    "build:css": "sass src/scss:dist/assets/css",
+    "build:js": "tsc",
     "clean": "run-p clean:**",
     "clean:dist": "rimraf dist/*",
     "clean:screenshot": "rimraf screenshot/*",
@@ -23,6 +23,8 @@
     "screenshot:device:mobile": "codeceptjs run tests/screenshot/mobile.js"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
+    "@types/node": "18.11.5",
     "browser-sync": "^2.27.10",
     "codeceptjs": "^3.3.6",
     "dotenv": "^16.0.3",
@@ -36,6 +38,7 @@
     "rimraf": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "sass": "^1.55.0",
+    "typescript": "^4.8.4",
     "yaml": "^2.1.3"
   }
 }
