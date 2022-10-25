@@ -6,12 +6,12 @@
     "server": "npm run watch:dist",
     "watch": "run-p watch:**",
     "watch:nunjucks": "onchange 'src/**/*.{njk,twig,html,yml}' 'vars.yml' -- npm run build:html",
-    "watch:scss": "sass --watch src/scss:dist/css",
+    "watch:scss": "sass --watch src/scss:dist/assets/css",
     "watch:js": "onchange 'src/**/*.js' -- npm run build:js",
     "watch:dist": "browser-sync dist --watch",
     "build": "run-s clean:dist build:**",
     "build:html": "node build_html.js",
-    "build:css": "sass src/scss:dist/css",
+    "build:css": "sass src/scss:dist/assets/css",
     "build:js": "node build_js.js",
     "clean": "run-p clean:**",
     "clean:dist": "rimraf dist/*",
@@ -36,6 +36,7 @@
     "rimraf": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "sass": "^1.55.0",
+    "typescript": "^4.8.4",
     "yaml": "^2.1.3"
   }
 }
