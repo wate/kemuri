@@ -19,6 +19,6 @@ exports.config = {
   include: {
     I: './steps_file.js'
   },
-  name: 'mock_system',
+  name: 'mock-tool',
   translation: 'ja-JP'
 }
