@@ -16,7 +16,7 @@
     "clean": "run-p clean:**",
     "clean:dist": "rimraf dist/*",
     "clean:screenshot": "rimraf screenshot/*",
-    "screenshot": "run-s clean build && run-p screenshot:** ",
+    "screenshot": "run-s build && run-p screenshot:** ",
     "screenshot:server": "browser-sync dist --no-notify --no-ui --no-open --port 8080",
     "screenshot:device:desktop": "codeceptjs run tests/screenshot/desktop.js",
     "screenshot:device:tablet": "codeceptjs run tests/screenshot/tablet.js",

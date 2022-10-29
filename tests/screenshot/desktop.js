@@ -13,19 +13,28 @@ Feature('screenshot');
 
 Scenario('screenshot pages desktop display', ({ I }) => {
   I.resizeWindow(parseInt(screenSizeWight), parseInt(screenSizeHeight));
-  let urls = ['/'];
-  if (fs.existsSync('url_list.json')) {
-    urls = JSON.parse(fs.readFileSync('url_list.json'));
+  let screenshotPages = [{ url: '/' }];
+  if (fs.existsSync('pages.json')) {
+    screenshotPages = JSON.parse(fs.readFileSync('pages.json'));
   }
-  urls.forEach(url => {
-    I.amOnPage(url);
-    I.usePlaywrightTo('screenshot:' + url, async ({ browser, browserContext, page }) => {
-      await fs.mkdir(outputDir, { recursive: true }, (err) => {
-        if (err) throw err;
-      });
+  const date = new Date();
+  const dateParts = [date.getFullYear(), date.getMonth(), date.getDate(), 'T', date.getHours(), date.getMinutes(), date.getSeconds()];
+  const subDir = dateParts.map(function (v) {
+    if (typeof (v) === 'number') {
+      v = v.toString();
+      if (v.length === 1) {
+        v = '0' + v;
+      }
+    }
+    return v;
+  }).join('');
+  fs.mkdirSync(path.join(outputDir, subDir), { recursive: true });
+  screenshotPages.forEach(screenshotPage => {
+    I.amOnPage(screenshotPage.url);
+    I.usePlaywrightTo('screenshot:' + screenshotPage.url, async ({ browser, browserContext, page }) => {
       let pageTitle = await page.title();
       pageTitle = pageTitle.replace(/ /g, '');
-      const screenshotSavePath = path.join(outputDir, sanitize(outputFilePrefix + pageTitle + outputFileSuffix) + '.png');
+      const screenshotSavePath = path.join(outputDir, subDir, sanitize(outputFilePrefix + pageTitle + outputFileSuffix) + '.png');
       await page.screenshot({ path: screenshotSavePath, fullPage: true });
     });
   });
