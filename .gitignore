@@ -48,8 +48,7 @@ jspm_packages/
 
 ### app ###
 
-url_list.json
-nunjucks_debug.json
+pages.json
 **/vars.yml
 /src/*
 !/src/.gitkeep

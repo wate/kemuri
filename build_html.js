@@ -62,8 +62,7 @@ const nunjucksOptions = {
 };
 nunjucks.configure(srcDir, nunjucksOptions);
 const srcFileKeys = glob.sync(filePattern, { cwd: srcDir });
-const urls = [];
-const nunjucksDebug = {};
+const pages = [];
 const loadedLocalVarFiles = {};
 srcFileKeys
   .filter((templateFile) => {
@@ -74,6 +73,7 @@ srcFileKeys
     return true;
   })
   .forEach((templateFile) => {
+    const srcFilePath = path.join(srcDir, templateFile);
     const localTemplateVarFile = path.join(srcDir, path.dirname(templateFile), 'vars.yml');
     if (!loadedLocalVarFiles[localTemplateVarFile]) {
       loadedLocalVarFiles[localTemplateVarFile] = {};
@@ -83,29 +83,24 @@ srcFileKeys
     }
     localTemplateVars = loadedLocalVarFiles[localTemplateVarFile];
     const sliceEnd = -(path.extname(templateFile).length);
-    const outFilePath = path.join(outDir, templateFile.slice(0, sliceEnd) + '.html');
-    const url = '/' + templateFile.replace('\\', '/').slice(0, sliceEnd) + '.html';
-    urls.push(url);
-    const templateVars = Object.assign(globalTemplateVars, localTemplateVars);
-    const html = nunjucks.render(templateFile, templateVars);
-    if (process.env.NUNJUCKS_DEBUG) {
-      const debugInfo = {
-        file: url,
-        variables: templateVars
-      };
-      nunjucksDebug[url] = templateVars;
-      console.log(JSON.stringify(debugInfo, null, 2));
+    let outFileName = path.basename(templateFile).slice(0, sliceEnd);
+    if (!outFileName.match(/\.[a-zA-Z0-9]+$/)) {
+      outFileName += '.html';
     }
+    const outFilePath = path.join(outDir, path.dirname(templateFile), outFileName);
+    const url = '/' + path.dirname(templateFile).replace(path.win32.sep, '/') + '/' + outFileName;
+    const templateVars = Object.assign(globalTemplateVars, localTemplateVars);
+    pages.push({
+      url: url,
+      src: srcFilePath,
+      variables: templateVars
+    });
+    const html = nunjucks.render(templateFile, templateVars);
     if (!fs.existsSync(path.dirname(outFilePath))) {
       fs.mkdirSync(path.dirname(outFilePath), { recursive: true }, (err) => { if (err) throw err; });
     }
     fs.writeFileSync(outFilePath, beautify.html_beautify(html, beautifyOption), (err) => { if (err) throw err; });
   });
-fs.writeFileSync('url_list.json', JSON.stringify(urls.sort(), null, 2), (err) => {
+fs.writeFileSync('pages.json', JSON.stringify(pages, null, 2), (err) => {
   if (err) throw err;
 });
-if (process.env.NUNJUCKS_DEBUG) {
-  fs.writeFileSync('nunjucks_debug.json', JSON.stringify(nunjucksDebug, null, 2), (err) => {
-    if (err) throw err;
-  });
-}
