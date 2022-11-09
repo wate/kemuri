@@ -9,7 +9,7 @@
     "watch:scss": "sass --watch src/scss:dist/assets/css",
     "watch:js": "tsc --watch",
     "watch:dist": "browser-sync dist --watch",
-    "build": "run-s clean:dist build:**",
+    "build": "run-s cleanup:dist build:**",
     "build:html": "node build_html.js",
     "build:css": "sass src/scss:dist/assets/css",
     "build:js": "tsc",

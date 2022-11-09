@@ -13,7 +13,7 @@ const outDir = process.env.OUTPUT_HTML_DIR || 'dist';
 
 const beautifyOption = {};
 //editorconfigの設定をjs-beautifyの設定に反映
-const eConfig = editorconfig.parseSync('sample.html')
+const eConfig = editorconfig.parseSync('dummy.html')
 if (eConfig.indent_style === 'tab') {
   beautifyOption.indent_with_tabs = true;
 } else if (eConfig.indent_style === 'space') {
@@ -73,6 +73,7 @@ srcFileKeys
     return true;
   })
   .forEach((templateFile) => {
+    const srcFilePath = path.join(srcDir, templateFile);
     const localTemplateVarFile = path.join(srcDir, path.dirname(templateFile), 'vars.yml');
     if (!loadedLocalVarFiles[localTemplateVarFile]) {
       loadedLocalVarFiles[localTemplateVarFile] = {};
@@ -82,11 +83,16 @@ srcFileKeys
     }
     localTemplateVars = loadedLocalVarFiles[localTemplateVarFile];
     const sliceEnd = -(path.extname(templateFile).length);
-    const outFilePath = path.join(outDir, templateFile.slice(0, sliceEnd) + '.html');
-    const url = '/' + templateFile.replace('\\', '/').slice(0, sliceEnd) + '.html';
+    let outFileName = path.basename(templateFile).slice(0, sliceEnd);
+    if (!outFileName.match(/\.[a-zA-Z0-9]+$/)) {
+      outFileName += '.html';
+    }
+    const outFilePath = path.join(outDir, path.dirname(templateFile), outFileName);
+    const url = '/' + path.dirname(templateFile).replace(path.win32.sep, '/') + '/' + outFileName;
     const templateVars = Object.assign(globalTemplateVars, localTemplateVars);
     pages.push({
       url: url,
+      src: srcFilePath,
       variables: templateVars
     });
     const html = nunjucks.render(templateFile, templateVars);
