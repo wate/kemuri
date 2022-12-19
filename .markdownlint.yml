@@ -2,7 +2,7 @@
 ## Default state for all rules
 default: true
 ## Path to configuration file to extend
-extends: null
+extends:
 ### ------------------
 ## MD001 - Heading levels should only increment by one level at a time
 # header-increment: true
@@ -86,11 +86,9 @@ line-length:
 # MD023 - Headings must start at the beginning of the line
 # header-start-left: true
 # MD024 - Multiple headings with the same content
-# no-duplicate-header:
-#   # Only check sibling headings
-#   allow_different_nesting: false
-#   # Only check sibling headings
-#   siblings_only: false
+no-duplicate-header:
+  # Only check sibling headings
+  siblings_only: true
 ## MD025 - Multiple top-level headings in the same document
 # single-title:
 #   # Heading level
@@ -130,7 +128,7 @@ line-length:
 #   # Allowed elements
 #   allowed_elements: []
 ## MD034/no-bare-urls - Bare URL used
-# no-bare-urls: true
+no-bare-urls: false
 ## MD035 - Horizontal rule style
 # hr-style:
 #   # Horizontal rule style
@@ -146,7 +144,7 @@ line-length:
 ## MD039 - Spaces inside link text
 # no-space-in-links: true
 ## MD040 - Fenced code blocks should have a language specified
-# fenced-code-language: true
+fenced-code-language: false
 ## MD041 - First line in a file should be a top-level heading
 # first-line-heading:
 #   # Heading level

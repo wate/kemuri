@@ -1,18 +1,10 @@
 ### macOS ###
 # General
 .DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
 
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
 
 ### VisualStudioCode ###
 .vscode/*
@@ -31,13 +23,8 @@ ehthumbs_vista.db
 logs
 *.log
 
-# Bower dependency directory (https://bower.io/)
-bower_components
-
 # Dependency directories
 node_modules/
-jspm_packages/
-
 
 ### direnv ###
 .direnv
@@ -54,8 +41,3 @@ pages.json
 !/src/.gitkeep
 /dist/*
 !/dist/.gitkeep
-/test_output/*
-!/test_output/.gitkeep
-/screenshot/*
-!/screenshot/.gitkeep
-
