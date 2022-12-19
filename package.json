@@ -10,7 +10,7 @@
     "watch:js": "tsc --watch",
     "watch:dist": "browser-sync dist --watch",
     "build": "run-s cleanup:dist build:**",
-    "build:html": "node build_html.js",
+    "build:html": "node bin/build_html.js",
     "build:css": "sass src/scss:dist/assets/css",
     "build:js": "tsc",
     "cleanup": "run-p cleanup:**",
