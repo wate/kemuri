@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env node
 const nunjucks = require('nunjucks');
 const YAML = require('yaml');
 const fs = require('fs');
