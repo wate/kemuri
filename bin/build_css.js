@@ -128,7 +128,7 @@ function scanDir(scanTargetDir, findFileOption = {}) {
   });
 }
 /**
- * インデックスアイルの生成処理
+ * インデックスファイルの生成処理
  *
  * @param {String} indexFilePath
  * @param {Array} forwardFiles
