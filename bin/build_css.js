@@ -91,8 +91,17 @@ function scanDir(scanTargetDir, findFileOption = {}) {
         !generateIndexFiles[indexPath].includes(childDirIndexName)
       ) {
         const indexComments = generateIndexFiles[childDirIndexPath]
-          .map(item => item.comment)
-          .filter(comment => comment);
+          .map(item => {
+            let result = [];
+            if (item.comments && item.comments.length > 0) {
+              result = item.comments;
+            }
+            if (item.comment) {
+              result.push(item.comment);
+            }
+            return result.length > 0 ? result : null;
+          })
+          .filter(comments => comments);
         const indexFileEntry = {
           comments: indexComments.length > 0 ? indexComments : null,
           file: childDirIndexName
@@ -174,6 +183,7 @@ scanDir(srcDir, findFileOption);
  */
 const mainFileEntries = generateIndexFiles[path.join(srcDir, indexFileName)]
 delete generateIndexFiles[path.join(srcDir, indexFileName)];
+console.log(mainFileEntries);
 
 /**
  * 各ディレクトリにインデックスファイルを生成、
