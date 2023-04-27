@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const sass = require('sass');
 
 //Sassファイルのディレクトリ
 let srcDir = process.cwd();
@@ -203,3 +204,8 @@ Object.keys(generateIndexFiles).forEach((indexFilePath) => {
 if (mainFileName && mainFileEntries.length > 0) {
   generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
 }
+/**
+ * @todo Sassのコンパイル
+ */
+//const result = sass.compile("style.scss");
+//console.log(result.css);
