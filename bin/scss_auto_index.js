@@ -183,7 +183,6 @@ scanDir(srcDir, findFileOption);
  */
 const mainFileEntries = generateIndexFiles[path.join(srcDir, indexFileName)]
 delete generateIndexFiles[path.join(srcDir, indexFileName)];
-console.log(mainFileEntries);
 
 /**
  * 各ディレクトリにインデックスファイルを生成、
@@ -204,6 +203,3 @@ Object.keys(generateIndexFiles).forEach((indexFilePath) => {
 if (mainFileName && mainFileEntries.length > 0) {
   generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
 }
-/**
- * @todo Sassファイルのコンパイル処理
- */
