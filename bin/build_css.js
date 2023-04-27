@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const sass = require('sass');
+require('dotenv').config();
 
 //Sassファイルのディレクトリ
 let srcDir = process.cwd();

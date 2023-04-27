@@ -6,7 +6,7 @@
     "server": "npm run watch:dist",
     "watch": "run-p watch:**",
     "watch:nunjucks": "onchange 'src/**/*.{njk,twig,html,yml}' 'vars.yml' -- npm run build:html",
-    "watch:scss": "onchange 'src/scss/**/*.{scss,sass}' -e 'src/scss/**/_all.scss' -- npm run build:css",
+    "watch:scss": "onchange 'src/scss/**/*.{scss,sass}' -e 'src/scss/**/_index.scss' -- npm run build:css",
     "watch:js": "tsc --watch",
     "watch:dist": "browser-sync dist --watch",
     "build": "run-s cleanup:dist build:**",
