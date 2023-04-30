@@ -7,7 +7,7 @@ require('dotenv').config();
 //Sassファイルのディレクトリ
 let srcDir = 'scss';
 //CSS出力先ディレクトリ
-const distDir = process.env.OUTPUT_CSS_DIR || 'css';
+const destDir = process.env.OUTPUT_CSS_DIR || 'css';
 //マスターSassファイル名
 const mainFileName = process.env.SCSS_MAIN_FILE || 'style.scss';
 
@@ -56,13 +56,13 @@ function regexpQuote(regexpStr) {
 const generateIndexFiles = {};
 
 /**
- * インデックスファイルの生成処理
+ * (インデックスファイルを生成する)パーシャルファイルを抽出する
  *
- * @param {string} scanTargetDir 対象ディレクトリ
+ * @param {string} targetDir 対象ディレクトリ
  * @param {Object} findFileOption 抽出条件
  * @returns {Array}
  */
-function findPartialFiles(scanTargetDir, findFileOption = {}) {
+function findPartialFiles(targetDir, findFileOption = {}) {
   const includeFilePrefix = findFileOption.includeFilePrefix || '_';
   const excludeFileSuffix = findFileOption.excludeFileSuffix || '-bk';
   const indexName = findFileOption.indexName || '_index.scss';
@@ -70,7 +70,7 @@ function findPartialFiles(scanTargetDir, findFileOption = {}) {
   allowExts = allowExts.map((ext) => ext.toLowerCase());
 
   //インデックスファイルのパス
-  const indexPath = path.join(scanTargetDir, indexName);
+  const indexPath = path.join(targetDir, indexName);
   if (!generateIndexFiles[indexPath]) {
     generateIndexFiles[indexPath] = [];
   }
@@ -81,9 +81,9 @@ function findPartialFiles(scanTargetDir, findFileOption = {}) {
   //インデックスファイル用コメントタグパターン
   const indexCommentTagPattern = '^' + regexpQuote('//') + '\\s+' + regexpQuote(indexCommentTag) + '\\s+(.+)';
   //対象ディレクトリのファイルの一覧を抽出
-  const allItems = fs.readdirSync(scanTargetDir);
+  const allItems = fs.readdirSync(targetDir);
   allItems.forEach(item => {
-    const fullPath = path.join(scanTargetDir, item);
+    const fullPath = path.join(targetDir, item);
     if (fs.statSync(fullPath).isDirectory()) {
       /**
        * @todo ディレクトリを除外できるようにする
@@ -226,5 +226,42 @@ if (isProduction) {
     sourceMap: false,
   };
 }
-// const result = sass.compile("style.scss", sassCompileOption);
+/**
+ * コンパイル対象ファイルの一覧
+ */
+const compileSassFiles = [];
+/**
+ * コンパイル対象ファイルを抽出する
+ *
+ * @param {String} targetDir
+ * @param {Object} findFileOption
+ */
+function findCompileFiles(targetDir, findFileOption = {}) {
+  let allowExts = findFileOption.allowExts || ['scss', 'sass'];
+  allowExts = allowExts.map((ext) => ext.toLowerCase());
+  //コンパイルするファイル名のパターン
+  const compileFilePattern = new RegExp('^[a-zA-Z0-9]');
+  const allItems = fs.readdirSync(targetDir);
+  allItems.forEach(item => {
+    const fullPath = path.join(targetDir, item);
+    if (fs.statSync(fullPath).isDirectory()) {
+      findCompileFiles(fullPath);
+    } else if (fs.statSync(fullPath).isFile()) {
+      const fileName = path.basename(item, path.extname(item));
+      const fileExt = path.extname(item).toLowerCase().slice(1);
+      if (
+        //ファイルの拡張子が抽出対象の拡張子に一致する
+        allowExts.includes(fileExt)
+        &&
+        //ファイル名がパターンに一致する
+        fileName.match(compileFilePattern)
+      ) {
+        compileSassFiles.push(item)
+      }
+    }
+  });
+}
+findCompileFiles(srcDir, findFileOption)
+console.log(compileSassFiles);
+// const result = sass.compile(srcDir + ':' + destDir, sassCompileOption);
 // console.log(result.css);
