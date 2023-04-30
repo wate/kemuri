@@ -11,7 +11,7 @@
     "watch:dist": "browser-sync dist --watch",
     "build": "run-s cleanup:dist build:**",
     "build:html": "node bin/build_html.js",
-    "build:css": "node bin/build_css.js",
+    "build:css": "node bin/build_css.js --production",
     "build:js": "tsc",
     "cleanup": "run-p cleanup:**",
     "cleanup:dist": "rimraf dist/*"
