@@ -345,7 +345,6 @@ if (isWatch === true) {
   const mainFilePath = path.join(srcDir, mainFileName);
   const watcher = chokidar.watch(watchGlobPattern, {
     ignoreInitial: true,
-    persistent: true,
   });
   watcher
     .on('add', (filePath) => {
