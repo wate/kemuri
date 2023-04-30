@@ -71,9 +71,9 @@ class buildCSS {
    */
   excludeFilePattern = new RegExp('-bk$');
   /**
-   * インデックスファイル用コメントタグパターン文字列
+   *  インデックスファイル用コメントタグ
    */
-  indexCommentTagPatternString = '^\/\/\\s+@package\\s+(.+)';
+  indexCommentTag = '@package';
   /**
    * インデックスファイル名
    */
@@ -107,7 +107,7 @@ class buildCSS {
       this.excludeFilePattern = new RegExp('^' + this.regexpQuote(buildOption.excludeFileSuffix));
     }
     if (buildOption.indexCommentTag) {
-      this.indexCommentTagPatternString = '^\/\/\\s+' + this.regexpQuote(buildOption.indexCommentTag) + '\\s+(.+)';
+      this.indexCommentTag = buildOption.indexCommentTag;
     }
     if (buildOption.indexFileName) {
       this.indexFileName = buildOption.indexFileName || '_index.scss';
@@ -188,7 +188,7 @@ class buildCSS {
           //アノテーションの抽出
           const indexCommentMatch = fs.readFileSync(fullPath)
             .toString()
-            .match(new RegExp(this.indexCommentTagPattern, 'm'));
+            .match(new RegExp('^\/\/\\s+' + this.regexpQuote(this.indexCommentTag) + '\\s+(.+)', 'm'));
           const indexFileEntry = {
             file: item,
             comments: indexCommentMatch ? [indexCommentMatch[1]] : null,
@@ -207,9 +207,9 @@ class buildCSS {
   generateIndex(indexFilePath, forwardFiles = []) {
     const indexFileContents = forwardFiles.map(item => {
       let indexEntryString = '';
-      if (item.comments && item.comments.length) {
+      if (item.comments && item.comments.length > 0) {
         indexEntryString += item.comments
-          .map(comment => '// ' + indexCommentTag + ' ' + comment)
+          .map(comment => '// ' + this.indexCommentTag + ' ' + comment)
           .join("\n");
         indexEntryString += "\n"
       }
@@ -227,7 +227,7 @@ class buildCSS {
    * インデックスファイルの生成
    */
   generateIndexFiles() {
-    this.indexFiles = [];
+    this.indexFiles = {};
     this.findPartialFiles(this.srcDir);
 
     // メインファイルに記載する内容を専用の変数に格納し、
@@ -287,6 +287,9 @@ class buildCSS {
       const cssFileName = path.basename(sassFilePath, path.extname(sassFilePath)) + '.css';
       const cssFilePath = path.dirname(sassFilePath) + path.sep + cssFileName;
       const cssOutputPath = path.join(destDir, cssFilePath);
+
+      console.log('Compile:' + sassFilePath);
+
       const result = sass.compile(compileSassFilePath, sassCompileOption);
       if (!fs.existsSync(path.dirname(cssOutputPath))) {
         fs.mkdirSync(path.dirname(cssOutputPath), { recursive: true }, (err) => { if (err) throw err; });
@@ -345,34 +348,53 @@ if (isWatch === true) {
   const mainFilePath = path.join(srcDir, mainFileName);
   const watcher = chokidar.watch(watchGlobPattern, {
     ignoreInitial: true,
+    // persistent: true,
   });
   watcher
     .on('add', (filePath) => {
       if (mainFilePath !== filePath && path.basename(filePath) !== indexFileName) {
-        if (isDebug) {
-          console.log('add:' + filePath);
+        if (isDebug) console.log('add:' + filePath);
+        try {
+          builder.build(sassCompileOption);
+        } catch (error) {
+          console.error(error);
         }
-        builder.build(sassCompileOption);
       }
     })
     .on('change', (filePath) => {
       if (mainFilePath !== filePath && path.basename(filePath) !== indexFileName) {
         if (isDebug) console.log('change:' + filePath);
-        builder.build(sassCompileOption);
+        try {
+          builder.build(sassCompileOption);
+        } catch (error) {
+          console.error(error);
+        }
       }
     })
     .on('unlink', (filePath) => {
       if (isDebug) console.log('unlink:' + filePath);
-      builder.build(sassCompileOption);
-    })
+      try {
+        builder.build(sassCompileOption);
+      } catch (error) {
+        console.error(error);
+      }
+  })
     .on('addDir', (dirPath) => {
       if (isDebug) console.log('addDir:' + dirPath);
-      builder.build(sassCompileOption);
-    })
+      try {
+        builder.build(sassCompileOption);
+      } catch (error) {
+        console.error(error);
+      }
+  })
     .on('unlinkDir', (dirPath) => {
       if (isDebug) console.log('unlinkDir:' + dirPath);
-      builder.build(sassCompileOption);
-    })
+      try {
+        builder.build(sassCompileOption);
+      } catch (error) {
+        console.error(error);
+      }
+  })
     .on('error', (error) => {
       console.error(error);
     });
