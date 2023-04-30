@@ -5,20 +5,23 @@ const sass = require('sass');
 require('dotenv').config();
 
 //Sassファイルのディレクトリ
-let srcDir = process.cwd();
+let srcDir = 'scss';
+//CSS出力先ディレクトリ
+const distDir = process.env.OUTPUT_CSS_DIR || 'css';
+//マスターSassファイル名
+const mainFileName = process.env.SCSS_MAIN_FILE || 'style.scss';
 
 /**
  * ターゲットディレクトリの設定およびチェック
  */
-if (process.env.SOURCE_SCSS_DIR || process.env.SOURCE_SASS_DIR) {
-  const realPath = path.resolve(process.cwd(), process.env.SOURCE_SCSS_DIR || process.env.SOURCE_SASS_DIR);
+if (process.env.SOURCE_SCSS_DIR) {
+  const realPath = path.resolve(process.cwd(), process.env.SOURCE_SCSS_DIR);
   if (!realPath.startsWith(process.cwd())) {
     //作業ディレクトリ以下のディレクトリではなかった場合はエラー扱いで終了
     throw new Exception('対象ディレクトリの指定が不正です');
   }
   srcDir = realPath;
 }
-
 //インデックスファイル名
 const indexFileName = process.env.SCSS_INDEX_FILE_NAME || '_index.scss';
 //抽出対象ファイルの拡張子
@@ -27,15 +30,11 @@ if (process.env.SCSS_FILE_EXTENSIONS) {
   fileExtensions = process.env.SCSS_FILE_EXTENSIONS.toLowerCase().split(',');
 }
 //ファイル名の抽出パターン(接頭語)
-const includePrefix = process.env.SCSS_INCLUDE_PREFIX || '_';
+const includeFilePrefix = process.env.SCSS_INCLUDE_FILE_PREFIX || '_';
 //ファイル名の除外パターン(接尾語)
-const excludeSuffix = process.env.SCSS_EXCLUDE_SUFFIX || '-bk';
+const excludeFileSuffix = process.env.SCSS_EXCLUDE_FILE_SUFFIX || '-bk';
 //インデックスファイル用コメントタグ
 const indexCommentTag = process.env.SCSS_INDEX_COMMENT_TAG || '@package';
-//メイン出力ファイル名
-const mainFileName = process.env.SCSS_MAIN_FILE;
-//CSS出力先ディレクトリ
-const destDir = process.env.SCSS_INCLUDE_PREFIX;
 
 /**
  * 正規表現文字をクオートする
@@ -62,8 +61,8 @@ const generateIndexFiles = {};
  * @returns {Array}
  */
 function scanDir(scanTargetDir, findFileOption = {}) {
-  const includePrefix = findFileOption.includePrefix || '_';
-  const excludeSuffix = findFileOption.excludeSuffix || '-bk';
+  const includeFilePrefix = findFileOption.includeFilePrefix || '_';
+  const excludeFileSuffix = findFileOption.excludeFileSuffix || '-bk';
   const indexName = findFileOption.indexName || '_index.scss';
   let allowExts = findFileOption.allowExts || ['scss', 'sass'];
   allowExts = allowExts.map((ext) => ext.toLowerCase());
@@ -76,14 +75,17 @@ function scanDir(scanTargetDir, findFileOption = {}) {
   //対象ディレクトリのファイルの一覧を抽出
   const allItems = fs.readdirSync(scanTargetDir);
   //抽出ファイル名パターン
-  const includeFilePattern = new RegExp('^' + regexpQuote(includePrefix));
+  const includeFilePattern = new RegExp('^' + regexpQuote(includeFilePrefix));
   //除外ファイル名パターン
-  const excludeFilePattern = new RegExp(regexpQuote(excludeSuffix) + '$');
+  const excludeFilePattern = new RegExp(regexpQuote(excludeFileSuffix) + '$');
   //インデックスファイル用コメントタグパターン
   const indexCommentTagPattern = '^' + regexpQuote('//') + '\\s+' + regexpQuote(indexCommentTag) + '\\s+(.+)';
   allItems.forEach(item => {
     const fullPath = path.join(scanTargetDir, item);
     if (fs.statSync(fullPath).isDirectory()) {
+      /**
+       * @todo ディレクトリを除外できるようにする
+       */
       scanDir(fullPath, findFileOption);
       const childDirIndexPath = fullPath + path.sep + indexName;
       const childDirIndexName = item + path.sep + indexName;
@@ -105,9 +107,15 @@ function scanDir(scanTargetDir, findFileOption = {}) {
           })
           .filter(comments => comments);
         const indexFileEntry = {
+          /**
+           * @todo インデックスファイルのアノテーションは引き継がない
+           */
           comments: indexComments.length > 0 ? indexComments : null,
           file: childDirIndexName
         };
+        /**
+         * @todo 先頭に追加
+         */
         generateIndexFiles[indexPath].push(indexFileEntry);
       }
     } else if (fs.statSync(fullPath).isFile()) {
@@ -174,8 +182,8 @@ function generateIndex(indexFilePath, forwardFiles = []) {
 findFileOption = {
   indexName: indexFileName,
   allowExts: fileExtensions,
-  includePrefix: includePrefix,
-  excludeSuffix: excludeSuffix
+  includeFilePrefix: includeFilePrefix,
+  excludeFileSuffix: excludeFileSuffix
 }
 scanDir(srcDir, findFileOption);
 
@@ -203,10 +211,30 @@ Object.keys(generateIndexFiles).forEach((indexFilePath) => {
 });
 //メインファイルを生成
 if (mainFileName && mainFileEntries.length > 0) {
+  /**
+   * @todo メインファイルにはアノテーションは出力しない
+   */
   generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
 }
 /**
  * @todo Sassのコンパイル
  */
-//const result = sass.compile("style.scss");
-//console.log(result.css);
+let sassOption = {
+  style: "expanded",
+  source_map: true
+};
+/**
+ * @todo コマンドラインパラメータ(process.argv「--production」)の解析
+ */
+const isProduction = process.argv
+  .slice(2)
+  .map((v) => v.toLowerCase())
+  .includes(--production);
+if (isProduction) {
+  sassOption = {
+    style: "compress",
+    source_map: false
+  };
+}
+// const result = sass.compile("style.scss", sassOption);
+// console.log(result.css);
