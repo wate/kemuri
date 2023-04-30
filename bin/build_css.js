@@ -141,7 +141,7 @@ function findPartialFiles(targetDir, findFileOption = {}) {
   });
 }
 /**
- * インデックスファイルの生成処理
+ * インデックスファイルを生成
  *
  * @param {String} indexFilePath
  * @param {Array} forwardFiles
@@ -164,67 +164,6 @@ function generateIndex(indexFilePath, forwardFiles = []) {
   indexFileContent += "// ===============================\n\n";
   indexFileContent += indexFileContents.join("\n\n");
   fs.writeFileSync(indexFilePath, indexFileContent);
-}
-
-/**
- * 対象ディレクトリの再起スキャンし、
- * 生成するインデックスファイルの情報を生成
- */
-//インデックスファイル生成オプション
-findFileOption = {
-  indexName: indexFileName,
-  allowExts: fileExtensions,
-  includeFilePrefix: includeFilePrefix,
-  excludeFileSuffix: excludeFileSuffix
-}
-findPartialFiles(srcDir, findFileOption);
-
-/**
- * メインファイルに記載する内容を専用の変数に格納し、
- * ルートディレクトリ直下のインデックスファイルのエントリーを削除
- */
-const mainFileEntries = generateIndexFiles[path.join(srcDir, indexFileName)]
-delete generateIndexFiles[path.join(srcDir, indexFileName)];
-
-/**
- * 各ディレクトリにインデックスファイルを生成、
- * または、不要なインデックスファイルの削除
- */
-Object.keys(generateIndexFiles).forEach((indexFilePath) => {
-  if (generateIndexFiles[indexFilePath].length > 0) {
-    //インデックスファイルの生成
-    generateIndex(indexFilePath, generateIndexFiles[indexFilePath]);
-  } else {
-    if (fs.existsSync(indexFilePath)) {
-      fs.unlinkSync(indexFilePath);
-    }
-    delete generateIndexFiles[indexFilePath];
-  }
-});
-//メインファイルを生成
-if (mainFileName && mainFileEntries.length > 0) {
-  generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
-}
-/**
- * @todo Sassのコンパイル
- */
-const sassLoadPaths = [
-  srcDir,
-  process.cwd() + path.sep + 'node_modules'
-];
-let sassCompileOption = {
-  loadPaths: sassLoadPaths,
-  style: 'expanded',
-  sourceMap: true,
-  charset: true,
-};
-const isProduction = process.argv.slice(2).includes('--production');
-if (isProduction) {
-  sassCompileOption = {
-    loadPaths: sassLoadPaths,
-    style: 'compressed',
-    sourceMap: false,
-  };
 }
 /**
  * コンパイル対象ファイルの一覧
@@ -256,12 +195,77 @@ function findCompileFiles(targetDir, findFileOption = {}) {
         //ファイル名がパターンに一致する
         fileName.match(compileFilePattern)
       ) {
-        compileSassFiles.push(item)
+        compileSassFiles.push(fullPath);
       }
     }
   });
 }
-findCompileFiles(srcDir, findFileOption)
-console.log(compileSassFiles);
-// const result = sass.compile(srcDir + ':' + destDir, sassCompileOption);
-// console.log(result.css);
+
+/**
+ * ---------------------
+ * メイン処理部
+ * ---------------------
+ */
+
+//対象ディレクトリの再起スキャンし、生成するインデックスファイルの情報を取得する
+findFileOption = {
+  indexName: indexFileName,
+  allowExts: fileExtensions,
+  includeFilePrefix: includeFilePrefix,
+  excludeFileSuffix: excludeFileSuffix
+}
+findPartialFiles(srcDir, findFileOption);
+
+// メインファイルに記載する内容を専用の変数に格納し、
+// ルートディレクトリ直下のインデックスファイルのエントリーを削除
+const mainFileEntries = generateIndexFiles[path.join(srcDir, indexFileName)]
+delete generateIndexFiles[path.join(srcDir, indexFileName)];
+
+// 各ディレクトリにインデックスファイルを生成、または、不要なインデックスファイルの削除
+Object.keys(generateIndexFiles).forEach((indexFilePath) => {
+  if (generateIndexFiles[indexFilePath].length > 0) {
+    generateIndex(indexFilePath, generateIndexFiles[indexFilePath]);
+  } else {
+    if (fs.existsSync(indexFilePath)) {
+      fs.unlinkSync(indexFilePath);
+    }
+    delete generateIndexFiles[indexFilePath];
+  }
+});
+// メインファイルを生成
+if (mainFileName && mainFileEntries.length > 0) {
+  generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
+}
+// コンパイル対象のSassファイルを抽出
+findCompileFiles(srcDir, findFileOption);
+//Sassファイルのコンパイル
+const sassLoadPaths = [
+  srcDir,
+  process.cwd() + path.sep + 'node_modules'
+];
+let sassCompileOption = {
+  loadPaths: sassLoadPaths,
+  style: 'expanded',
+  sourceMap: true,
+  charset: true,
+};
+const isProduction = process.argv.slice(2).includes('--production');
+if (isProduction) {
+  sassCompileOption = {
+    loadPaths: sassLoadPaths,
+    style: 'compressed',
+    sourceMap: false,
+  };
+}
+//Sassファイルのコンパイル
+compileSassFiles.forEach((compileSassFilePath) => {
+  const sassFilePath = path.relative(srcDir, compileSassFilePath);
+  const cssFileName = path.basename(sassFilePath, path.extname(sassFilePath)) + '.css';
+  const cssFilePath = path.dirname(sassFilePath) + path.sep + cssFileName;
+  const cssOutputPath = path.join(destDir, cssFilePath);
+  const result = sass.compile(compileSassFilePath, sassCompileOption);
+  if (!fs.existsSync(path.dirname(cssOutputPath))) {
+    fs.mkdirSync(path.dirname(cssOutputPath), { recursive: true }, (err) => { if (err) throw err; });
+  }
+  fs.writeFileSync(cssOutputPath, result.css, (err) => { if (err) throw err; });
+});
