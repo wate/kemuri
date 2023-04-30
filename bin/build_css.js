@@ -35,6 +35,8 @@ const includeFilePrefix = process.env.SCSS_INCLUDE_FILE_PREFIX || '_';
 const excludeFileSuffix = process.env.SCSS_EXCLUDE_FILE_SUFFIX || '-bk';
 //インデックスファイル用コメントタグ
 const indexCommentTag = process.env.SCSS_INDEX_COMMENT_TAG || '@package';
+//インデックスファイルのコメント継承
+// const inheritIndexComment = false;
 
 /**
  * 正規表現文字をクオートする
@@ -60,7 +62,7 @@ const generateIndexFiles = {};
  * @param {Object} findFileOption 抽出条件
  * @returns {Array}
  */
-function scanDir(scanTargetDir, findFileOption = {}) {
+function findPartialFiles(scanTargetDir, findFileOption = {}) {
   const includeFilePrefix = findFileOption.includeFilePrefix || '_';
   const excludeFileSuffix = findFileOption.excludeFileSuffix || '-bk';
   const indexName = findFileOption.indexName || '_index.scss';
@@ -72,21 +74,21 @@ function scanDir(scanTargetDir, findFileOption = {}) {
   if (!generateIndexFiles[indexPath]) {
     generateIndexFiles[indexPath] = [];
   }
-  //対象ディレクトリのファイルの一覧を抽出
-  const allItems = fs.readdirSync(scanTargetDir);
   //抽出ファイル名パターン
   const includeFilePattern = new RegExp('^' + regexpQuote(includeFilePrefix));
   //除外ファイル名パターン
   const excludeFilePattern = new RegExp(regexpQuote(excludeFileSuffix) + '$');
   //インデックスファイル用コメントタグパターン
   const indexCommentTagPattern = '^' + regexpQuote('//') + '\\s+' + regexpQuote(indexCommentTag) + '\\s+(.+)';
+  //対象ディレクトリのファイルの一覧を抽出
+  const allItems = fs.readdirSync(scanTargetDir);
   allItems.forEach(item => {
     const fullPath = path.join(scanTargetDir, item);
     if (fs.statSync(fullPath).isDirectory()) {
       /**
        * @todo ディレクトリを除外できるようにする
        */
-      scanDir(fullPath, findFileOption);
+      findPartialFiles(fullPath, findFileOption);
       const childDirIndexPath = fullPath + path.sep + indexName;
       const childDirIndexName = item + path.sep + indexName;
       if (
@@ -94,29 +96,20 @@ function scanDir(scanTargetDir, findFileOption = {}) {
         &&
         !generateIndexFiles[indexPath].includes(childDirIndexName)
       ) {
-        const indexComments = generateIndexFiles[childDirIndexPath]
-          .map(item => {
-            let result = [];
-            if (item.comments && item.comments.length > 0) {
-              result = item.comments;
-            }
-            if (item.comment) {
-              result.push(item.comment);
-            }
-            return result.length > 0 ? result : null;
-          })
-          .filter(comments => comments);
+        let indexComments = [];
+        // if (inheritIndexComment) {
+        //   const inheritIndexComments = generateIndexFiles[childDirIndexPath]
+        //     .forEach(comments => {
+        //       if (comments && comments.length) {
+        //         indexComments.push(comments);
+        //       }
+        //     })
+        // }
         const indexFileEntry = {
-          /**
-           * @todo インデックスファイルのアノテーションは引き継がない
-           */
-          comments: indexComments.length > 0 ? indexComments : null,
+          comments: indexComments,
           file: childDirIndexName
         };
-        /**
-         * @todo 先頭に追加
-         */
-        generateIndexFiles[indexPath].push(indexFileEntry);
+        generateIndexFiles[indexPath].unshift(indexFileEntry);
       }
     } else if (fs.statSync(fullPath).isFile()) {
       const fileName = path.basename(item, path.extname(item));
@@ -134,12 +127,13 @@ function scanDir(scanTargetDir, findFileOption = {}) {
         //ファイル名が除外パターンに一致しない
         !fileName.match(excludeFilePattern)
       ) {
+        //アノテーションの抽出
         const indexCommentMatch = fs.readFileSync(fullPath)
           .toString()
           .match(new RegExp(indexCommentTagPattern, 'm'));
         const indexFileEntry = {
           file: item,
-          comment: indexCommentMatch ? indexCommentMatch[1] : null,
+          comments: indexCommentMatch ? [indexCommentMatch[1]] : null,
         };
         generateIndexFiles[indexPath].push(indexFileEntry)
       }
@@ -155,9 +149,7 @@ function scanDir(scanTargetDir, findFileOption = {}) {
 function generateIndex(indexFilePath, forwardFiles = []) {
   const indexFileContents = forwardFiles.map(item => {
     let indexEntryString = '';
-    if (item.comment) {
-      indexEntryString += '// ' + indexCommentTag + ' ' + item.comment + "\n";
-    } else if (item.comments) {
+    if (item.comments && item.comments.length) {
       indexEntryString += item.comments
         .map(comment => '// ' + indexCommentTag + ' ' + comment)
         .join("\n");
@@ -185,7 +177,7 @@ findFileOption = {
   includeFilePrefix: includeFilePrefix,
   excludeFileSuffix: excludeFileSuffix
 }
-scanDir(srcDir, findFileOption);
+findPartialFiles(srcDir, findFileOption);
 
 /**
  * メインファイルに記載する内容を専用の変数に格納し、
@@ -211,30 +203,28 @@ Object.keys(generateIndexFiles).forEach((indexFilePath) => {
 });
 //メインファイルを生成
 if (mainFileName && mainFileEntries.length > 0) {
-  /**
-   * @todo メインファイルにはアノテーションは出力しない
-   */
   generateIndex(path.join(srcDir, mainFileName), mainFileEntries);
 }
 /**
  * @todo Sassのコンパイル
  */
-let sassOption = {
-  style: "expanded",
-  source_map: true
+const sassLoadPaths = [
+  srcDir,
+  process.cwd() + path.sep + 'node_modules'
+];
+let sassCompileOption = {
+  loadPaths: sassLoadPaths,
+  style: 'expanded',
+  sourceMap: true,
+  charset: true,
 };
-/**
- * @todo コマンドラインパラメータ(process.argv「--production」)の解析
- */
-const isProduction = process.argv
-  .slice(2)
-  .map((v) => v.toLowerCase())
-  .includes(--production);
+const isProduction = process.argv.slice(2).includes('--production');
 if (isProduction) {
-  sassOption = {
-    style: "compress",
-    source_map: false
+  sassCompileOption = {
+    loadPaths: sassLoadPaths,
+    style: 'compressed',
+    sourceMap: false,
   };
 }
-// const result = sass.compile("style.scss", sassOption);
+// const result = sass.compile("style.scss", sassCompileOption);
 // console.log(result.css);
