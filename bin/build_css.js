@@ -134,17 +134,17 @@ class buildCSS {
     return regexpStr.replace(new RegExp('[' + escapedChars + ']', 'g'), '\\$&');
   }
   /**
-   * (インデックスファイルを生成する)パーシャルファイルを抽出する
+   * (インデックスファイルを生成する)パーシャルファイルを探す
    *
    * @param {string} targetDir 対象ディレクトリ
    */
   findPartialFiles(targetDir) {
-    //インデックスファイルのパス
+    // インデックスファイルのパス
     const indexPath = path.join(targetDir, this.indexFileName);
     if (!this.indexFiles[indexPath]) {
       this.indexFiles[indexPath] = [];
     }
-    //対象ディレクトリのファイルの一覧を抽出
+    // 対象ディレクトリのファイルの一覧を抽出
     const allItems = fs.readdirSync(targetDir);
     allItems.forEach(item => {
       const fullPath = path.join(targetDir, item);
@@ -179,16 +179,16 @@ class buildCSS {
         const fileName = path.basename(item, path.extname(item));
         const fileExt = path.extname(item).toLowerCase().slice(1);
         if (
-          //インデックファイルではない
+          // インデックファイルではない
           path.basename(item) !== this.indexFileName
           &&
-          //ファイルの拡張子が抽出対象の拡張子に一致する
+          // ファイルの拡張子が抽出対象の拡張子に一致する
           this.allowExts.includes(fileExt)
           &&
-          //ファイル名が抽出パターンに一致する
+          // ファイル名が抽出パターンに一致する
           fileName.match(this.includeFilePattern)
           &&
-          //ファイル名が除外パターンに一致しない
+          // ファイル名が除外パターンに一致しない
           !fileName.match(this.excludeFilePattern)
         ) {
           //アノテーションの抽出
@@ -258,12 +258,12 @@ class buildCSS {
     }
   }
   /**
-   * コンパイル対象ファイルを抽出する
+   * コンパイル対象ファイルを探す
    *
    * @param {String} targetDir
    */
   findCompileFiles(targetDir) {
-    //コンパイルするファイル名のパターン
+    // コンパイルするファイル名のパターン
     const compileFilePattern = new RegExp('^[a-zA-Z0-9]');
     const allItems = fs.readdirSync(targetDir);
     allItems.forEach(item => {
@@ -282,6 +282,8 @@ class buildCSS {
 
   /**
    * Sassファイルのコンパイル
+   *
+   * @param {Object} sassCompileOption
    */
   compileSassFiles(sassCompileOption = {}) {
     this.sassFiles = [];
@@ -289,34 +291,63 @@ class buildCSS {
     this.findCompileFiles(this.srcDir);
     const sourceMapReplaceSrcPath = 'file://' + this.srcDir + path.sep;
     const sourceMapReplacedPath = path.relative(this.destDir, this.srcDir) + path.sep;
-    //Sassファイルのコンパイル
+    let cssContent = '';
+    // Sassファイルのコンパイル
     this.sassFiles.forEach((compileSassFilePath) => {
       const sassFilePath = path.relative(this.srcDir, compileSassFilePath);
       const cssFileName = path.basename(sassFilePath, path.extname(sassFilePath)) + '.css';
       const cssFilePath = path.dirname(sassFilePath) + path.sep + cssFileName;
       const cssOutputPath = path.join(this.destDir, cssFilePath);
       const sourceMapFilePath = cssOutputPath + '.map';
+
       console.log('Compile:' + sassFilePath);
-      const result = sass.compile(compileSassFilePath, sassCompileOption);
-      if (!fs.existsSync(path.dirname(cssOutputPath))) {
-        fs.mkdirSync(path.dirname(cssOutputPath), { recursive: true }, (err) => { if (err) throw err; });
-      }
-      fs.writeFileSync(cssOutputPath, result.css);
-      if (result.sourceMap) {
-        result.sourceMap.file = path.basename(cssOutputPath);
-        result.sourceMap.sources = result.sourceMap.sources.map((sourcePath) => {
-          return sourcePath.replace(sourceMapReplaceSrcPath, sourceMapReplacedPath);
-        });
-        fs.writeFileSync(sourceMapFilePath, JSON.stringify(result.sourceMap));
-      } else {
-        if (fs.existsSync(sourceMapFilePath)) {
-          fs.unlinkSync(sourceMapFilePath);
+      /**
+       * @todo エラートラップを入れてコンパイルエラー時には、エラーメッセージ用のCSSを強制出力
+       */
+      try {
+        if (!fs.existsSync(path.dirname(cssOutputPath))) {
+          fs.mkdirSync(path.dirname(cssOutputPath), { recursive: true }, (err) => { if (err) throw err; });
         }
+        const result = sass.compile(compileSassFilePath, sassCompileOption);
+        cssContent = result.css;
+        if (result.sourceMap) {
+          result.sourceMap.file = path.basename(cssOutputPath);
+          result.sourceMap.sources = result.sourceMap.sources.map((sourcePath) => {
+            return sourcePath.replace(sourceMapReplaceSrcPath, sourceMapReplacedPath);
+          });
+          fs.writeFileSync(sourceMapFilePath, JSON.stringify(result.sourceMap));
+        } else {
+          if (fs.existsSync(sourceMapFilePath)) {
+            fs.unlinkSync(sourceMapFilePath);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        const cssErrorStyleContent = error.toString()
+          .replace(/\x1b\[3[0-9]m/g, ' ')
+          .replace(/\x1b\[0m/g, '')
+          .replace(/╷/g, '\\2577')
+          .replace(/│/g, '\\2502')
+          .replace(/╵/g, '\\2575')
+          .replace(/\n/g, "\\A");
+        cssContent = `@charset "UTF-8";
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: '${cssErrorStyleContent}';
+}`;
       }
+      fs.writeFileSync(cssOutputPath, cssContent);
     });
   }
   /**
    * ビルド処理
+   *
+   * @param {Object} sassCompileOption
    */
   build(sassCompileOption = {}) {
     this.generateIndexFiles();
@@ -366,52 +397,31 @@ if (isWatch === true) {
   const mainFilePath = path.join(srcDir, mainFileName);
   const watcher = chokidar.watch(watchGlobPattern, {
     ignoreInitial: true,
-    // persistent: true,
   });
   watcher
     .on('add', (filePath) => {
       if (mainFilePath !== filePath && path.basename(filePath) !== indexFileName) {
         if (isDebug) console.log('add:' + filePath);
-        try {
-          builder.build(sassCompileOption);
-        } catch (error) {
-          console.error(error);
-        }
+        builder.build(sassCompileOption);
       }
     })
     .on('change', (filePath) => {
       if (mainFilePath !== filePath && path.basename(filePath) !== indexFileName) {
         if (isDebug) console.log('change:' + filePath);
-        try {
-          builder.build(sassCompileOption);
-        } catch (error) {
-          console.error(error);
-        }
+        builder.build(sassCompileOption);
       }
     })
     .on('unlink', (filePath) => {
       if (isDebug) console.log('unlink:' + filePath);
-      try {
-        builder.build(sassCompileOption);
-      } catch (error) {
-        console.error(error);
-      }
+      builder.build(sassCompileOption);
     })
     .on('addDir', (dirPath) => {
       if (isDebug) console.log('addDir:' + dirPath);
-      try {
-        builder.build(sassCompileOption);
-      } catch (error) {
-        console.error(error);
-      }
+      builder.build(sassCompileOption);
     })
     .on('unlinkDir', (dirPath) => {
       if (isDebug) console.log('unlinkDir:' + dirPath);
-      try {
-        builder.build(sassCompileOption);
-      } catch (error) {
-        console.error(error);
-      }
+      builder.build(sassCompileOption);
     })
     .on('error', (error) => {
       console.error(error);
