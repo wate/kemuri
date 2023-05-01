@@ -57,13 +57,13 @@ VSCodeを起動後、画面左下の`NPMスクリプト`より
 * `*.njk`
 * `*.twig`
 * `*.html`
+* `vars.yml`
 * `*.ts`
 * `*.js`
 * `*.scss`
 * `*.sass`
-* `vars.yml`
 
-テンプレートについて
+HTMLの生成について
 -----------------
 
 テンプレートエンジンを利用することで、  
@@ -74,9 +74,7 @@ VSCodeを起動後、画面左下の`NPMスクリプト`より
 
 テンプレートの記法については、以下の公式サイトを参照してください。
 
-[Nunjucks][]
-
-[Nunjucks]: https://mozilla.github.io/nunjucks/
+[Nunjucks](https://mozilla.github.io/nunjucks/)
 
 ### パーツファイルについて
 
@@ -94,3 +92,53 @@ VSCodeを起動後、画面左下の`NPMスクリプト`より
 * `_partial/menu.njk`
 * `_partial/footer.njk`
 * `_layout/default.njk`
+
+CSSの生成について
+-----------------
+
+* [Sass](https://www.npmjs.com/package/sass)を利用しています。
+
+### 設定の初期値
+
+* ソースディレクトリ：`scss`
+* 出力先ディレクトリ：`css`
+* 監視対象ファイルの拡張子：`scss`または`sass`
+* パーシャルとして認識するファイルの接頭語：`_`
+* パーシャルから除外するファイルの接尾語：`-bk`
+* インデックスファイルのファイル名：`_index.scss`
+    * 各ディレクトリ内のSassファイルをインポートするためのファイルです。
+* マスターSassファイルのファイル名：`style.scss`
+    * インデックスファイルをインポートするためのファイルです。
+    * このファイルは対象ディレクトリ直下にのみ生成されます。
+
+上記の各種設定は`.env`ファイルに記述することで変更可能です。
+
+#### `.env`ファイルの設定例
+
+```sh
+## ソースディレクトリ
+SOURCE_SCSS_DIR=src/scss
+## 出力先ディレクトリ
+OUTPUT_CSS_DIR=src/css
+## 監視対象ファイルの拡張子
+# SCSS_FILE_EXTENSIONS=scss,sass
+## インデックスファイルのファイル名
+# SCSS_INDEX_FILE_NAME=_index.scss
+## パーシャルとして認識するファイルの接頭語
+# SCSS_INCLUDE_FILE_PREFIX=_
+## パーシャルから除外するファイルの接尾語
+# SCSS_EXCLUDE_FILE_SUFFIX=-bk
+## マスターSassファイルのファイル名
+# SCSS_MAIN_FILE=style.scss
+```
+
+### 利用可能なコマンドライン引数
+
+* `--watch` または `-w`：
+    * ファイルの変更を監視し、変更があった場合に自動的に再ビルドします。
+* `--production`：
+    * このパラメーターがあるか否かCSSの出力形式の切り替えを行っています。
+        * `--production`無し：`expanded`形式で出力します。
+        * `--production`有り：`compressed`形式で出力します。
+* `--debug`：
+    * ファイルの監視状況をコンソールに出力します。
