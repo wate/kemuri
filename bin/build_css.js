@@ -48,7 +48,13 @@ const indexCommentTag = process.env.SCSS_INDEX_COMMENT_TAG || '@package';
 // const inheritIndexComment = false;
 
 class buildCSS {
+  /**
+   * ソースディレクトリ
+   */
   srcDir = 'scss';
+  /**
+   * 出力先ディレクトリ
+   */
   destDir = 'css';
   /**
    * インデックスファイル情報
@@ -281,20 +287,32 @@ class buildCSS {
     this.sassFiles = [];
     // コンパイル対象のSassファイルを抽出
     this.findCompileFiles(this.srcDir);
+    const sourceMapReplaceSrcPath = 'file://' + this.srcDir + path.sep;
+    const sourceMapReplacedPath = path.relative(this.destDir, this.srcDir) + path.sep;
     //Sassファイルのコンパイル
     this.sassFiles.forEach((compileSassFilePath) => {
       const sassFilePath = path.relative(this.srcDir, compileSassFilePath);
       const cssFileName = path.basename(sassFilePath, path.extname(sassFilePath)) + '.css';
       const cssFilePath = path.dirname(sassFilePath) + path.sep + cssFileName;
-      const cssOutputPath = path.join(destDir, cssFilePath);
-
+      const cssOutputPath = path.join(this.destDir, cssFilePath);
+      const sourceMapFilePath = cssOutputPath + '.map';
       console.log('Compile:' + sassFilePath);
-
       const result = sass.compile(compileSassFilePath, sassCompileOption);
       if (!fs.existsSync(path.dirname(cssOutputPath))) {
         fs.mkdirSync(path.dirname(cssOutputPath), { recursive: true }, (err) => { if (err) throw err; });
       }
-      fs.writeFileSync(cssOutputPath, result.css, (err) => { if (err) throw err; });
+      fs.writeFileSync(cssOutputPath, result.css);
+      if (result.sourceMap) {
+        result.sourceMap.file = path.basename(cssOutputPath);
+        result.sourceMap.sources = result.sourceMap.sources.map((sourcePath) => {
+          return sourcePath.replace(sourceMapReplaceSrcPath, sourceMapReplacedPath);
+        });
+        fs.writeFileSync(sourceMapFilePath, JSON.stringify(result.sourceMap));
+      } else {
+        if (fs.existsSync(sourceMapFilePath)) {
+          fs.unlinkSync(sourceMapFilePath);
+        }
+      }
     });
   }
   /**
@@ -378,7 +396,7 @@ if (isWatch === true) {
       } catch (error) {
         console.error(error);
       }
-  })
+    })
     .on('addDir', (dirPath) => {
       if (isDebug) console.log('addDir:' + dirPath);
       try {
@@ -386,7 +404,7 @@ if (isWatch === true) {
       } catch (error) {
         console.error(error);
       }
-  })
+    })
     .on('unlinkDir', (dirPath) => {
       if (isDebug) console.log('unlinkDir:' + dirPath);
       try {
@@ -394,7 +412,7 @@ if (isWatch === true) {
       } catch (error) {
         console.error(error);
       }
-  })
+    })
     .on('error', (error) => {
       console.error(error);
     });
