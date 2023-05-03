@@ -6,9 +6,9 @@ const chokidar = require('chokidar');
 require('dotenv').config();
 
 //Sassファイルのディレクトリ
-let srcDir = 'scss';
+let srcDir = 'src/scss';
 //CSS出力先ディレクトリ
-let destDir = 'css';
+let destDir = 'dist/assets/css';
 //マスターSassファイル名
 const mainFileName = process.env.SCSS_MAIN_FILE || 'style.scss';
 
