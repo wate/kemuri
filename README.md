@@ -174,6 +174,7 @@ CSSの生成について
 * 監視対象ファイルの拡張子：`scss`または`sass`
 * パーシャルとして認識するファイルの接頭語：`_`
 * パーシャルから除外するファイルの接尾語：`-bk`
+* インデックスファイル及びコンパイルから除外するディレクトリの接尾語：`未設定`
 * インデックスファイルのファイル名：`_index.scss`
     * 各ディレクトリ内のSassファイルをインポートするためのファイルです。
 * マスターSassファイルのファイル名：`style.scss`
@@ -197,6 +198,8 @@ OUTPUT_CSS_DIR=dist/assets/css
 # SCSS_INCLUDE_FILE_PREFIX=_
 ## パーシャルから除外するファイルの接尾語
 # SCSS_EXCLUDE_FILE_SUFFIX=-bk
+## インデックス及びコンパイルから除外するディレクトリの接尾語
+# SCSS_EXCLUDE_DIR_SUFFIX=
 ## マスターSassファイルのファイル名
 # SCSS_MAIN_FILE=style.scss
 ```

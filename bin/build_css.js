@@ -42,6 +42,8 @@ if (process.env.SCSS_FILE_EXTENSIONS) {
 const includeFilePrefix = process.env.SCSS_INCLUDE_FILE_PREFIX || '_';
 //ファイル名の除外パターン(接尾語)
 const excludeFileSuffix = process.env.SCSS_EXCLUDE_FILE_SUFFIX || '-bk';
+//ディレクトリの除外パターン(接尾語)
+const excludeDirSuffix = process.env.SCSS_EXCLUDE_DIR_SUFFIX || null;
 //インデックスファイル用コメントタグ
 const indexCommentTag = process.env.SCSS_INDEX_COMMENT_TAG || '@package';
 //インデックスファイルのコメント継承
@@ -77,6 +79,10 @@ class buildCSS {
    */
   excludeFilePattern = new RegExp('-bk$');
   /**
+   * 除外ディレクトリ名パターン
+   */
+  excludeDirPattern = null;
+  /**
    *  インデックスファイル用コメントタグ
    */
   indexCommentTag = '@package';
@@ -110,7 +116,10 @@ class buildCSS {
       this.includeFilePattern = new RegExp('^' + this.regexpQuote(buildOption.includeFilePrefix));
     }
     if (buildOption.excludeFileSuffix) {
-      this.excludeFilePattern = new RegExp('^' + this.regexpQuote(buildOption.excludeFileSuffix));
+      this.excludeFilePattern = new RegExp(this.regexpQuote(buildOption.excludeFileSuffix) + '$');
+    }
+    if (buildOption.excludeDirSuffix) {
+      this.excludeDirPattern = new RegExp(this.regexpQuote(buildOption.excludeDirSuffix) + '$');
     }
     if (buildOption.indexCommentTag) {
       this.indexCommentTag = buildOption.indexCommentTag;
@@ -149,31 +158,33 @@ class buildCSS {
     allItems.forEach(item => {
       const fullPath = path.join(targetDir, item);
       if (fs.statSync(fullPath).isDirectory()) {
-        /**
-         * @todo ディレクトリを除外できるようにする
-         */
-        this.findPartialFiles(fullPath);
-        const childDirIndexPath = fullPath + path.sep + this.indexFileName;
-        const childDirIndexName = item + path.sep + this.indexFileName;
-        if (
-          this.indexFiles[childDirIndexPath].length > 0
-          &&
-          !this.indexFiles[indexPath].includes(childDirIndexName)
-        ) {
-          let indexComments = [];
-          // if (inheritIndexComment) {
-          //   const inheritIndexComments = this.indexFiles[childDirIndexPath]
-          //     .forEach(comments => {
-          //       if (comments && comments.length) {
-          //         indexComments.push(comments);
-          //       }
-          //     })
-          // }
-          const indexFileEntry = {
-            comments: indexComments,
-            file: childDirIndexName
-          };
-          this.indexFiles[indexPath].unshift(indexFileEntry);
+        if (!this.excludeDirPattern || !item.match(this.excludeDirPattern)) {
+          this.findPartialFiles(fullPath);
+          const childDirIndexPath = fullPath + path.sep + this.indexFileName;
+          const childDirIndexName = item + path.sep + this.indexFileName;
+          if (
+            this.indexFiles[childDirIndexPath].length > 0
+            &&
+            !this.indexFiles[indexPath].includes(childDirIndexName)
+          ) {
+            let indexComments = [];
+            /**
+             * @todo 仮想ディレクトリのアノテーションの引き継ぎ(必要になった時に実装)
+             */
+            // if (inheritIndexComment) {
+            //   const inheritIndexComments = this.indexFiles[childDirIndexPath]
+            //     .forEach(comments => {
+            //       if (comments && comments.length) {
+            //         indexComments.push(comments);
+            //       }
+            //     })
+            // }
+            const indexFileEntry = {
+              comments: indexComments,
+              file: childDirIndexName
+            };
+            this.indexFiles[indexPath].unshift(indexFileEntry);
+          }
         }
       } else if (fs.statSync(fullPath).isFile()) {
         const fileName = path.basename(item, path.extname(item));
@@ -269,7 +280,9 @@ class buildCSS {
     allItems.forEach(item => {
       const fullPath = path.join(targetDir, item);
       if (fs.statSync(fullPath).isDirectory()) {
-        this.findCompileFiles(fullPath);
+        if (!this.excludeDirPattern || !item.match(this.excludeDirPattern)) {
+          this.findCompileFiles(fullPath);
+        }
       } else if (fs.statSync(fullPath).isFile()) {
         const fileName = path.basename(item, path.extname(item));
         const fileExt = path.extname(item).toLowerCase().slice(1);
@@ -371,6 +384,7 @@ const builder = new buildCSS(srcDir, destDir, {
   allowExts: fileExtensions,
   includeFilePrefix: includeFilePrefix,
   excludeFileSuffix: excludeFileSuffix,
+  excludeDirSuffix: excludeDirSuffix,
   indexCommentTag: indexCommentTag,
   indexFileName: indexFileName,
   mainFileName: mainFileName
