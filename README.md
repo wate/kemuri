@@ -76,6 +76,31 @@ HTMLの生成について
 
 [Nunjucks](https://mozilla.github.io/nunjucks/)
 
+### 設定の初期値
+
+* ソースディレクトリ：`src`
+* 出力先ディレクトリ：`dist`
+* 監視対象ファイルの拡張子：`njk`または`twig`または`html`
+* 変数ファイル名：`vars.yml`
+* ページ情報の出力ファイル名：`pages.json`
+
+上記の各種設定は`.env`ファイルに記述することで変更可能です。
+
+#### `.env`ファイルの設定例
+
+```sh
+## ソースディレクトリ
+SOURCE_NUNJUCKS_DIR=src
+## 出力先ディレクトリ
+OUTPUT_HTML_DIR=dist
+## 監視対象ファイルの拡張子
+# NUNJUCKS_FILE_PATTERN=njk,twig,html
+## 変数ファイル名
+# NUNJUCKS_VAR_FILE=vars.yml
+## コンパイル済みページ情報の出力ファイル名
+# NUNJUCKS_COMPILED_PAGE_LIST_FILE=pages.json
+```
+
 ### パーツファイルについて
 
 `_`で始まるファイル、または、ディレクトリ内のファイルはパーツとして扱われ、  
@@ -92,6 +117,50 @@ HTMLの生成について
 * `_partial/menu.njk`
 * `_partial/footer.njk`
 * `_layout/default.njk`
+
+### 変数ファイルについて
+
+ページに出力する内容を変数として定義することができます。
+変数ファイルは`vars.yml`というファイル名で、  
+プロジェクトディレクトリまたは、`src`ディレクトリ内に配置します。
+
+変数ファイルは各ディレクトリごとに定義することができ、
+ディレクトリ内に定義された変数は、そのディレクトリ以下のファイルで利用することができます。
+
+#### 変数ファイルの例
+
+```yml
+---
+base_url: http://example.com/
+title: サイトのタイトル
+description: サイトの説明
+keywords: サイトのキーワード
+author: サイトの著者
+```
+
+### 利用可能なコマンドライン引数
+
+* `--watch` または `-w`：
+    * ファイルの変更を監視し、変更があった場合に自動的に再ビルドします。
+* `--production`：
+    * このパラメーターがあるか場合はサイトマップファイルを生成します。
+    * 出力先ディレクトリに`sitemap.xml`が生成されます。
+* `--debug`：
+    * ファイルの監視状況などをコンソールに出力します。
+
+### サイトマップファイル用変数について
+
+* `base_url`：サイトのベースURLを設定します。
+* `sitemap_lastmod`：サイトマップに出力するページの最終更新日を設定します。
+    * この変数の値に`git`が設定されている場合は、Gitのコミット履歴から最終更新日を取得します。
+    * この変数の値に`file`が設定されている場合は、ファイルの更新日から最終更新日を取得します。
+        * ※パーシャルファイルを更新した場合でも、コンパイル対象ファイルの最終更新日が出力されます。
+    * この変数の値にその他の値されている場合は、設定された値をそのまま出力します。
+* `sitemap_changefreq`：サイトマップに出力するページの更新頻度を設定します。
+* `sitemap_priority`：サイトマップに出力するページの優先度を設定します。
+
+サイトマップファイルの詳細については以下のページなどを参照してください。
+https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=ja#xml
 
 CSSの生成について
 -----------------
@@ -119,7 +188,7 @@ CSSの生成について
 ## ソースディレクトリ
 SOURCE_SCSS_DIR=src/scss
 ## 出力先ディレクトリ
-OUTPUT_CSS_DIR=src/css
+OUTPUT_CSS_DIR=dist/assets/css
 ## 監視対象ファイルの拡張子
 # SCSS_FILE_EXTENSIONS=scss,sass
 ## インデックスファイルのファイル名
@@ -141,4 +210,4 @@ OUTPUT_CSS_DIR=src/css
         * `--production`無し：`expanded`形式で出力します。
         * `--production`有り：`compressed`形式で出力します。
 * `--debug`：
-    * ファイルの監視状況をコンソールに出力します。
+    * ファイルの監視状況などをコンソールに出力します。
