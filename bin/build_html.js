@@ -210,7 +210,7 @@ class buildHTML {
   compileNujucksFiles() {
     nunjucks.configure(this.srcDir, this.nunjucksOptions);
     const trimPathLength = (this.srcDir + path.sep).length;
-    const urlPrefix = this.globalVariables.baseURL ? this.globalVariables.baseUrl : '/';
+    const urlPrefix = this.globalVariables.base_url ? this.globalVariables.base_url : '/';
     let html = '';
     this.compileTargetFiles.forEach((templateFilePath) => {
       const templateVars = this.getTemplateVars(templateFilePath);
