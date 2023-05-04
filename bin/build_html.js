@@ -37,7 +37,9 @@ if (process.env.NUNJUCKS_FILE_PATTERN) {
   fileExtensions = process.env.NUNJUCKS_FILE_PATTERN.toLowerCase().split(',');
 }
 //変数ファイル名
-varFileName = process.env.NUNJUCKS_VAR_FILE_NAME || 'vars.yml';
+const nunjucksVarFile = process.env.NUNJUCKS_VAR_FILE || 'vars.yml';
+//コンパイル済みページ一覧ファイル
+const nunjucksCompiledPageListFile = process.env.NUNJUCKS_COMPILED_PAGE_LIST_FILE || 'pages.json';
 
 class buildHTML {
   /**
@@ -58,7 +60,12 @@ class buildHTML {
   /**
    * 変数ファイル名
    */
-  varFileName = 'vars.yml';
+  varFile = 'vars.yml';
+
+  /**
+   * Nunjucksオプション
+   */
+  nunjucksOptions = {};
 
   /**
    * コンパイル対象から除外ファイル/ディレクトリの接頭語
@@ -79,14 +86,21 @@ class buildHTML {
    * コンパイル対象ファイルの一覧
    */
   compileTargetFiles = [];
-  /**
-   * Nunjucksオプション
-   */
-  nunjucksOptions = {};
+
   /**
    * js-beautifyオプション
    */
   beautifyOptions = {};
+
+  /**
+   * コンパイル済みページ情報
+   */
+  compiledFiles = [];
+
+  /**
+   * コンパイル済みページ一覧ファイル
+   */
+  pageListFile = 'pages.json';
 
   /**
    * 正規表現文字をクオートする
@@ -117,10 +131,17 @@ class buildHTML {
       const prefixPattern = buildOptions.excludePrefix.replace(new RegExp('[' + escapedChars + ']', 'g'), '\\$&');
       this.excludePattern = new RegExp('^' + prefixPattern);
     }
-    //グルーバル変数の読み込み
-    const templateVarFile = path.join(path.dirname(this.srcDir), this.varFileName);
-    if (fs.existsSync(templateVarFile)) {
-      this.globalVariables = this.loadVariableFile(templateVarFile);
+    //変数ファイル名
+    if (buildOptions.varFile) {
+      this.varFile = buildOptions.varFile;
+    }
+    //コンパイル済みページ一覧ファイル名
+    if (buildOptions.pageListFile) {
+      this.pageListFile = buildOptions.pageListFile;
+    }
+    //js-beautifyオプションを設定
+    if (buildOptions.beautify) {
+      this.beautifyOptions = buildOptions.beautify;
     }
     //Nunjucksオプションを設定
     if (buildOptions.nunjucks) {
@@ -129,6 +150,11 @@ class buildHTML {
     //js-beautifyオプションを設定
     if (buildOptions.beautify) {
       this.beautifyOptions = buildOptions.beautify;
+    }
+    //グルーバル変数の読み込み
+    const templateVarFile = path.join(path.dirname(this.srcDir), this.varFile);
+    if (fs.existsSync(templateVarFile)) {
+      this.globalVariables = this.loadVariableFile(templateVarFile);
     }
   }
   /**
@@ -169,7 +195,7 @@ class buildHTML {
    */
   loadLocalVariables(templateFilePath) {
     const localVarKey = path.dirname(templateFilePath);
-    const localVarFilePath = localVarKey + path.sep + this.varFileName;
+    const localVarFilePath = localVarKey + path.sep + this.varFile;
     if (!this.localVariables[localVarKey]) {
       let localTemplateVars = {};
       if (fs.existsSync(localVarFilePath)) {
@@ -184,6 +210,8 @@ class buildHTML {
   compileNujucksFiles() {
     nunjucks.configure(this.srcDir, this.nunjucksOptions);
     const trimPathLength = (this.srcDir + path.sep).length;
+    const urlPrefix = this.globalVariables.baseURL ? this.globalVariables.baseUrl : '/';
+    let html = '';
     this.compileTargetFiles.forEach((templateFilePath) => {
       const templateVars = this.getTemplateVars(templateFilePath);
       const templateName = templateFilePath.slice(trimPathLength);
@@ -193,11 +221,17 @@ class buildHTML {
       }
       const outFileDir = path.join(this.destDir, path.dirname(templateFilePath.slice(trimPathLength)));
       const outFilePath = path.join(outFileDir, outFileName);
+
       if (isDebug) {
+        console.log('-------------------');
         console.log(templateFilePath + ' => ' + outFilePath);
         console.log(templateVars);
       }
-      let html = '';
+      this.compiledFiles.push({
+        src: templateFilePath,
+        url: urlPrefix + path.relative(this.destDir, outFilePath),
+        variables: templateVars,
+      });
       try {
         html = nunjucks.render(templateName, templateVars);
       } catch (error) {
@@ -217,6 +251,8 @@ ${error.message}
       }
       fs.writeFileSync(outFilePath, beautify.html_beautify(html, this.beautifyOptions), (err) => { if (err) throw err; });
     });
+    //ページ一覧ファイルの出力
+    fs.writeFileSync(this.pageListFile, JSON.stringify(this.compiledFiles, null, 2));
   }
   /**
    * テンプレートに設定する変数を取得する
@@ -244,11 +280,6 @@ ${error.message}
   }
 }
 
-/**
- * ---------------------
- * メイン処理部
- * ---------------------
- */
 //コマンドライン引数
 const args = process.argv.slice(2);
 //ファイル変更の監視モード
@@ -303,14 +334,21 @@ if (eConfig.end_of_line) {
     beautifyOption.eol = '\r\n';
   }
 }
+/**
+ * ---------------------
+ * メイン処理部
+ * ---------------------
+ */
 const builder = new buildHTML(srcDir, destDir, {
   nunjucks: nunjucksOption,
-  beautify: beautifyOption
+  beautify: beautifyOption,
+  varFile: nunjucksVarFile,
+  pageListFile: nunjucksCompiledPageListFile,
 });
 if (isWatch === true) {
   const watchGlobPatterns = [
     varFileName,
-    srcDir + '/**/' + varFileName,
+    srcDir + '/**/' + nunjucksVarFile,
     srcDir + '/**/*.{' + fileExtensions.join(',') + '}',
   ];
   const watcher = chokidar.watch(watchGlobPatterns, {
