@@ -27,7 +27,7 @@ if (process.env.OUTPUT_CSS_DIR) {
   const realPath = path.resolve(process.cwd(), process.env.OUTPUT_CSS_DIR);
   if (!realPath.startsWith(process.cwd())) {
     //作業ディレクトリ以下のディレクトリではなかった場合はエラー扱いで終了
-    throw new Exception('出力先ディレクトリ指定が不正です');
+    throw new Exception('CSS出力先ディレクトリ指定が不正です');
   }
   destDir = realPath;
 }
