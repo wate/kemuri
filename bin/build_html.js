@@ -6,6 +6,7 @@ const YAML = require('yaml');
 const beautify = require('js-beautify');
 const editorconfig = require('editorconfig');
 const chokidar = require('chokidar');
+const { execSync } = require('child_process')
 require('dotenv').config();
 
 //Nunjucksファイルのディレクトリ
@@ -230,6 +231,7 @@ class buildHTML {
       this.compiledFiles.push({
         src: templateFilePath,
         url: urlPrefix + path.relative(this.destDir, outFilePath),
+        lastmod: fs.statSync(templateFilePath).mtime,
         variables: templateVars,
       });
       try {
@@ -271,12 +273,75 @@ ${error.message}
     return templateVars;
   }
   /**
+   * サイトマップファイルの生成
+   */
+  generateSiteMapFile() {
+    const urlList = this.compiledFiles.map((page) => {
+      const url = {
+        loc: page.url
+      };
+      if (page.variables.sitemap_lastmod) {
+        switch (page.variables.sitemap_lastmod) {
+          case 'git':
+            const lastCommitDatetime = execSync('git log -1 --format="%at" ' + page.src).toString();
+            if (lastCommitDatetime) {
+              //Dateがミリ秒なのでUnixtimeに1000を乗算
+              url.lastmod = this.formatedSitemapLastmod(new Date(lastCommitDatetime * 1000));
+            }
+            break;
+          case 'file':
+            url.lastmod = this.formatedSitemapLastmod(page.lastmod);
+            break;
+          default:
+            url.lastmod = page.variables.sitemap_lastmod;
+            break;
+        }
+      }
+      if (page.variables.sitemap_changefreq) {
+        url.changefreq = page.variables.sitemap_changefreq;
+      }
+      if (page.variables.sitemap_priority) {
+        url.priority = page.variables.sitemap_priority;
+      }
+      return url;
+    });
+    const sitemapTemplateString = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% for url in urlList -%}
+  <url>
+    <loc>{{ url.loc }}</loc>
+    {% if url.lastmod is defined -%}
+    <lastmod>{{ url.lastmod }}</lastmod>
+    {% endif %}
+    {% if url.changefreq is defined -%}
+    <changefreq>{{ url.changefreq }}</changefreq>
+    {% endif %}
+    {% if url.priority is defined -%}
+    <priority>{{ url.priority }}</priority>
+    {% endif %}
+  </url>
+  {% endfor %}
+</urlset>`;
+    const sitemapContent = nunjucks.renderString(sitemapTemplateString, { urlList: urlList });
+    fs.writeFileSync(this.destDir + path.sep + 'sitemap.xml', beautify.html_beautify(sitemapContent).replace(/^\n/mg, ''));
+  }
+  formatedSitemapLastmod(pageLastmod) {
+    return `
+    ${pageLastmod.getFullYear()}-
+    ${(pageLastmod.getMonth() + 1).toString().padStart(2, '0')}-
+    ${pageLastmod.getDate().toString().padStart(2, '0')}`
+      .replace(/\s/g, '');
+  }
+  /**
    * ビルド処理
    */
-  build() {
+  build(isProduction = false) {
     console.log('Build HTML');
     this.findCompileFiles(this.srcDir);
     this.compileNujucksFiles();
+    if (isProduction) {
+      this.generateSiteMapFile();
+    }
   }
 }
 
@@ -285,6 +350,7 @@ const args = process.argv.slice(2);
 //ファイル変更の監視モード
 const isWatch = args.includes('-w') || args.includes('--watch');
 const isDebug = args.includes('--debug');
+const isProduction = args.includes('--production');
 /**
  * Nunjucksオプション
  */
@@ -347,7 +413,7 @@ const builder = new buildHTML(srcDir, destDir, {
 });
 if (isWatch === true) {
   const watchGlobPatterns = [
-    varFileName,
+    nunjucksVarFile,
     srcDir + '/**/' + nunjucksVarFile,
     srcDir + '/**/*.{' + fileExtensions.join(',') + '}',
   ];
@@ -357,27 +423,27 @@ if (isWatch === true) {
   watcher
     .on('add', (filePath) => {
       if (isDebug) console.log('add:' + filePath);
-      builder.build();
+      builder.build(isProduction);
     })
     .on('change', (filePath) => {
       if (isDebug) console.log('change:' + filePath);
-      builder.build();
+      builder.build(isProduction);
     })
     .on('unlink', (filePath) => {
       if (isDebug) console.log('unlink:' + filePath);
-      builder.build();
+      builder.build(isProduction);
     })
     .on('addDir', (dirPath) => {
       if (isDebug) console.log('addDir:' + dirPath);
-      builder.build();
+      builder.build(isProduction);
     })
     .on('unlinkDir', (dirPath) => {
       if (isDebug) console.log('unlinkDir:' + dirPath);
-      builder.build();
+      builder.build(isProduction);
     })
     .on('error', (error) => {
       console.error(error);
     });
 } else {
-  builder.build();
+  builder.build(isProduction);
 }
