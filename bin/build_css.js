@@ -46,8 +46,6 @@ const excludeFileSuffix = process.env.SCSS_EXCLUDE_FILE_SUFFIX || '-bk';
 const excludeDirSuffix = process.env.SCSS_EXCLUDE_DIR_SUFFIX || null;
 //インデックスファイル用コメントタグ
 const indexCommentTag = process.env.SCSS_INDEX_COMMENT_TAG || '@package';
-//インデックスファイルのコメント継承
-// const inheritIndexComment = false;
 
 class buildCSS {
   /**
@@ -93,7 +91,7 @@ class buildCSS {
   /**
    * メインファイル名
    */
-  mainFileName = 'style.scss';
+  mainFileName = null;
 
   /**
    * コンストラクタ
@@ -128,7 +126,7 @@ class buildCSS {
       this.indexFileName = buildOption.indexFileName || '_index.scss';
     }
     if (buildOption.mainFileName) {
-      this.mainName = buildOption.mainFileName || 'style.scss';
+      this.mainName = buildOption.mainFileName;
     }
   }
   /**
@@ -151,42 +149,17 @@ class buildCSS {
     // インデックスファイルのパス
     const indexPath = path.join(targetDir, this.indexFileName);
     if (!this.indexFiles[indexPath]) {
-      this.indexFiles[indexPath] = [];
+      this.indexFiles[indexPath] = {
+        'files': [],
+        'subDirectoryIndexes': []
+      };
     }
     // 対象ディレクトリのファイルの一覧を抽出
     const allItems = fs.readdirSync(targetDir);
     allItems.forEach(item => {
       const fullPath = path.join(targetDir, item);
-      if (fs.statSync(fullPath).isDirectory()) {
-        if (!this.excludeDirPattern || !item.match(this.excludeDirPattern)) {
-          this.findPartialFiles(fullPath);
-          const childDirIndexPath = fullPath + path.sep + this.indexFileName;
-          const childDirIndexName = item + path.sep + this.indexFileName;
-          if (
-            this.indexFiles[childDirIndexPath].length > 0
-            &&
-            !this.indexFiles[indexPath].includes(childDirIndexName)
-          ) {
-            let indexComments = [];
-            /**
-             * @todo 仮想ディレクトリのアノテーションの引き継ぎ(必要になった時に実装)
-             */
-            // if (inheritIndexComment) {
-            //   const inheritIndexComments = this.indexFiles[childDirIndexPath]
-            //     .forEach(comments => {
-            //       if (comments && comments.length) {
-            //         indexComments.push(comments);
-            //       }
-            //     })
-            // }
-            const indexFileEntry = {
-              comments: indexComments,
-              file: childDirIndexName
-            };
-            this.indexFiles[indexPath].unshift(indexFileEntry);
-          }
-        }
-      } else if (fs.statSync(fullPath).isFile()) {
+      if (fs.statSync(fullPath).isFile()) {
+        //指定されたパスがファイルだった場合
         const fileName = path.basename(item, path.extname(item));
         const fileExt = path.extname(item).toLowerCase().slice(1);
         if (
@@ -208,37 +181,72 @@ class buildCSS {
             .match(new RegExp('^\/\/\\s+' + this.regexpQuote(this.indexCommentTag) + '\\s+(.+)', 'm'));
           const indexFileEntry = {
             file: item,
-            comments: indexCommentMatch ? [indexCommentMatch[1]] : null,
+            comments: indexCommentMatch ? [indexCommentMatch[1]] : [],
           };
-          this.indexFiles[indexPath].push(indexFileEntry)
+          this.indexFiles[indexPath]['files'].push(indexFileEntry)
+        }
+      } else if (fs.statSync(fullPath).isDirectory()) {
+        //指定されたパスがディレクトリだった場合
+        if (!this.excludeDirPattern || !item.match(this.excludeDirPattern)) {
+          this.findPartialFiles(fullPath);
+          const childDirIndexPath = fullPath + path.sep + this.indexFileName;
+          const childDirIndexName = item + path.sep + this.indexFileName;
+          if (
+            this.indexFiles[childDirIndexPath]['subDirectoryIndexes'].length > 0
+            ||
+            this.indexFiles[childDirIndexPath]['files'].length > 0
+          ) {
+            const indexFileEntry = {
+              file: childDirIndexName,
+              comments: []
+            };
+            this.indexFiles[indexPath]['subDirectoryIndexes'].push(indexFileEntry);
+          }
         }
       }
     });
   }
   /**
-   * インデックスファイルを生成
+   * インデックスファイルを生成する
    *
    * @param {String} indexFilePath
    * @param {Array} forwardFiles
    */
   generateIndex(indexFilePath, forwardFiles = []) {
-    const indexFileContents = forwardFiles.map(item => {
-      let indexEntryString = '';
-      if (item.comments && item.comments.length > 0) {
-        indexEntryString += item.comments
-          .map(comment => '// ' + this.indexCommentTag + ' ' + comment)
-          .join("\n");
-        indexEntryString += "\n"
-      }
-      indexEntryString += '@forward "' + item.file + '";'
-      return indexEntryString;
-    });
+    let indexFileContents = [];
+    indexFileContents = indexFileContents.concat(this.getIndexEntiryContents(forwardFiles['subDirectoryIndexes']));
+    indexFileContents = indexFileContents.concat(this.getIndexEntiryContents(forwardFiles['files']));
+
     let indexFileContent = "// ===============================\n";
     indexFileContent += "// Auto generated by " + path.basename(__filename) + "\n";
     indexFileContent += "// Do not edit this file!\n";
     indexFileContent += "// ===============================\n\n";
     indexFileContent += indexFileContents.join("\n\n");
     fs.writeFileSync(indexFilePath, indexFileContent + "\n");
+  }
+  /**
+   * インデックスファイルに出力する内容を取得する
+   *
+   * @param {Array} indexFileEntries
+   * @returns {String}
+   */
+  getIndexEntiryContents(indexFileEntries) {
+    let indexEntryContents = [];
+    if (indexFileEntries.length > 0) {
+      indexEntryContents = indexFileEntries.map((entry) => {
+        let indexEntryString = '';
+        if (entry.comments && entry.comments.length > 0) {
+          //コメントを追加出力
+          indexEntryString += entry.comments
+            .map(comment => '// ' + this.indexCommentTag + ' ' + comment)
+            .join("\n");
+          indexEntryString += "\n"
+        }
+        indexEntryString += '@forward "' + entry.file + '";'
+        return indexEntryString;
+      });
+    }
+    return indexEntryContents;
   }
   /**
    * インデックスファイルの生成
@@ -249,12 +257,17 @@ class buildCSS {
 
     // メインファイルに記載する内容を専用の変数に格納し、
     // ルートディレクトリ直下のインデックスファイルのエントリーを削除
-    const mainFileEntries = this.indexFiles[path.join(this.srcDir, this.indexFileName)]
-    delete this.indexFiles[path.join(this.srcDir, this.indexFileName)];
+    const mainIndexFilePath = path.join(this.srcDir, this.indexFileName);
+    const mainFileEntries = this.indexFiles[mainIndexFilePath]
+    delete this.indexFiles[mainIndexFilePath];
 
     // 各ディレクトリにインデックスファイルを生成、または、不要なインデックスファイルの削除
     Object.keys(this.indexFiles).forEach((indexFilePath) => {
-      if (this.indexFiles[indexFilePath].length > 0) {
+      if (
+        this.indexFiles[indexFilePath]['subDirectoryIndexes'].length > 0
+        ||
+        this.indexFiles[indexFilePath]['files'].length > 0
+      ) {
         this.generateIndex(indexFilePath, this.indexFiles[indexFilePath]);
       } else {
         if (fs.existsSync(indexFilePath)) {
@@ -264,8 +277,12 @@ class buildCSS {
       }
     });
     // メインファイルの生成
-    if (this.mainFileName && mainFileEntries.length > 0) {
-      this.generateIndex(path.join(this.srcDir, this.mainFileName), mainFileEntries);
+    if (
+      this.mainName
+      &&
+      (mainFileEntries['subDirectoryIndexes'].length > 0 || mainFileEntries['file'].length > 0)
+    ) {
+      this.generateIndex(path.join(this.srcDir, this.mainName), mainFileEntries);
     }
   }
   /**
@@ -408,7 +425,7 @@ if (isProduction) {
 }
 if (isWatch === true) {
   const watchGlobPattern = srcDir + '/**/*.{' + fileExtensions.join(',') + '}';
-  const mainFilePath = path.join(srcDir, mainFileName);
+  const mainFilePath = mainFileName ? path.join(srcDir, mainFileName) : null;
   const watcher = chokidar.watch(watchGlobPattern, {
     ignoreInitial: true,
   });
