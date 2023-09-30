@@ -6,7 +6,7 @@ const YAML = require('yaml');
 const beautify = require('js-beautify');
 const editorconfig = require('editorconfig');
 const chokidar = require('chokidar');
-const { execSync } = require('child_process')
+const {execSync} = require('child_process');
 require('dotenv').config();
 
 //Nunjucksファイルのディレクトリ
@@ -174,7 +174,7 @@ class buildHTML {
    */
   findCompileFiles(targetDir) {
     const allItems = fs.readdirSync(targetDir);
-    allItems.forEach(item => {
+    allItems.forEach((item) => {
       const fullPath = path.join(targetDir, item);
       if (!item.match(this.excludePattern)) {
         if (fs.statSync(fullPath).isDirectory()) {
@@ -249,9 +249,13 @@ ${error.message}
 </html>`;
       }
       if (!fs.existsSync(outFileDir)) {
-        fs.mkdirSync(outFileDir, { recursive: true }, (err) => { if (err) throw err; });
+        fs.mkdirSync(outFileDir, {recursive: true}, (err) => {
+          if (err) throw err;
+        });
       }
-      fs.writeFileSync(outFilePath, beautify.html_beautify(html, this.beautifyOptions), (err) => { if (err) throw err; });
+      fs.writeFileSync(outFilePath, beautify.html_beautify(html, this.beautifyOptions), (err) => {
+        if (err) throw err;
+      });
     });
     //ページ一覧ファイルの出力
     fs.writeFileSync(this.pageListFile, JSON.stringify(this.compiledFiles, null, 2));
@@ -278,7 +282,7 @@ ${error.message}
   generateSiteMapFile() {
     const urlList = this.compiledFiles.map((page) => {
       const url = {
-        loc: page.url
+        loc: page.url,
       };
       if (page.variables.sitemap_lastmod) {
         switch (page.variables.sitemap_lastmod) {
@@ -322,15 +326,17 @@ ${error.message}
   </url>
   {% endfor %}
 </urlset>`;
-    const sitemapContent = nunjucks.renderString(sitemapTemplateString, { urlList: urlList });
-    fs.writeFileSync(this.destDir + path.sep + 'sitemap.xml', beautify.html_beautify(sitemapContent).replace(/^\n/mg, ''));
+    const sitemapContent = nunjucks.renderString(sitemapTemplateString, {urlList: urlList});
+    fs.writeFileSync(
+      this.destDir + path.sep + 'sitemap.xml',
+      beautify.html_beautify(sitemapContent).replace(/^\n/gm, '')
+    );
   }
   formatedSitemapLastmod(pageLastmod) {
     return `
     ${pageLastmod.getFullYear()}-
     ${(pageLastmod.getMonth() + 1).toString().padStart(2, '0')}-
-    ${pageLastmod.getDate().toString().padStart(2, '0')}`
-      .replace(/\s/g, '');
+    ${pageLastmod.getDate().toString().padStart(2, '0')}`.replace(/\s/g, '');
   }
   /**
    * ビルド処理
@@ -370,7 +376,7 @@ const nunjucksOption = {
  * ※editorconfigの設定をjs-beautifyの設定に反映
  */
 const beautifyOption = {};
-const eConfig = editorconfig.parseSync('dummy.html')
+const eConfig = editorconfig.parseSync('dummy.html');
 if (eConfig.indent_style === 'tab') {
   beautifyOption.indent_with_tabs = true;
 } else if (eConfig.indent_style === 'space') {
