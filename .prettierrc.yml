@@ -34,7 +34,7 @@ singleQuote: true
 # trailingComma: all
 ### オブジェクトリテラル内の括弧の間にスペースを付与する
 ## https://prettier.io/docs/en/options#bracket-spacing
-bracketSpacing: false
+# bracketSpacing: true
 ### 複数行に渡るHTML開始タグの終了文字(>)を最後の行に単独配置するのではなく最後の行の末尾に付与する
 ## https://prettier.io/docs/en/options#bracket-line
 # bracketSameLine: false

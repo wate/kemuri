@@ -6,7 +6,7 @@ const YAML = require('yaml');
 const beautify = require('js-beautify');
 const editorconfig = require('editorconfig');
 const chokidar = require('chokidar');
-const {execSync} = require('child_process');
+const { execSync } = require('child_process');
 require('dotenv').config();
 
 //Nunjucksファイルのディレクトリ
@@ -249,7 +249,7 @@ ${error.message}
 </html>`;
       }
       if (!fs.existsSync(outFileDir)) {
-        fs.mkdirSync(outFileDir, {recursive: true}, (err) => {
+        fs.mkdirSync(outFileDir, { recursive: true }, (err) => {
           if (err) throw err;
         });
       }
@@ -326,7 +326,7 @@ ${error.message}
   </url>
   {% endfor %}
 </urlset>`;
-    const sitemapContent = nunjucks.renderString(sitemapTemplateString, {urlList: urlList});
+    const sitemapContent = nunjucks.renderString(sitemapTemplateString, { urlList: urlList });
     fs.writeFileSync(
       this.destDir + path.sep + 'sitemap.xml',
       beautify.html_beautify(sitemapContent).replace(/^\n/gm, '')
