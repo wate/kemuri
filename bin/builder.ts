@@ -37,9 +37,7 @@ if (argv.mode !== undefined) {
  * ソースマップの出力オプション
  */
 const jsOrverrideOption: typescriptBuilderOption = {};
-const cssOrverrideOption: sassBuilderOption = {
-  style: mode === 'develop' ? 'expanded' : 'compressed',
-};
+const cssOrverrideOption: sassBuilderOption = {};
 if (argv.sourcemap !== undefined) {
   jsOrverrideOption.sourcemap = true;
   cssOrverrideOption.sourcemap = true;
@@ -47,10 +45,13 @@ if (argv.sourcemap !== undefined) {
 /**
  * minifyの出力オプション
  */
-if (argv.minify !== undefined) {
+if (argv.minify !== undefined || mode === 'production') {
   jsOrverrideOption.minify = true;
   cssOrverrideOption.style = 'compressed';
 }
+
+// console.log('jsOrverrideOption', jsOrverrideOption);
+// console.log('cssOrverrideOption', cssOrverrideOption);
 
 const builders = new Map();
 if (!configLoader.isDisable('js')) {

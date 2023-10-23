@@ -39,5 +39,5 @@ js:
       - node_modules
       - vendor
       - lib
-  globals:
-    jquery: $
+  # globals:
+  #   jquery: $

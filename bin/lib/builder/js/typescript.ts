@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { baseBuilder, builderOption } from '../base';
 import { rollup } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import js_beautify from 'js-beautify';
 import { MinifyOutput, minify } from 'terser';
@@ -208,7 +209,7 @@ export class typescriptBuilder extends baseBuilder {
       };
       bundle = await rollup({
         input: srcPath,
-        plugins: [nodeResolve(), typescript(typescriptConfig)],
+        plugins: [nodeResolve(), commonjs(), typescript(typescriptConfig)],
       });
       const { output } = await bundle.generate({
         globals: this.globals,
@@ -254,7 +255,7 @@ export class typescriptBuilder extends baseBuilder {
           exclude: this.ignoreDirNames,
           compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
         };
-        const rollupPlugins = [nodeResolve(), typescript(typescriptConfig)];
+        const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
         bundle = await rollup({
           input: Object.fromEntries(entries),
           plugins: rollupPlugins,

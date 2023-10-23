@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "Mock Tool",
   "type": "module",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.7.1"
+  },
   "devDependencies": {
     "@hono/node-server": "^1.2.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/glob": "^8.1.0",
@@ -37,7 +40,7 @@
   "scripts": {
     "mock:server": "tsx bin/server.ts",
     "mock:watch": "tsx bin/builder.ts -w",
-    "mock:build": "tsx bin/builder.ts",
+    "mock:build": "tsx bin/builder.ts --sourcemap",
     "mock:cleanup": "rimraf dist --preserve-root",
     "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
     "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
