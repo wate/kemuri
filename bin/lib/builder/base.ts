@@ -204,10 +204,10 @@ export abstract class baseBuilder {
       this.setIgnoreDirPrefix(option.dirPrefix);
     }
     if (option.fileSuffix !== undefined && option.fileSuffix) {
-      this.setIgnoreFilePrefix(option.fileSuffix);
+      this.setIgnoreFileSuffix(option.fileSuffix);
     }
-    if (option.dirPrefix !== undefined && option.dirPrefix) {
-      this.setIgnoreDirSuffix(option.dirPrefix);
+    if (option.dirSuffix !== undefined && option.dirSuffix) {
+      this.setIgnoreDirSuffix(option.dirSuffix);
     }
     if (option.dirNames !== undefined) {
       this.setIgnoreDirNames(option.dirNames);
@@ -292,6 +292,14 @@ export abstract class baseBuilder {
   }
 
   /**
+   * エントリポイントのGlobパターンを取得する
+   * @returns
+   */
+  protected getEntryPointGlobPatetrn(): string | string[] {
+    return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
+  }
+
+  /**
    * エントリポイントからの除外ファイル判定処理
    * @param p
    * @returns
@@ -316,13 +324,6 @@ export abstract class baseBuilder {
     return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
   }
 
-  /**
-   * エントリポイントのGlobパターンを取得する
-   * @returns
-   */
-  protected getEntryPointGlobPatetrn(): string | string[] {
-    return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
-  }
   /**
    * エントリポイントの対象ファイル一覧を取得する
    * @returns
@@ -409,7 +410,6 @@ export abstract class baseBuilder {
    * ファイルの監視とビルド
    */
   public watch() {
-    this.buildAll();
     let entryPoint = this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern();
     chokidar

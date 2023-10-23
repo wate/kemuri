@@ -162,10 +162,10 @@ class baseBuilder {
             this.setIgnoreDirPrefix(option.dirPrefix);
         }
         if (option.fileSuffix !== undefined && option.fileSuffix) {
-            this.setIgnoreFilePrefix(option.fileSuffix);
+            this.setIgnoreFileSuffix(option.fileSuffix);
         }
-        if (option.dirPrefix !== undefined && option.dirPrefix) {
-            this.setIgnoreDirSuffix(option.dirPrefix);
+        if (option.dirSuffix !== undefined && option.dirSuffix) {
+            this.setIgnoreDirSuffix(option.dirSuffix);
         }
         if (option.dirNames !== undefined) {
             this.setIgnoreDirNames(option.dirNames);
@@ -251,6 +251,13 @@ class baseBuilder {
         return globPattern;
     }
     /**
+     * エントリポイントのGlobパターンを取得する
+     * @returns
+     */
+    getEntryPointGlobPatetrn() {
+        return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
+    }
+    /**
      * エントリポイントからの除外ファイル判定処理
      * @param p
      * @returns
@@ -272,13 +279,6 @@ class baseBuilder {
         const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + this.ignoreDirPrefix).test(dirName) : false;
         const suffixCheck = this.ignoreDirSuffix ? RegExp(this.ignoreDirSuffix + '$').test(dirName) : false;
         return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
-    }
-    /**
-     * エントリポイントのGlobパターンを取得する
-     * @returns
-     */
-    getEntryPointGlobPatetrn() {
-        return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
     }
     /**
      * エントリポイントの対象ファイル一覧を取得する
@@ -362,7 +362,6 @@ class baseBuilder {
      * ファイルの監視とビルド
      */
     watch() {
-        this.buildAll();
         let entryPoint = this.getEntryPoint();
         const watchFilePattern = this.getWatchFilePattern();
         chokidar
@@ -711,6 +710,7 @@ class typescriptBuilder extends baseBuilder {
                     sourcemap: this.sourcemap,
                 });
                 let outputPath;
+                const baseDir = this.getEntryPointBaseDir();
                 for (const chunkOrAsset of output) {
                     if (chunkOrAsset.type === 'asset') {
                         outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
@@ -730,6 +730,7 @@ class typescriptBuilder extends baseBuilder {
                             outputCode = js_beautify.js(outputCode, beautifyOption);
                         }
                         fs.writeFileSync(outputPath, outputCode.trim() + '\n');
+                        console.log('Compile: ' + (baseDir ? path.join(baseDir, chunkOrAsset.fileName) : chunkOrAsset.fileName) + ' => ' + outputPath);
                     }
                 }
             }
@@ -898,7 +899,6 @@ class sassBuilder extends baseBuilder {
     async buildAll() {
         const entries = this.getEntryPoint();
         if (entries.size > 0) {
-            this.getEntryPointBaseDir();
             const compileOption = this.getCompileOption();
             const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
             entries.forEach((srcFile, entryPoint) => {
@@ -909,6 +909,7 @@ class sassBuilder extends baseBuilder {
                 }
                 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
                 fs.writeFileSync(outputPath, result.css.trim() + '\n');
+                console.log('Compile: ' + srcFile + ' => ' + outputPath);
                 if (result.sourceMap) {
                     fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
                 }
@@ -1038,7 +1039,6 @@ class nunjucksBuilder extends baseBuilder {
      * ファイルの監視及びビルド処理
      */
     watch() {
-        this.buildAll();
         let entryPoint = this.getEntryPoint();
         const watchFilePattern = this.getWatchFilePattern();
         chokidar
@@ -1149,19 +1149,20 @@ class nunjucksBuilder extends baseBuilder {
      */
     async buildFile(srcPath, outputPath) {
         nunjucks.configure(this.srcDir, this.compileOption);
-        const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+        this.getBeautifyOption('dummy.' + this.outpuExt);
         this.loadTemplateVars();
         let templatePath = srcPath;
-        let html;
         const baseDir = this.getEntryPointBaseDir();
         if (baseDir) {
             templatePath = path.relative(baseDir, templatePath);
         }
         const templateVars = this.getTemplateVars(srcPath);
-        html = nunjucks.render(templatePath, templateVars);
-        html = js_beautify.html(html, beautifyOption);
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+        nunjucks.render(templatePath, templateVars, (error) => {
+            if (error) {
+                console.error(error.name + ' : ' + error.message);
+                throw error;
+            }
+        });
     }
     /**
      * 全ファイルのビルド処理
@@ -1173,21 +1174,19 @@ class nunjucksBuilder extends baseBuilder {
             this.loadTemplateVars();
             nunjucks.configure(this.srcDir, this.compileOption);
             const baseDir = this.getEntryPointBaseDir();
-            let templatePath;
-            let outputPath;
-            let html;
-            let templateVars = {};
-            entries.forEach(async (srcFile, entryPoint) => {
-                templatePath = srcFile;
-                outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
+            entries.forEach((srcFile, entryPoint) => {
+                let templatePath = srcFile;
+                const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
                 if (baseDir) {
                     templatePath = path.relative(baseDir, templatePath);
                 }
-                templateVars = this.getTemplateVars(srcFile);
-                html = nunjucks.render(templatePath, templateVars);
+                const templateVars = this.getTemplateVars(srcFile);
+                let html = nunjucks.render(templatePath, templateVars);
+                //@ts-ignore
                 html = js_beautify.html(html, beautifyOption);
                 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
                 fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+                console.log('Compile: ' + srcFile + ' => ' + outputPath);
             });
         }
     }

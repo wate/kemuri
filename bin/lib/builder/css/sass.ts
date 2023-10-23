@@ -193,7 +193,6 @@ export class sassBuilder extends baseBuilder {
   public async buildAll() {
     const entries = this.getEntryPoint();
     if (entries.size > 0) {
-      const baseDir = this.getEntryPointBaseDir();
       const compileOption = this.getCompileOption();
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
       entries.forEach((srcFile, entryPoint) => {
@@ -204,6 +203,7 @@ export class sassBuilder extends baseBuilder {
         }
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, result.css.trim() + '\n');
+        console.log('Compile: ' + srcFile + ' => ' + outputPath);
         if (result.sourceMap) {
           fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
         }

@@ -1,0 +1,43 @@
+---
+## ---------------
+## 全体の設定
+## ---------------
+srcDir: src
+outputDir: dist
+ignore:
+  suffix: -bk
+# disabled:
+#   # - js
+#   # - css
+#   - html
+## ---------------
+## HTML用の設定
+## ---------------
+html:
+  exts:
+    - njk
+    - twig
+  ignore:
+    filePrefix: _
+    dirNames:
+      - layout
+      - element
+      - partial
+## ---------------
+## CSS用の設定
+## ---------------
+css:
+  srcDir: src/scss
+  outputDir: dist/assets/css
+## ---------------
+## JS用の設定
+## ---------------
+js:
+  outputDir: dist/assets/js
+  ignore:
+    dirNames:
+      - node_modules
+      - vendor
+      - lib
+  globals:
+    jquery: $

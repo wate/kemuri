@@ -143,7 +143,6 @@ export class nunjucksBuilder extends baseBuilder {
    * ファイルの監視及びビルド処理
    */
   public watch() {
-    this.buildAll();
     let entryPoint = this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern();
     chokidar
@@ -256,10 +255,12 @@ export class nunjucksBuilder extends baseBuilder {
       templatePath = path.relative(baseDir, templatePath);
     }
     const templateVars = this.getTemplateVars(srcPath);
-    html = nunjucks.render(templatePath, templateVars);
-    html = js_beautify.html(html, beautifyOption);
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+    nunjucks.render(templatePath, templateVars, (error) => {
+      if (error) {
+        console.error(error.name + ' : ' + error.message);
+        throw error;
+      }
+    });
   }
 
   /**
@@ -272,21 +273,19 @@ export class nunjucksBuilder extends baseBuilder {
       this.loadTemplateVars();
       nunjucks.configure(this.srcDir, this.compileOption);
       const baseDir = this.getEntryPointBaseDir();
-      let templatePath: string;
-      let outputPath: string;
-      let html: string;
-      let templateVars = {};
-      entries.forEach(async (srcFile, entryPoint) => {
-        templatePath = srcFile;
-        outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
+      entries.forEach((srcFile, entryPoint) => {
+        let templatePath:string  = srcFile;
+        const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
         if (baseDir) {
           templatePath = path.relative(baseDir, templatePath);
         }
-        templateVars = this.getTemplateVars(srcFile);
-        html = nunjucks.render(templatePath, templateVars);
+        const templateVars = this.getTemplateVars(srcFile);
+        let html = nunjucks.render(templatePath, templateVars);
+        //@ts-ignore
         html = js_beautify.html(html, beautifyOption);
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+        console.log('Compile: ' + srcFile + ' => ' + outputPath);
       });
     }
   }
