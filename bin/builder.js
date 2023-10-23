@@ -782,10 +782,12 @@ class sassBuilder extends baseBuilder {
         this.compilerOption = {};
         /**
          * インデックスファイルの名前
+         * @todo 未実装
          */
         this.indexFileName = '_index.scss';
         /**
          * インデックスファイルの自動生成の可否
+         * @todo 未実装
          */
         this.generateIndexFile = false;
         if (option) {
