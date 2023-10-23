@@ -43,7 +43,7 @@ export class nunjucksBuilder extends baseBuilder {
    * コンストラクタ
    * @param option
    */
-  public constructor(option?: htmlBuilderOption) {
+  public constructor(option?: nunjucksBuilderOption) {
     super();
     if(option){
       this.setOption(option);
@@ -118,7 +118,7 @@ export class nunjucksBuilder extends baseBuilder {
    * @param option
    * @returns
    */
-  public setOption(option: htmlBuilderOption): this {
+  public setOption(option: nunjucksBuilderOption): this {
     super.setOption(option);
     if (option.varFileName !== undefined && option.varFileName) {
       this.setVarFileName(option.varFileName);
