@@ -15,6 +15,7 @@ import nunjucks from 'nunjucks';
 import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
 import yargs from 'yargs';
+import * as dotenv from 'dotenv';
 
 /**
  * ビルド処理の抽象クラス
@@ -1291,6 +1292,7 @@ configLoader.defaultCompiler = {
     html: 'nunjucks',
 };
 
+dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },

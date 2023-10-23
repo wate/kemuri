@@ -3,6 +3,8 @@ import { sassBuilder, sassBuilderOption } from './lib/builder/css/sass';
 import { nunjucksBuilder, nunjucksBuilderOption } from './lib/builder/html/nunjucks';
 import configLoader from './lib/builder/config';
 import yargs from 'yargs';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const argv = yargs(process.argv.slice(2))
   .options({
