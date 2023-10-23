@@ -19,6 +19,7 @@
     "@types/node": "^20.8.7",
     "@types/nunjucks": "^3.2.5",
     "@types/yargs": "^17.0.29",
+    "browser-sync": "^2.29.3",
     "cosmiconfig": "^8.3.6",
     "dotenv": "^16.3.1",
     "glob": "^10.3.10",
@@ -38,9 +39,9 @@
     "yargs": "^17.7.2"
   },
   "scripts": {
-    "mock:server": "tsx bin/server.ts",
+    "mock:server": "browser-sync dist",
     "mock:watch": "tsx bin/builder.ts -w",
-    "mock:build": "tsx bin/builder.ts --sourcemap",
+    "mock:build": "tsx bin/builder.ts --minify",
     "mock:cleanup": "rimraf dist --preserve-root",
     "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
     "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
