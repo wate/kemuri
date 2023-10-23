@@ -92,6 +92,12 @@ export class nunjucksBuilder extends baseBuilder {
         templateVars = Object.assign(templateVars, this.templateVars[key]);
       }
     });
+    const baseDir = this.getEntryPointBaseDir();
+    let scope = path.dirname(srcFile);
+    if(baseDir){
+      scope = path.dirname(path.relative(baseDir, srcFile));
+    }
+    templateVars['_scope'] = scope;
     return templateVars;
   }
 
@@ -161,14 +167,12 @@ export class nunjucksBuilder extends baseBuilder {
               console.log('Compile: ' + filePath + ' => ' + outputPath);
             } else {
               this.buildAll();
-              console.log('Compile All');
             }
           } else {
             const isRootVarFile = this.isRootVarFile(filePath);
             if (isRootVarFile) {
               //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
               this.buildAll();
-              console.log('Compile All');
             } else {
               //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
               entryPoint.forEach((srcFile) => {
@@ -195,14 +199,12 @@ export class nunjucksBuilder extends baseBuilder {
               console.log('Compile: ' + filePath + ' => ' + outputPath);
             } else {
               this.buildAll();
-              console.log('Compile All');
             }
           } else {
             const isRootVarFile = this.isRootVarFile(filePath);
             if (isRootVarFile) {
               //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
               this.buildAll();
-              console.log('Compile All');
             } else {
               //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
               entryPoint.forEach((srcFile) => {

@@ -425,7 +425,6 @@ export abstract class baseBuilder {
             this.buildFile(filePath, outputPath);
           } else {
             this.buildAll();
-            console.log('Compile All');
           }
         } catch (error) {
           console.error(error);
@@ -440,7 +439,6 @@ export abstract class baseBuilder {
             console.log('Compile: ' + filePath + ' => ' + outputPath);
           } else {
             this.buildAll();
-            console.log('Compile All');
           }
         } catch (error) {
           console.error(error);

@@ -10,7 +10,13 @@ import js_beautify from 'js-beautify';
 export interface sassBuilderOption extends builderOption {
   style?: 'expanded' | 'compressed';
   sourcemap?: boolean;
+  /**
+   * @todo 未実装
+   */
   generateIndexFile?: boolean;
+  /**
+   * @todo 未実装
+   */
   indexFileName?: string;
 }
 
@@ -61,11 +67,13 @@ export class sassBuilder extends baseBuilder {
 
   /**
    * インデックスファイルの名前
+   * @todo 未実装
    */
   private indexFileName: string = '_index.scss';
 
   /**
    * インデックスファイルの自動生成の可否
+   * @todo 未実装
    */
   private generateIndexFile: boolean = false;
 

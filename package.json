@@ -3,15 +3,7 @@
   "version": "1.0.0",
   "description": "Mock Tool",
   "type": "module",
-  "scripts": {
-    "mock:watch": "node bin/builder.js -w",
-    "mock:build": "node bin/builder.js",
-    "mock:cleanup": "rimraf dist --preserve-root",
-    "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
-    "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
-    "mock:cleanup:assets:css": "rimraf dist/assets/css --preserve-root",
-    "builder:build": "rollup -i bin/builder.ts -o bin/builder.js -p @rollup/plugin-typescript"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
@@ -39,5 +31,13 @@
     "typescript": "^5.2.2",
     "yargs": "^17.7.2"
   },
-  "dependencies": {}
+  "scripts": {
+    "mock:watch": "node bin/builder.js -w",
+    "mock:build": "node bin/builder.js",
+    "mock:cleanup": "rimraf dist --preserve-root",
+    "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
+    "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
+    "mock:cleanup:assets:css": "rimraf dist/assets/css --preserve-root",
+    "builder:build": "rollup -i bin/builder.ts -o bin/builder.js -p @rollup/plugin-typescript"
+  }
 }
