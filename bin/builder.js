@@ -445,6 +445,7 @@ class baseBuilder {
                 beautifyOption.wrap_line_length = 0;
             }
             else {
+                // @ts-ignore
                 beautifyOption.wrap_line_length = parseInt(eConfigs.max_line_length, 10);
             }
         }
@@ -455,6 +456,7 @@ class baseBuilder {
             beautifyOption.end_with_newline = false;
         }
         if (eConfigs.end_of_line) {
+            // @ts-ignore
             if (eConfigs.end_of_line === 'cr') {
                 beautifyOption.eol = '\r';
             }
@@ -667,6 +669,7 @@ class typescriptBuilder extends baseBuilder {
                     let outputCode = chunkOrAsset.code;
                     if (this.minify !== undefined && this.minify) {
                         const minifyResult = await minify(outputCode, { sourceMap: this.sourcemap });
+                        // @ts-ignore
                         outputCode = minifyResult.code;
                     }
                     else {
@@ -720,6 +723,7 @@ class typescriptBuilder extends baseBuilder {
                         let outputCode = chunkOrAsset.code;
                         if (this.minify !== undefined && this.minify) {
                             const minifyResult = await minify(outputCode, { sourceMap: this.sourcemap });
+                            // @ts-ignore
                             outputCode = minifyResult.code;
                         }
                         else {
@@ -965,6 +969,7 @@ class nunjucksBuilder extends baseBuilder {
         const varFiles = glob.sync(globPatterns);
         varFiles.forEach((varFilePath) => {
             const key = path.dirname(varFilePath);
+            // @ts-ignore
             this.templateVars[key] = yaml.load(fs.readFileSync(varFilePath));
         });
     }

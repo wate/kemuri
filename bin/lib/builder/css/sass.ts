@@ -75,7 +75,7 @@ export class sassBuilder extends baseBuilder {
    */
   constructor(option?: sassBuilderOption) {
     super();
-    if(option){
+    if (option) {
       this.setOption(option);
     }
   }

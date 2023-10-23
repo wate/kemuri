@@ -5,7 +5,7 @@ import { rollup } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import js_beautify from 'js-beautify';
-import { minify } from 'terser';
+import { MinifyOutput, minify } from 'terser';
 
 /**
  * JSビルドの設定オプション
@@ -119,7 +119,7 @@ export class typescriptBuilder extends baseBuilder {
    */
   constructor(option?: typescriptBuilderOption) {
     super();
-    if(option){
+    if (option) {
       this.setOption(option);
     }
   }
@@ -220,9 +220,10 @@ export class typescriptBuilder extends baseBuilder {
         if (chunkOrAsset.type === 'asset') {
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
         } else {
-          let outputCode = chunkOrAsset.code;
+          let outputCode: string = chunkOrAsset.code;
           if (this.minify !== undefined && this.minify) {
-            const minifyResult = await minify(outputCode, { sourceMap: this.sourcemap });
+            const minifyResult: MinifyOutput = await minify(outputCode, { sourceMap: this.sourcemap });
+            // @ts-ignore
             outputCode = minifyResult.code;
           } else {
             outputCode = js_beautify.js(outputCode, beautifyOption);
@@ -273,7 +274,8 @@ export class typescriptBuilder extends baseBuilder {
             fs.mkdirSync(path.dirname(outputPath), { recursive: true });
             let outputCode = chunkOrAsset.code;
             if (this.minify !== undefined && this.minify) {
-              const minifyResult = await minify(outputCode, { sourceMap: this.sourcemap });
+              const minifyResult: MinifyOutput = await minify(outputCode, { sourceMap: this.sourcemap });
+              // @ts-ignore
               outputCode = minifyResult.code;
             } else {
               outputCode = js_beautify.js(outputCode, beautifyOption);

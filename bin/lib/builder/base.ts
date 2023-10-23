@@ -471,7 +471,7 @@ export abstract class baseBuilder {
    * @param targetFile
    * @returns
    */
-  protected getBeautifyOption(targetFile) {
+  protected getBeautifyOption(targetFile: string) {
     const eConfigs = editorconfig.parseSync(targetFile);
     let beautifyOption: any = {};
     if (eConfigs.indent_style === 'tab') {
@@ -488,6 +488,7 @@ export abstract class baseBuilder {
       if (eConfigs.max_line_length === 'off') {
         beautifyOption.wrap_line_length = 0;
       } else {
+        // @ts-ignore
         beautifyOption.wrap_line_length = parseInt(eConfigs.max_line_length, 10);
       }
     }
@@ -499,6 +500,7 @@ export abstract class baseBuilder {
     }
 
     if (eConfigs.end_of_line) {
+      // @ts-ignore
       if (eConfigs.end_of_line === 'cr') {
         beautifyOption.eol = '\r';
       } else if (eConfigs.end_of_line === 'lf') {

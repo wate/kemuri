@@ -45,7 +45,7 @@ export class nunjucksBuilder extends baseBuilder {
    */
   public constructor(option?: nunjucksBuilderOption) {
     super();
-    if(option){
+    if (option) {
       this.setOption(option);
     }
   }
@@ -71,8 +71,9 @@ export class nunjucksBuilder extends baseBuilder {
   protected loadTemplateVars() {
     const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
     const varFiles = glob.sync(globPatterns);
-    varFiles.forEach((varFilePath) => {
+    varFiles.forEach((varFilePath: string) => {
       const key = path.dirname(varFilePath);
+      // @ts-ignore
       this.templateVars[key] = yaml.load(fs.readFileSync(varFilePath));
     });
   }
