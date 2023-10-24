@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { baseBuilder, builderOption } from '../base';
 import { glob, Path } from 'glob';
 import * as sass from 'sass';
+import { rimraf, rimrafSync } from 'rimraf';
 import js_beautify from 'js-beautify';
 
 /**
@@ -145,9 +146,9 @@ export class sassBuilder extends baseBuilder {
    * @param filePath
    */
   protected generateIndex(filePath: string) {
-    // if (this.generateIndexFile === false) {
-    //   return;
-    // }
+    if (!this.generateIndexFile) {
+      return;
+    }
     const indexMatchPatterns = ['./_*.' + this.convertGlobPattern(this.fileExts), './*/' + this.indexFileName];
     const partialMatchFiles = glob
       .sync(indexMatchPatterns, {
@@ -193,6 +194,7 @@ export class sassBuilder extends baseBuilder {
     }
     const indexFilePath = path.join(path.dirname(filePath), this.indexFileName);
     fs.writeFileSync(indexFilePath, indexFileContents.join('\n') + '\n');
+    console.log('Generate: ' + indexFilePath);
   }
   /**
    * -------------------------
@@ -236,38 +238,23 @@ export class sassBuilder extends baseBuilder {
     }
     return compileOption;
   }
-  /**
-   * 監視時のオプションを取得する
-   * @returns
-   */
-  protected getWatchOpton(): any {
-    const watchOption = {
-      ignoreInitial: true,
-    };
-    if (this.generateIndexFile) {
-      console.log(this.indexFileName);
-      // @ts-ignore
-      watchOption.ignore = {
-        ignored: (p: Path) => {
-          console.log(this.indexFileName);
-          return p.name === this.indexFileName
-        },
-      };
-    }
-    return watchOption;
-  }
 
   /**
    * ファイル追加時のコールバック処理
    * @param filePath
    */
   protected watchAddCallBack(filePath: string) {
+    if (this.generateIndexFile && path.basename(filePath) === this.indexFileName) {
+      return;
+    }
     console.log('Add file: ' + filePath);
+    if (this.generateIndexFile) {
+      //インデックスファイルの生成/更新
+      this.generateIndex.bind(this)(filePath);
+    }
     try {
       //エントリポイントを更新
       this.getEntryPoint();
-      //インデックスファイルを生成
-      this.generateIndex.bind(this)(filePath);
       if (Array.from(this.entryPoint.values()).includes(filePath)) {
         const outputPath = this.convertOutputPath(filePath);
         this.buildFile(filePath, outputPath);
@@ -277,6 +264,40 @@ export class sassBuilder extends baseBuilder {
     } catch (error) {
       console.error(error);
       process.exit(1);
+    }
+  }
+  protected watchChangeCallBack(filePath: string) {
+    if (this.generateIndexFile && path.basename(filePath) === this.indexFileName) {
+      return;
+    }
+    console.log('Update file: ' + filePath);
+    try {
+      if (Array.from(this.entryPoint.values()).includes(filePath)) {
+        const outputPath = this.convertOutputPath(filePath);
+        this.buildFile(filePath, outputPath);
+        console.log('Compile: ' + filePath + ' => ' + outputPath);
+      } else {
+        this.buildAll();
+      }
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  }
+  protected watchUnlinkCallBack(filePath: string) {
+    if (this.generateIndexFile && path.basename(filePath) === this.indexFileName) {
+      return;
+    }
+    console.log('Remove file: ' + filePath);
+    if (this.generateIndexFile) {
+      //インデックスファイルの更新
+      this.generateIndex.bind(this)(filePath);
+    }
+    if (Array.from(this.entryPoint.values()).includes(filePath)) {
+      this.entryPoint.delete(filePath);
+      const outputPath = this.convertOutputPath(filePath);
+      rimraf(outputPath);
+      console.log('Remove: ' + outputPath);
     }
   }
 
