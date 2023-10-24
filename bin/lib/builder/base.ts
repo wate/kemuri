@@ -433,6 +433,7 @@ export abstract class baseBuilder {
    * @param filePath
    */
   protected watchAddCallBack(filePath: string) {
+    console.log('Add file: ' + filePath);
     try {
       //エントリポイントを更新
       this.getEntryPoint();
@@ -452,6 +453,7 @@ export abstract class baseBuilder {
    * @param filePath
    */
   protected watchChangeCallBack(filePath: string) {
+    console.log('Update file: ' + filePath);
     try {
       if (Array.from(this.entryPoint.values()).includes(filePath)) {
         const outputPath = this.convertOutputPath(filePath);
@@ -470,6 +472,7 @@ export abstract class baseBuilder {
    * @param filePath
    */
   protected watchUnlinkCallBack(filePath: string) {
+    console.log('Remove file: ' + filePath);
     const outputPath = this.convertOutputPath(filePath);
     rimraf(outputPath);
     console.log('Remove: ' + outputPath);
@@ -480,6 +483,7 @@ export abstract class baseBuilder {
    * @param filePath
    */
   protected watchUnlinkDirCallBack(filePath: string) {
+    console.log('Remove directory: ' + filePath);
     const outputPath = this.convertOutputPath(filePath);
     rimraf(outputPath);
     console.log('Remove: ' + outputPath);

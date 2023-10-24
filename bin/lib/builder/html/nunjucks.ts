@@ -94,7 +94,7 @@ export class nunjucksBuilder extends baseBuilder {
     });
     const baseDir = this.getEntryPointBaseDir();
     let scope = path.dirname(srcFile);
-    if(baseDir){
+    if (baseDir) {
       scope = path.dirname(path.relative(baseDir, srcFile));
     }
     templateVars['_scope'] = scope;
@@ -145,95 +145,82 @@ export class nunjucksBuilder extends baseBuilder {
     ];
     return watchFilePattern;
   }
+
   /**
-   * ファイルの監視及びビルド処理
+   * ファイル追加時のコールバック処理
+   * @param filePath
    */
-  public watch() {
-    let entryPoint = this.getEntryPoint();
-    const watchFilePattern = this.getWatchFilePattern();
-    chokidar
-      .watch(watchFilePattern, {
-        ignoreInitial: true,
-      })
-      .on('add', (filePath) => {
-        try {
-          const addFileName = path.basename(filePath);
-          if (addFileName !== this.varFileName) {
-            //エントリポイントを更新
-            entryPoint = this.getEntryPoint();
-            if (Array.from(entryPoint.values()).includes(filePath)) {
-              const outputPath = this.convertOutputPath(filePath);
-              this.buildFile(filePath, outputPath);
-              console.log('Compile: ' + filePath + ' => ' + outputPath);
-            } else {
-              this.buildAll();
-            }
-          } else {
-            const isRootVarFile = this.isRootVarFile(filePath);
-            if (isRootVarFile) {
-              //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
-              this.buildAll();
-            } else {
-              //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
-              entryPoint.forEach((srcFile) => {
-                if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
-                  const outputPath = this.convertOutputPath(srcFile);
-                  this.buildFile(srcFile, outputPath);
-                  console.log('Compile: ' + srcFile + ' => ' + outputPath);
-                }
-              });
-            }
-          }
-        } catch (error) {
-          console.error(error);
-          process.exit(1);
-        }
-      })
-      .on('change', (filePath) => {
-        try {
-          const changeFileName = path.basename(filePath);
-          if (changeFileName !== this.varFileName) {
-            if (Array.from(entryPoint.values()).includes(filePath)) {
-              const outputPath = this.convertOutputPath(filePath);
-              this.buildFile(filePath, outputPath);
-              console.log('Compile: ' + filePath + ' => ' + outputPath);
-            } else {
-              this.buildAll();
-            }
-          } else {
-            const isRootVarFile = this.isRootVarFile(filePath);
-            if (isRootVarFile) {
-              //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
-              this.buildAll();
-            } else {
-              //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
-              entryPoint.forEach((srcFile) => {
-                if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
-                  const outputPath = this.convertOutputPath(srcFile);
-                  this.buildFile(srcFile, outputPath);
-                  console.log('Compile: ' + srcFile + ' => ' + outputPath);
-                }
-              });
-            }
-          }
-        } catch (error) {
-          console.error(error);
-          process.exit(1);
-        }
-      })
-      .on('unlink', (filePath) => {
-        if (path.basename(filePath) !== this.varFileName) {
+  protected watchAddCallBack(filePath: string) {
+    console.log('Add file: ' + filePath);
+    try {
+      const addFileName = path.basename(filePath);
+      if (addFileName !== this.varFileName) {
+        //エントリポイントを更新
+        this.getEntryPoint();
+        if (Array.from(this.entryPoint.values()).includes(filePath)) {
           const outputPath = this.convertOutputPath(filePath);
-          rimraf(outputPath);
-          console.log('Remove: ' + outputPath);
+          this.buildFile(filePath, outputPath);
+          console.log('Compile: ' + filePath + ' => ' + outputPath);
+        } else {
+          this.buildAll();
         }
-      })
-      .on('unlinkDir', (dirPath) => {
-        const outputPath = this.convertOutputPath(dirPath);
-        rimraf(outputPath);
-        console.log('Remove: ' + outputPath);
-      })
-      .on('error', (error) => console.log('Watcher error: ' + error));
+      } else {
+        const isRootVarFile = this.isRootVarFile(filePath);
+        if (isRootVarFile) {
+          //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
+          this.buildAll();
+        } else {
+          //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
+          this.entryPoint.forEach((srcFile) => {
+            if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+              const outputPath = this.convertOutputPath(srcFile);
+              this.buildFile(srcFile, outputPath);
+              console.log('Compile: ' + srcFile + ' => ' + outputPath);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  }
+  /**
+   * ファイル更新時のコールバック処理
+   * @param filePath
+   */
+  protected watchChangeCallBack(filePath: string) {
+    console.log('Update file: ' + filePath);
+    try {
+      const changeFileName = path.basename(filePath);
+      if (changeFileName !== this.varFileName) {
+        if (Array.from(this.entryPoint.values()).includes(filePath)) {
+          const outputPath = this.convertOutputPath(filePath);
+          this.buildFile(filePath, outputPath);
+          console.log('Compile: ' + filePath + ' => ' + outputPath);
+        } else {
+          this.buildAll();
+        }
+      } else {
+        const isRootVarFile = this.isRootVarFile(filePath);
+        if (isRootVarFile) {
+          //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
+          this.buildAll();
+        } else {
+          //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
+          this.entryPoint.forEach((srcFile) => {
+            if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+              const outputPath = this.convertOutputPath(srcFile);
+              this.buildFile(srcFile, outputPath);
+              console.log('Compile: ' + srcFile + ' => ' + outputPath);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
   }
   /**
    * -------------------------
@@ -257,7 +244,7 @@ export class nunjucksBuilder extends baseBuilder {
       templatePath = path.relative(baseDir, templatePath);
     }
     const templateVars = this.getTemplateVars(srcPath);
-    html = nunjucks.render(templatePath, templateVars, (error) => {
+    nunjucks.render(templatePath, templateVars, (error) => {
       if (error) {
         console.error(error.name + ' : ' + error.message);
         throw error;
@@ -276,7 +263,7 @@ export class nunjucksBuilder extends baseBuilder {
       nunjucks.configure(this.srcDir, this.compileOption);
       const baseDir = this.getEntryPointBaseDir();
       entries.forEach((srcFile, entryPoint) => {
-        let templatePath:string  = srcFile;
+        let templatePath: string = srcFile;
         const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
         if (baseDir) {
           templatePath = path.relative(baseDir, templatePath);
