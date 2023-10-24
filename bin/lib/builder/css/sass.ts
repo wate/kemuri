@@ -169,6 +169,17 @@ export class sassBuilder extends baseBuilder {
     }
     return compileOption;
   }
+  /**
+   * 監視対象ファイルのパターンを取得する
+   * @returns
+   */
+  protected getWatchFilePattern(): string | string[] {
+    const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
+    const watchFilePattern = [
+      this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts),
+    ];
+    return watchFilePattern;
+  }
 
   /**
    * -------------------------

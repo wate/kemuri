@@ -413,15 +413,23 @@ export abstract class baseBuilder {
   }
 
   /**
+   * 監視時のオプションを取得する
+   * @returns
+   */
+  protected getWatchOpton(): any {
+    return {
+      ignoreInitial: true,
+    };
+  }
+
+  /**
    * ファイルの監視とビルド
    */
   public watch() {
     this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern();
     chokidar
-      .watch(watchFilePattern, {
-        ignoreInitial: true,
-      })
+      .watch(watchFilePattern, this.getWatchOpton())
       .on('add', this.watchAddCallBack.bind(this))
       .on('change', this.watchChangeCallBack.bind(this))
       .on('unlink', this.watchUnlinkCallBack.bind(this))
