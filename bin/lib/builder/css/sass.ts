@@ -110,9 +110,17 @@ export class sassBuilder extends baseBuilder {
   public setSourceMap(sourcemap: boolean): void {
     this.sourcemap = sourcemap;
   }
+  /**
+   * インデックスファイルの自動生成の可否を設定する
+   *
+   * @param generateIndex
+   */
+  public setGenerateIndex(generateIndex: boolean): void {
+    this.generateIndex = generateIndex;
+  }
 
   /**
-   * インデックスファイル名の名前を設定する
+   * インデックスファイルの名前を設定する
    *
    * @param indexFileName
    */
@@ -120,12 +128,12 @@ export class sassBuilder extends baseBuilder {
     this.indexFileName = indexFileName;
   }
   /**
-   * インデックスファイル名の名前を設定する
+   * インデックスファイルのインポート形式を設定する
    *
-   * @param generateIndex
+   * @param importType
    */
-  public setGenerateIndexFile(generateIndex: boolean): void {
-    this.generateIndex = generateIndex;
+  public setIndexImportType(importType: 'forward' | 'use'): void {
+    this.indexImportType = importType;
   }
 
   /**
@@ -148,9 +156,9 @@ export class sassBuilder extends baseBuilder {
       })
       .sort();
     const indexFilePath = path.join(targetDir, this.indexFileName);
-    let updateParentIndexFile = false;
+    let updateParentDirIndexFile = false;
     if (partialMatchFiles.length === 0) {
-      updateParentIndexFile = true;
+      updateParentDirIndexFile = true;
       rimraf(indexFilePath);
       console.log('Remove index file: ' + indexFilePath);
     } else {
@@ -189,18 +197,17 @@ export class sassBuilder extends baseBuilder {
       }
       let actionName = 'Update';
       if (!fs.existsSync(indexFilePath)) {
-        updateParentIndexFile = true;
+        updateParentDirIndexFile = true;
         actionName = 'Generate';
       }
       fs.writeFileSync(indexFilePath, indexFileContents.join('\n') + '\n');
       console.log(actionName + ' index file: ' + indexFilePath);
     }
-    //ルートディレクトリでない場合は親ディレクトリのインデックスファイルも更新
-    if (updateParentIndexFile) {
-      const relativePath = path.relative(this.srcDir, targetDir);
-      console.log('relativePath: ' + relativePath);
-      if (path.dirname(relativePath) !== '.') {
-        this.generateIndexFile(targetDir);
+    if (updateParentDirIndexFile) {
+      console.log('sic dir:' + this.srcDir);
+      console.log('parent dir: ' + path.dirname(targetDir));
+      if (this.srcDir !== path.dirname(targetDir)) {
+        this.generateIndexFile(path.dirname(targetDir));
       }
     }
   }
@@ -228,7 +235,10 @@ export class sassBuilder extends baseBuilder {
       this.setIndexFileName(option.indexFileName);
     }
     if (option.generateIndex !== undefined) {
-      this.setGenerateIndexFile(option.generateIndex);
+      this.setGenerateIndex(option.generateIndex);
+    }
+    if (option.generateIndex !== undefined) {
+      this.setGenerateIndex(option.generateIndex);
     }
   }
 
@@ -274,11 +284,20 @@ export class sassBuilder extends baseBuilder {
       process.exit(1);
     }
   }
+  /**
+   * ファイル更新時のコールバック処理
+   * @param filePath
+   * @returns
+   */
   protected watchChangeCallBack(filePath: string) {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
     console.log('Update file: ' + filePath);
+    if (this.generateIndex) {
+      // インデックスファイルの更新
+      this.generateIndexFile.bind(this)(path.dirname(filePath));
+    }
     try {
       if (Array.from(this.entryPoint.values()).includes(filePath)) {
         const outputPath = this.convertOutputPath(filePath);
@@ -292,6 +311,11 @@ export class sassBuilder extends baseBuilder {
       process.exit(1);
     }
   }
+  /**
+   * ファイル削除時のコールバック処理
+   * @param filePath
+   * @returns
+   */
   protected watchUnlinkCallBack(filePath: string) {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
