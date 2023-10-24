@@ -265,7 +265,6 @@ export class typescriptBuilder extends baseBuilder {
           sourcemap: this.sourcemap,
         });
         let outputPath: string;
-        const baseDir = this.getEntryPointBaseDir();
         for (const chunkOrAsset of output) {
           if (chunkOrAsset.type === 'asset') {
             outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
@@ -283,7 +282,7 @@ export class typescriptBuilder extends baseBuilder {
               outputCode = js_beautify.js(outputCode, beautifyOption);
             }
             fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-            console.log('Compile: ' + (baseDir ? path.join(baseDir, chunkOrAsset.fileName) : chunkOrAsset.fileName)  + ' => ' + outputPath);
+            console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName)  + ' => ' + outputPath);
           }
         }
       } catch (error) {

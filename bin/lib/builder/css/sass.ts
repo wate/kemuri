@@ -209,11 +209,7 @@ export class sassBuilder extends baseBuilder {
     }
     //ルートディレクトリでない場合は親ディレクトリのインデックスファイルも更新
     if (updateParentIndexFile) {
-      const baseDir = this.getEntryPointBaseDir();
-      let relativePath = path.dirname(filePath);
-      if (baseDir) {
-        relativePath = path.relative(baseDir, path.dirname(filePath));
-      }
+      const relativePath = path.relative(this.srcDir, path.dirname(filePath));
       console.log('relativePath: ' + relativePath);
       if (path.dirname(relativePath) !== '.') {
         this.generateIndex(path.dirname(filePath));

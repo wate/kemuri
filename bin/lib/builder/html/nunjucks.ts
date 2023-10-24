@@ -90,12 +90,7 @@ export class nunjucksBuilder extends baseBuilder {
         templateVars = Object.assign(templateVars, this.templateVars[key]);
       }
     });
-    const baseDir = this.getEntryPointBaseDir();
-    let scope = path.dirname(srcFile);
-    if (baseDir) {
-      scope = path.dirname(path.relative(baseDir, srcFile));
-    }
-    templateVars['_scope'] = scope;
+    templateVars['_scope'] = path.dirname(path.relative(this.srcDir, srcFile));
     return templateVars;
   }
 
@@ -106,10 +101,8 @@ export class nunjucksBuilder extends baseBuilder {
    * @returns
    */
   protected isRootVarFile(varFilePath: string): boolean {
-    const baseDir = this.getEntryPointBaseDir();
-    const checkFileName = path.basename(varFilePath);
     const isProjectRootVarFile: boolean = varFilePath === this.varFileName;
-    const isSrcRootVarFile = baseDir ? path.join(baseDir, this.varFileName) === varFilePath : false;
+    const isSrcRootVarFile: boolean = path.join(this.srcDir, this.varFileName) === varFilePath;
     return isProjectRootVarFile || isSrcRootVarFile;
   }
   /**
@@ -235,12 +228,7 @@ export class nunjucksBuilder extends baseBuilder {
     nunjucks.configure(this.srcDir, this.compileOption);
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
     this.loadTemplateVars();
-    let templatePath: string = srcPath;
-    let html: string;
-    const baseDir = this.getEntryPointBaseDir();
-    if (baseDir) {
-      templatePath = path.relative(baseDir, templatePath);
-    }
+    const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
     nunjucks.render(templatePath, templateVars, (error) => {
       if (error) {
@@ -259,13 +247,9 @@ export class nunjucksBuilder extends baseBuilder {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
       this.loadTemplateVars();
       nunjucks.configure(this.srcDir, this.compileOption);
-      const baseDir = this.getEntryPointBaseDir();
       entries.forEach((srcFile, entryPoint) => {
-        let templatePath: string = srcFile;
+        const templatePath: string = path.relative(this.srcDir, srcFile);
         const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
-        if (baseDir) {
-          templatePath = path.relative(baseDir, templatePath);
-        }
         const templateVars = this.getTemplateVars(srcFile);
         let html = nunjucks.render(templatePath, templateVars);
         //@ts-ignore
