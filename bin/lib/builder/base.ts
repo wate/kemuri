@@ -368,6 +368,11 @@ export abstract class baseBuilder {
   }
 
   /**
+   * エントリーポイント
+   */
+  protected entryPoint: Map<string, string> = new Map();
+
+  /**
    * エントリーポイントを取得する
    *
    * @param srcDir
@@ -377,7 +382,8 @@ export abstract class baseBuilder {
    */
   protected getEntryPoint(): Map<string, string> {
     const entryPointFiles = this.findEntryPointFiles();
-    return this.convertEntryPoint(entryPointFiles);
+    this.entryPoint = this.convertEntryPoint(entryPointFiles);
+    return this.entryPoint;
   }
   /**
    * ソースコードのパスを出力先のパスに変換する
@@ -410,53 +416,75 @@ export abstract class baseBuilder {
    * ファイルの監視とビルド
    */
   public watch() {
-    let entryPoint = this.getEntryPoint();
+    this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern();
     chokidar
       .watch(watchFilePattern, {
         ignoreInitial: true,
       })
-      .on('add', (filePath) => {
-        try {
-          //エントリポイントを更新
-          entryPoint = this.getEntryPoint();
-          if (Array.from(entryPoint.values()).includes(filePath)) {
-            const outputPath = this.convertOutputPath(filePath);
-            this.buildFile(filePath, outputPath);
-          } else {
-            this.buildAll();
-          }
-        } catch (error) {
-          console.error(error);
-          process.exit(1);
-        }
-      })
-      .on('change', (filePath) => {
-        try {
-          if (Array.from(entryPoint.values()).includes(filePath)) {
-            const outputPath = this.convertOutputPath(filePath);
-            this.buildFile(filePath, outputPath);
-            console.log('Compile: ' + filePath + ' => ' + outputPath);
-          } else {
-            this.buildAll();
-          }
-        } catch (error) {
-          console.error(error);
-          process.exit(1);
-        }
-      })
-      .on('unlink', (filePath) => {
-        const outputPath = this.convertOutputPath(filePath);
-        rimraf(outputPath);
-        console.log('Remove: ' + outputPath);
-      })
-      .on('unlinkDir', (dirPath) => {
-        const outputPath = this.convertOutputPath(dirPath);
-        rimraf(outputPath);
-        console.log('Remove: ' + outputPath);
-      })
+      .on('add', this.watchAddCallBack.bind(this))
+      .on('change', this.watchChangeCallBack.bind(this))
+      .on('unlink', this.watchUnlinkCallBack.bind(this))
+      .on('unlinkDir', this.watchUnlinkDirCallBack.bind(this))
       .on('error', (error) => console.log('Watcher error: ' + error));
   }
+  /**
+   * ファイル追加時のコールバック処理
+   * @param filePath
+   */
+  protected watchAddCallBack(filePath: string) {
+    try {
+      //エントリポイントを更新
+      this.getEntryPoint();
+      if (Array.from(this.entryPoint.values()).includes(filePath)) {
+        const outputPath = this.convertOutputPath(filePath);
+        this.buildFile(filePath, outputPath);
+      } else {
+        this.buildAll();
+      }
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  }
+  /**
+   * ファイル更新時のコールバック処理
+   * @param filePath
+   */
+  protected watchChangeCallBack(filePath: string) {
+    try {
+      if (Array.from(this.entryPoint.values()).includes(filePath)) {
+        const outputPath = this.convertOutputPath(filePath);
+        this.buildFile(filePath, outputPath);
+        console.log('Compile: ' + filePath + ' => ' + outputPath);
+      } else {
+        this.buildAll();
+      }
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
+  }
+  /**
+   * ファイル削除時のコールバック処理
+   * @param filePath
+   */
+  protected watchUnlinkCallBack(filePath: string) {
+    const outputPath = this.convertOutputPath(filePath);
+    rimraf(outputPath);
+    console.log('Remove: ' + outputPath);
+  }
+  /**
+   * ディレクトリ削除時のコールバック処理
+   *
+   * @param filePath
+   */
+  protected watchUnlinkDirCallBack(filePath: string) {
+    const outputPath = this.convertOutputPath(filePath);
+    rimraf(outputPath);
+    console.log('Remove: ' + outputPath);
+  }
+
   /**
    * コンパイルオプションを取得する
    * @returns
