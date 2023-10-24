@@ -194,7 +194,7 @@ export class sassBuilder extends baseBuilder {
     }
     const indexFilePath = path.join(path.dirname(filePath), this.indexFileName);
     fs.writeFileSync(indexFilePath, indexFileContents.join('\n') + '\n');
-    console.log('Generate: ' + indexFilePath);
+    console.log('Generate/Update: ' + indexFilePath);
   }
   /**
    * -------------------------
