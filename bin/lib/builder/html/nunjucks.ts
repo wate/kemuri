@@ -257,7 +257,7 @@ export class nunjucksBuilder extends baseBuilder {
       templatePath = path.relative(baseDir, templatePath);
     }
     const templateVars = this.getTemplateVars(srcPath);
-    nunjucks.render(templatePath, templateVars, (error) => {
+    html = nunjucks.render(templatePath, templateVars, (error) => {
       if (error) {
         console.error(error.name + ' : ' + error.message);
         throw error;

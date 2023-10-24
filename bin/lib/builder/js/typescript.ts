@@ -294,6 +294,8 @@ export class typescriptBuilder extends baseBuilder {
         await bundle.close();
       }
     }
-    process.exit(buildFailed ? 1 : 0);
+    if (buildFailed) {
+      throw new Error('Build Failed');
+    }
   }
 }

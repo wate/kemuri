@@ -56,14 +56,17 @@ if (argv.minify !== undefined || mode === 'production') {
 const builders = new Map();
 if (!configLoader.isDisable('js')) {
   const builderOption = configLoader.getJsOption(jsOrverrideOption);
+  console.log('jsBuildOption', builderOption);
   builders.set('js', new typescriptBuilder(builderOption));
 }
 if (!configLoader.isDisable('css')) {
   const builderOption = configLoader.getCssOption(cssOrverrideOption);
+  console.log('cssBuildOption', builderOption);
   builders.set('css', new sassBuilder(builderOption));
 }
 if (!configLoader.isDisable('html')) {
   const builderOption = configLoader.getHtmlOption();
+  console.log('htmlBuildOption', builderOption);
   builders.set('html', new nunjucksBuilder(builderOption));
 }
 
