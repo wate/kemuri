@@ -5,8 +5,6 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
-import * as chokidar from 'chokidar';
-import { rimraf } from 'rimraf';
 
 /**
  * HTMLビルドの設定オプション
