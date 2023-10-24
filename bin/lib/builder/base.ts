@@ -481,9 +481,11 @@ export abstract class baseBuilder {
    */
   protected watchUnlinkCallBack(filePath: string) {
     console.log('Remove file: ' + filePath);
-    const outputPath = this.convertOutputPath(filePath);
-    rimraf(outputPath);
-    console.log('Remove: ' + outputPath);
+    if (Array.from(this.entryPoint.values()).includes(filePath)) {
+      const outputPath = this.convertOutputPath(filePath);
+      rimraf(outputPath);
+      console.log('Remove: ' + outputPath);
+    }
   }
   /**
    * ディレクトリ削除時のコールバック処理
