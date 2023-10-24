@@ -427,9 +427,9 @@ export abstract class baseBuilder {
    */
   public watch() {
     this.getEntryPoint();
-    const watchFilePattern = this.getWatchFilePattern();
+    const watchFilePattern = this.getWatchFilePattern.bind(this)();
     chokidar
-      .watch(watchFilePattern, this.getWatchOpton())
+      .watch(watchFilePattern, this.getWatchOpton.bind(this)())
       .on('add', this.watchAddCallBack.bind(this))
       .on('change', this.watchChangeCallBack.bind(this))
       .on('unlink', this.watchUnlinkCallBack.bind(this))
