@@ -1,43 +1,133 @@
 ---
 ## ---------------
-## 全体の設定
+## ビルダーの無効化
 ## ---------------
-srcDir: src
-outputDir: dist
-ignore:
-  suffix: -bk
 # disabled:
 #   # - js
 #   # - css
-#   - html
+#   # - html
+## ---------------
+## 共通設定項目
+## ---------------
+# srcDir: src
+# outputDir: public
+# exts: []
+# moduleExts: []
+# ignore:
+#   filePrefix: null
+#   fileSuffix: null
+#   dirPrefix: null
+#   dirSuffix: null
+#   dirNames: []
+# compileOption: {}
+# beautifyOption: {}
 ## ---------------
 ## HTML用の設定
 ## ---------------
 html:
-  exts:
-    - njk
-    - twig
+  ### ----------
+  ### 初期値
+  ### ----------
+  # srcDir: src
+  # outputDir: public
+  # exts:
+  #   - njk
+  #   - twig
+  # moduleExts: []
+  # ignore:
+  #   filePrefix: null
+  #   fileSuffix: null
+  #   dirPrefix: null
+  #   dirSuffix: null
+  #   dirNames: []
+  # compileOption: {}
+  # beautifyOption: {}
+  # varFileName: vars.yml
+  ### ----------
+  ### 設定値
+  ### ----------
+  srcDir: src
+  outputDir: dist
   ignore:
     filePrefix: _
+    fileSuffix: -bk
+    dirSuffix: -bk
     dirNames:
       - layout
       - element
-      - partial
 ## ---------------
 ## CSS用の設定
 ## ---------------
 css:
+  ### ----------
+  ### 初期値
+  ### ----------
+  # srcDir: src
+  # outputDir: public/assets/css
+  # exts:
+  #   - scss
+  #   - sass
+  #   - css
+  # moduleExts: []
+  # ignore:
+  #   filePrefix: _
+  #   fileSuffix: null
+  #   dirPrefix: null
+  #   dirSuffix: null
+  #   dirNames: []
+  # compileOption: {}
+  # beautifyOption: {}
+  # style: null
+  # sourcemap: null
+  # loadPaths:
+  #   - src
+  #   - node_modules
+  ### ----------
+  ### 設定値
+  ### ----------
   srcDir: src/scss
   outputDir: dist/assets/css
+  ignore:
+    filePrefix: _
+    fileSuffix: -bk
+    dirSuffix: -bk
 ## ---------------
 ## JS用の設定
 ## ---------------
 js:
+  ### ----------
+  ### 初期値
+  ### ----------
+  # srcDir: src
+  # outputDir: public
+  # exts:
+  #   - js
+  #   - ts
+  # moduleExts:
+  #   - mjs
+  #   - mts
+  #   - cjs
+  #   - cts
+  # ignore:
+  #   filePrefix: null
+  #   fileSuffix: null
+  #   dirPrefix: null
+  #   dirSuffix: null
+  #   dirNames:
+  #     - node_modules
+  # compileOption: {}
+  # beautifyOption: {}
+  # globals: {}
+  # sourcemap: null
+  # minify: null
+  ### ----------
+  ### 設定値
+  ### ----------
   outputDir: dist/assets/js
   ignore:
+    fileSuffix: -bk
+    dirSuffix: -bk
     dirNames:
       - node_modules
       - vendor
       - lib
-  # globals:
-  #   jquery: $

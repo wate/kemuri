@@ -130,6 +130,7 @@ export class typescriptBuilder extends baseBuilder {
    * このクラス固有のメソッド
    * -------------------------
    */
+
   /**
    * グルーバルオブジェクトを設定する
    *
@@ -168,13 +169,13 @@ export class typescriptBuilder extends baseBuilder {
    */
   public setOption(option: typescriptBuilderOption) {
     super.setOption(option);
-    if (option.globals !== undefined && option.globals) {
+    if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
       this.setGlobals(option.globals);
     }
-    if (option.sourcemap !== undefined) {
+    if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
     }
-    if (option.minify !== undefined) {
+    if (option.minify !== undefined && option.minify !== null) {
       this.setMinfy(option.minify);
     }
   }
@@ -208,6 +209,7 @@ export class typescriptBuilder extends baseBuilder {
         compilerOptions: this.getCompileOption(),
       };
       bundle = await rollup({
+        external: Object.keys(this.globals),
         input: srcPath,
         plugins: [nodeResolve(), commonjs(), typescript(typescriptConfig)],
       });
@@ -257,6 +259,7 @@ export class typescriptBuilder extends baseBuilder {
         };
         const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
         bundle = await rollup({
+          external: Object.keys(this.globals),
           input: Object.fromEntries(entries),
           plugins: rollupPlugins,
         });
@@ -265,7 +268,6 @@ export class typescriptBuilder extends baseBuilder {
           sourcemap: this.sourcemap,
         });
         let outputPath: string;
-        const baseDir = this.getEntryPointBaseDir();
         for (const chunkOrAsset of output) {
           if (chunkOrAsset.type === 'asset') {
             outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
@@ -283,7 +285,7 @@ export class typescriptBuilder extends baseBuilder {
               outputCode = js_beautify.js(outputCode, beautifyOption);
             }
             fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-            console.log('Compile: ' + (baseDir ? path.join(baseDir, chunkOrAsset.fileName) : chunkOrAsset.fileName)  + ' => ' + outputPath);
+            console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
           }
         }
       } catch (error) {

@@ -42,7 +42,7 @@ export type ignoreOption = {
  * ビルダーのコンストラクターオプション
  */
 export interface builderOption {
-  srcDir?: string | string[];
+  srcDir?: string;
   outputDir?: string;
   exts?: string[];
   moduleExts?: string[];
@@ -58,7 +58,7 @@ export abstract class baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
-  protected srcDir: string | string[] = 'src';
+  protected srcDir: string = 'src';
   /**
    * 出力先ディレクトリ
    */
@@ -67,7 +67,7 @@ export abstract class baseBuilder {
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['txt'];
+  protected fileExts: string[] = [];
 
   /**
    * エントリポイントではないが変更の監視対象となるファイルの拡張子
@@ -339,16 +339,6 @@ export abstract class baseBuilder {
     const entryPointFiles: string[] = glob.sync(entryPointGlobPatetrn, globOption);
     return entryPointFiles;
   }
-  /**
-   * エントリポイントのベースディレクトリを取得する
-   */
-  protected getEntryPointBaseDir(): string | null {
-    let baseDir: string | null = typeof this.srcDir === 'string' ? this.srcDir : null;
-    if (Array.isArray(this.srcDir) && this.srcDir.length === 1) {
-      baseDir = this.srcDir[0];
-    }
-    return baseDir;
-  }
 
   /**
    * エントリポイントファイルの一覧をエントリポイントに変換する
@@ -358,9 +348,8 @@ export abstract class baseBuilder {
    */
   protected convertEntryPoint(entryPointFiles: string[]): Map<string, string> {
     const entries: Map<string, string> = new Map();
-    const baseDir = this.getEntryPointBaseDir();
     entryPointFiles.forEach((file: string) => {
-      const targetFile = baseDir ? path.relative(baseDir, file) : file;
+      const targetFile = path.relative(this.srcDir, file);
       const key: string = path.join(path.dirname(targetFile), path.basename(targetFile, path.extname(targetFile)));
       entries.set(key, file);
     });
@@ -396,8 +385,7 @@ export abstract class baseBuilder {
     if (/\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
       outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outpuExt;
     }
-    const baseDir = this.getEntryPointBaseDir();
-    const outputDir = path.dirname(baseDir ? path.relative(baseDir, srcPath) : srcPath);
+    const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
     const outputPath = path.join(this.outputDir, outputDir, outputName);
     return outputPath;
   }
@@ -423,18 +411,26 @@ export abstract class baseBuilder {
   }
 
   /**
+   * ファイルの監視オブジェクト
+   */
+  protected watcher: chokidar.FSWatcher | null = null;
+
+  /**
    * ファイルの監視とビルド
    */
   public watch() {
     this.getEntryPoint();
-    const watchFilePattern = this.getWatchFilePattern();
-    chokidar
-      .watch(watchFilePattern, this.getWatchOpton())
+    const watchFilePattern = this.getWatchFilePattern.bind(this)();
+    this.watcher = chokidar.watch(watchFilePattern, this.getWatchOpton.bind(this)());
+    this.watcher
       .on('add', this.watchAddCallBack.bind(this))
       .on('change', this.watchChangeCallBack.bind(this))
       .on('unlink', this.watchUnlinkCallBack.bind(this))
+      .on('addDir', this.watchAddDirCallBack.bind(this))
       .on('unlinkDir', this.watchUnlinkDirCallBack.bind(this))
-      .on('error', (error) => console.log('Watcher error: ' + error));
+      .on('error', (error) => {
+        console.log('Watcher error: ' + error);
+      });
   }
   /**
    * ファイル追加時のコールバック処理
@@ -476,14 +472,23 @@ export abstract class baseBuilder {
     }
   }
   /**
+   * ディレクトリ時のコールバック処理
+   * @param filePath
+   */
+  protected watchAddDirCallBack(filePath: string) {
+    console.log('Add directory: ' + filePath);
+  }
+  /**
    * ファイル削除時のコールバック処理
    * @param filePath
    */
   protected watchUnlinkCallBack(filePath: string) {
     console.log('Remove file: ' + filePath);
-    const outputPath = this.convertOutputPath(filePath);
-    rimraf(outputPath);
-    console.log('Remove: ' + outputPath);
+    if (Array.from(this.entryPoint.values()).includes(filePath)) {
+      const outputPath = this.convertOutputPath(filePath);
+      rimraf(outputPath);
+      console.log('Remove: ' + outputPath);
+    }
   }
   /**
    * ディレクトリ削除時のコールバック処理

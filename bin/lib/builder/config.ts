@@ -35,7 +35,7 @@ class configLoader {
    */
   public static isDisable(type: 'js' | 'css' | 'html') {
     const allConfig = configLoader.load();
-    if (allConfig && _.has(allConfig, 'disabled')) {
+    if (allConfig && _.has(allConfig, 'disabled') && _.get(allConfig, 'disabled')) {
       return _.get(allConfig, 'disabled').includes(type);
     }
     return false;
