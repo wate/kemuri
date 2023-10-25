@@ -130,6 +130,7 @@ export class typescriptBuilder extends baseBuilder {
    * このクラス固有のメソッド
    * -------------------------
    */
+
   /**
    * グルーバルオブジェクトを設定する
    *
@@ -208,6 +209,7 @@ export class typescriptBuilder extends baseBuilder {
         compilerOptions: this.getCompileOption(),
       };
       bundle = await rollup({
+        external: Object.keys(this.globals),
         input: srcPath,
         plugins: [nodeResolve(), commonjs(), typescript(typescriptConfig)],
       });
@@ -257,6 +259,7 @@ export class typescriptBuilder extends baseBuilder {
         };
         const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
         bundle = await rollup({
+          external: Object.keys(this.globals),
           input: Object.fromEntries(entries),
           plugins: rollupPlugins,
         });
