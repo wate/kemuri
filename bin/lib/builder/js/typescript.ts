@@ -7,6 +7,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import js_beautify from 'js-beautify';
 import { MinifyOutput, minify } from 'terser';
+import '../../console';
 
 /**
  * JSビルドの設定オプション
@@ -246,6 +247,7 @@ export class typescriptBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
+    console.group('Build entory point files');
     const entries = this.getEntryPoint();
     let bundle;
     let buildFailed = false;
@@ -299,5 +301,6 @@ export class typescriptBuilder extends baseBuilder {
     if (buildFailed) {
       throw new Error('Build Failed');
     }
+    console.groupEnd();
   }
 }

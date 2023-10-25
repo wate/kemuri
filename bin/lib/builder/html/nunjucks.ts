@@ -5,6 +5,7 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
+import '../../console';
 
 /**
  * HTMLビルドの設定オプション
@@ -140,7 +141,7 @@ export class nunjucksBuilder extends baseBuilder {
    * @param filePath
    */
   protected watchAddCallBack(filePath: string) {
-    console.log('Add file: ' + filePath);
+    console.group('Add file: ' + filePath);
     try {
       const addFileName = path.basename(filePath);
       if (addFileName !== this.varFileName) {
@@ -173,13 +174,14 @@ export class nunjucksBuilder extends baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * ファイル更新時のコールバック処理
    * @param filePath
    */
   protected watchChangeCallBack(filePath: string) {
-    console.log('Update file: ' + filePath);
+    console.group('Update file: ' + filePath);
     try {
       const changeFileName = path.basename(filePath);
       if (changeFileName !== this.varFileName) {
@@ -210,6 +212,7 @@ export class nunjucksBuilder extends baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * -------------------------
@@ -240,6 +243,7 @@ export class nunjucksBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
+    console.group('Build entory point files');
     const entries = this.getEntryPoint();
     if (entries.size > 0) {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
@@ -257,5 +261,6 @@ export class nunjucksBuilder extends baseBuilder {
         console.log('Compile: ' + srcFile + ' => ' + outputPath);
       });
     }
+    console.groupEnd();
   }
 }

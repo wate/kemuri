@@ -78,9 +78,12 @@ css:
   # compileOption: {}
   # beautifyOption: {}
   # style: null
+  # generateIndex: false
+  # indexFileName: _all.scss
+  # indexImportType: forward
   # sourcemap: null
   # loadPaths:
-  #   - src
+  #   - ${srcDir}
   #   - node_modules
   ### ----------
   ### 設定値
@@ -91,6 +94,7 @@ css:
     filePrefix: _
     fileSuffix: -bk
     dirSuffix: -bk
+  generateIndex: true
 ## ---------------
 ## JS用の設定
 ## ---------------

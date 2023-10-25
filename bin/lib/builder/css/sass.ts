@@ -5,6 +5,7 @@ import { glob, Path } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
 import js_beautify from 'js-beautify';
+import '../../console';
 
 /**
  * CSSビルドの設定オプション
@@ -282,7 +283,7 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.log('Add file: ' + filePath);
+    console.group('Add file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの生成/更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
@@ -300,6 +301,7 @@ export class sassBuilder extends baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * ファイル更新時のコールバック処理
@@ -310,7 +312,7 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.log('Update file: ' + filePath);
+    console.group('Update file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
@@ -327,6 +329,7 @@ export class sassBuilder extends baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * ファイル削除時のコールバック処理
@@ -337,7 +340,7 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.log('Remove file: ' + filePath);
+    console.group('Remove file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
@@ -348,6 +351,7 @@ export class sassBuilder extends baseBuilder {
       rimraf(outputPath);
       console.log('Remove: ' + outputPath);
     }
+    console.groupEnd();
   }
 
   /**
@@ -379,6 +383,7 @@ export class sassBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
+    console.group('Build entory point files');
     const entries = this.getEntryPoint();
     if (this.generateIndex) {
       //インデックスファイルの生成/更新
@@ -414,5 +419,6 @@ export class sassBuilder extends baseBuilder {
         }
       });
     }
+    console.groupEnd();
   }
 }

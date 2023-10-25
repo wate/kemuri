@@ -3,8 +3,10 @@ import { sassBuilder, sassBuilderOption } from './lib/builder/css/sass';
 import { nunjucksBuilder, nunjucksBuilderOption } from './lib/builder/html/nunjucks';
 import configLoader from './lib/builder/config';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv'
-dotenv.config()
+import * as dotenv from 'dotenv';
+import chalk from 'chalk';
+import './lib/console';
+dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -56,17 +58,23 @@ if (argv.minify !== undefined || mode === 'production') {
 const builders = new Map();
 if (!configLoader.isDisable('js')) {
   const builderOption = configLoader.getJsOption(jsOrverrideOption);
-  console.log('jsBuildOption', builderOption);
+  console.group(chalk.blue('javaScript Builder Option'));
+  console.log(builderOption);
+  console.groupEnd();
   builders.set('js', new typescriptBuilder(builderOption));
 }
 if (!configLoader.isDisable('css')) {
   const builderOption = configLoader.getCssOption(cssOrverrideOption);
-  console.log('cssBuildOption', builderOption);
+  console.group(chalk.blue('CSS Builder Option'));
+  console.log(builderOption);
+  console.groupEnd();
   builders.set('css', new sassBuilder(builderOption));
 }
 if (!configLoader.isDisable('html')) {
   const builderOption = configLoader.getHtmlOption();
-  console.log('htmlBuildOption', builderOption);
+  console.group(chalk.blue('HTML Builder Option'));
+  console.log(builderOption);
+  console.groupEnd();
   builders.set('html', new nunjucksBuilder(builderOption));
 }
 

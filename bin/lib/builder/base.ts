@@ -1,8 +1,11 @@
+import fs from 'node:fs';
 import * as path from 'node:path';
 import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
 import editorconfig from 'editorconfig';
+import chalk from 'chalk';
+import '../console';
 
 /**
  * エントリポイント除外オプション
@@ -419,8 +422,10 @@ export abstract class baseBuilder {
    * ファイルの監視とビルド
    */
   public watch() {
+    console.group('Watch files:');
     this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern.bind(this)();
+    console.log(watchFilePattern);
     this.watcher = chokidar.watch(watchFilePattern, this.getWatchOpton.bind(this)());
     this.watcher
       .on('add', this.watchAddCallBack.bind(this))
@@ -429,15 +434,16 @@ export abstract class baseBuilder {
       .on('addDir', this.watchAddDirCallBack.bind(this))
       .on('unlinkDir', this.watchUnlinkDirCallBack.bind(this))
       .on('error', (error) => {
-        console.log('Watcher error: ' + error);
+        console.error('Watcher error: ' + error);
       });
+    console.groupEnd();
   }
   /**
    * ファイル追加時のコールバック処理
    * @param filePath
    */
   protected watchAddCallBack(filePath: string) {
-    console.log('Add file: ' + filePath);
+    console.group('Add file: ' + filePath);
     try {
       //エントリポイントを更新
       this.getEntryPoint();
@@ -451,13 +457,14 @@ export abstract class baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * ファイル更新時のコールバック処理
    * @param filePath
    */
   protected watchChangeCallBack(filePath: string) {
-    console.log('Update file: ' + filePath);
+    console.group('Update file: ' + filePath);
     try {
       if (Array.from(this.entryPoint.values()).includes(filePath)) {
         const outputPath = this.convertOutputPath(filePath);
@@ -470,25 +477,30 @@ export abstract class baseBuilder {
       console.error(error);
       process.exit(1);
     }
+    console.groupEnd();
   }
   /**
    * ディレクトリ時のコールバック処理
    * @param filePath
    */
   protected watchAddDirCallBack(filePath: string) {
-    console.log('Add directory: ' + filePath);
+    console.group('Add directory: ' + filePath);
+    console.groupEnd();
   }
   /**
    * ファイル削除時のコールバック処理
    * @param filePath
    */
   protected watchUnlinkCallBack(filePath: string) {
-    console.log('Remove file: ' + filePath);
+    console.group('Remove file: ' + filePath);
     if (Array.from(this.entryPoint.values()).includes(filePath)) {
       const outputPath = this.convertOutputPath(filePath);
-      rimraf(outputPath);
-      console.log('Remove: ' + outputPath);
+      if (fs.existsSync(outputPath)) {
+        rimraf(outputPath);
+        console.log('Remove: ' + outputPath);
+      }
     }
+    console.groupEnd();
   }
   /**
    * ディレクトリ削除時のコールバック処理
@@ -496,10 +508,13 @@ export abstract class baseBuilder {
    * @param filePath
    */
   protected watchUnlinkDirCallBack(filePath: string) {
-    console.log('Remove directory: ' + filePath);
+    console.group('Remove directory: ' + filePath);
     const outputPath = this.convertOutputPath(filePath);
-    rimraf(outputPath);
-    console.log('Remove: ' + outputPath);
+    if (fs.existsSync(outputPath)) {
+      rimraf(outputPath);
+      console.log('Remove: ' + outputPath);
+    }
+    console.groupEnd();
   }
 
   /**
