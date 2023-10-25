@@ -411,18 +411,26 @@ export abstract class baseBuilder {
   }
 
   /**
+   * ファイルの監視オブジェクト
+   */
+  protected watcher: chokidar.FSWatcher | null = null;
+
+  /**
    * ファイルの監視とビルド
    */
   public watch() {
     this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern.bind(this)();
-    chokidar
-      .watch(watchFilePattern, this.getWatchOpton.bind(this)())
+    this.watcher = chokidar.watch(watchFilePattern, this.getWatchOpton.bind(this)());
+    this.watcher
       .on('add', this.watchAddCallBack.bind(this))
       .on('change', this.watchChangeCallBack.bind(this))
       .on('unlink', this.watchUnlinkCallBack.bind(this))
+      .on('addDir', this.watchAddDirCallBack.bind(this))
       .on('unlinkDir', this.watchUnlinkDirCallBack.bind(this))
-      .on('error', (error) => console.log('Watcher error: ' + error));
+      .on('error', (error) => {
+        console.log('Watcher error: ' + error);
+      });
   }
   /**
    * ファイル追加時のコールバック処理
@@ -462,6 +470,13 @@ export abstract class baseBuilder {
       console.error(error);
       process.exit(1);
     }
+  }
+  /**
+   * ディレクトリ時のコールバック処理
+   * @param filePath
+   */
+  protected watchAddDirCallBack(filePath: string) {
+    console.log('Add directory: ' + filePath);
   }
   /**
    * ファイル削除時のコールバック処理
