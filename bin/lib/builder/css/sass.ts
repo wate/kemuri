@@ -65,7 +65,7 @@ export class sassBuilder extends baseBuilder {
   /**
    * インデックスファイルの自動生成の可否
    */
-  private generateIndex: boolean = true;
+  private generateIndex: boolean = false;
 
   /**
    * インデックスファイルの名前
