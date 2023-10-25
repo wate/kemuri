@@ -155,7 +155,7 @@ export class sassBuilder extends baseBuilder {
    *
    * @param filePath
    */
-  protected generateIndexFile(targetDir: string) {
+  protected generateIndexFile(targetDir: string, recursive: boolean = true) {
     if (!this.generateIndex) {
       return;
     }
@@ -219,7 +219,7 @@ export class sassBuilder extends baseBuilder {
         console.log('Generate index file: ' + indexFilePath);
       }
     }
-    if (path.dirname(targetDir).startsWith(this.srcDir)) {
+    if (recursive && path.dirname(targetDir).startsWith(this.srcDir)) {
       this.generateIndexFile(path.dirname(targetDir));
     }
   }
@@ -240,10 +240,10 @@ export class sassBuilder extends baseBuilder {
     if (option.style !== undefined && option.style) {
       this.setStyle(option.style);
     }
-    if (option.sourcemap !== undefined) {
+    if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
     }
-    if (option.generateIndex !== undefined) {
+    if (option.generateIndex !== undefined && option.generateIndex !== null) {
       this.setGenerateIndex(option.generateIndex);
     }
     if (option.indexFileName !== undefined) {
@@ -382,7 +382,20 @@ export class sassBuilder extends baseBuilder {
     const entries = this.getEntryPoint();
     if (this.generateIndex) {
       //インデックスファイルの生成/更新
-      // this.generateIndexFile.bind(this)(this.srcDir);
+      const partialFilePattern = path.join(this.srcDir, '**/_*.' + this.convertGlobPattern(this.fileExts));
+      const partialFiles = glob.sync(partialFilePattern);
+      if (partialFiles.length > 0) {
+        partialFiles
+          .map((partialFile: string) => {
+            return path.dirname(partialFile);
+          })
+          .reduce((unique: string[], item: string) => {
+            return unique.includes(item) ? unique : [...unique, item];
+          }, [])
+          .forEach((generateIndexDir: string) => {
+            this.generateIndexFile.bind(this)(generateIndexDir, false);
+          });
+      }
     }
     if (entries.size > 0) {
       const compileOption = this.getCompileOption();

@@ -168,13 +168,13 @@ export class typescriptBuilder extends baseBuilder {
    */
   public setOption(option: typescriptBuilderOption) {
     super.setOption(option);
-    if (option.globals !== undefined && option.globals) {
+    if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
       this.setGlobals(option.globals);
     }
-    if (option.sourcemap !== undefined) {
+    if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
     }
-    if (option.minify !== undefined) {
+    if (option.minify !== undefined && option.minify !== null) {
       this.setMinfy(option.minify);
     }
   }
@@ -282,7 +282,7 @@ export class typescriptBuilder extends baseBuilder {
               outputCode = js_beautify.js(outputCode, beautifyOption);
             }
             fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-            console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName)  + ' => ' + outputPath);
+            console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
           }
         }
       } catch (error) {

@@ -58,9 +58,8 @@ export class nunjucksBuilder extends baseBuilder {
    *
    * @param varFileName
    */
-  public setVarFileName(varFileName: string): this {
+  public setVarFileName(varFileName: string) {
     this.varFileName = varFileName;
-    return this;
   }
 
   /**
@@ -116,12 +115,11 @@ export class nunjucksBuilder extends baseBuilder {
    * @param option
    * @returns
    */
-  public setOption(option: nunjucksBuilderOption): this {
+  public setOption(option: nunjucksBuilderOption) {
     super.setOption(option);
     if (option.varFileName !== undefined && option.varFileName) {
       this.setVarFileName(option.varFileName);
     }
-    return this;
   }
   /**
    * 監視対象ファイルのパターンを取得する
