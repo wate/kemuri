@@ -1,11 +1,17 @@
 ---
 ## ---------------
-### 基底クラス
+## ビルダーの無効化
+## ---------------
+# disabled:
+#   # - js
+#   # - css
+#   # - html
+## ---------------
+## 共通設定項目
 ## ---------------
 # srcDir: src
 # outputDir: public
-# exts:
-#   - txt
+# exts: []
 # moduleExts: []
 # ignore:
 #   filePrefix: null
@@ -15,13 +21,6 @@
 #   dirNames: []
 # compileOption: {}
 # beautifyOption: {}
-## ---------------
-### ビルダーの無効化
-## ---------------
-# disabled:
-#   # - js
-#   # - css
-#   # - html
 ## ---------------
 ## HTML用の設定
 ## ---------------
@@ -92,8 +91,6 @@ css:
     filePrefix: _
     fileSuffix: -bk
     dirSuffix: -bk
-  compileOption: {}
-  beautifyOption: {}
 ## ---------------
 ## JS用の設定
 ## ---------------

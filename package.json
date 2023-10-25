@@ -48,6 +48,6 @@
     "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
     "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
     "mock:cleanup:assets:css": "rimraf dist/assets/css --preserve-root",
-    "builder:build": "rollup -i bin/builder.ts -o bin/builder.js -p @rollup/plugin-typescript"
+    "builder:build": "rollup -i bin/builder.ts -o bin/builder.js -p @rollup/plugin-typescript --format=cjs"
   }
 }

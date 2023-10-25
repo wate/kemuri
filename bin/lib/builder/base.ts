@@ -42,7 +42,7 @@ export type ignoreOption = {
  * ビルダーのコンストラクターオプション
  */
 export interface builderOption {
-  srcDir?: string | string[];
+  srcDir?: string;
   outputDir?: string;
   exts?: string[];
   moduleExts?: string[];
@@ -67,7 +67,7 @@ export abstract class baseBuilder {
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['txt'];
+  protected fileExts: string[] = [];
 
   /**
    * エントリポイントではないが変更の監視対象となるファイルの拡張子
