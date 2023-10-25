@@ -15,6 +15,7 @@ export interface sassBuilderOption extends builderOption {
   generateIndex?: boolean;
   indexFileName?: string;
   indexImportType?: 'use' | 'forward';
+  loadPaths?: string[];
 }
 
 /**
@@ -63,6 +64,11 @@ export class sassBuilder extends baseBuilder {
   private sourcemap?: boolean;
 
   /**
+   * SassのloadPathsオプション
+   */
+  private loadPaths?: string[];
+
+  /**
    * インデックスファイルの自動生成の可否
    */
   private generateIndex: boolean = false;
@@ -109,6 +115,14 @@ export class sassBuilder extends baseBuilder {
    */
   public setSourceMap(sourcemap: boolean): void {
     this.sourcemap = sourcemap;
+  }
+  /**
+   * SassのloadPathsオプションを設定する
+   *
+   * @param loadPaths
+   */
+  public setLoadPaths(loadPaths: string[]): void {
+    this.loadPaths = loadPaths;
   }
   /**
    * インデックスファイルの自動生成の可否を設定する
@@ -229,15 +243,17 @@ export class sassBuilder extends baseBuilder {
     if (option.sourcemap !== undefined) {
       this.setSourceMap(option.sourcemap);
     }
+    if (option.generateIndex !== undefined) {
+      this.setGenerateIndex(option.generateIndex);
+    }
     if (option.indexFileName !== undefined) {
       this.setIndexFileName(option.indexFileName);
     }
-    if (option.generateIndex !== undefined) {
-      this.setGenerateIndex(option.generateIndex);
+    let sassLoadPaths = [this.srcDir, path.join(process.cwd(), 'node_modules')];
+    if (option.loadPaths !== undefined) {
+      sassLoadPaths = option.loadPaths;
     }
-    if (option.generateIndex !== undefined) {
-      this.setGenerateIndex(option.generateIndex);
-    }
+    this.setLoadPaths(sassLoadPaths);
   }
 
   /**
@@ -251,6 +267,9 @@ export class sassBuilder extends baseBuilder {
     }
     if (this.sourcemap !== undefined) {
       compileOption = Object.assign(compileOption, { sourceMap: this.sourcemap });
+    }
+    if (this.loadPaths && this.loadPaths.length > 0) {
+      compileOption = Object.assign(compileOption, { loadPaths: this.loadPaths });
     }
     return compileOption;
   }
@@ -361,6 +380,10 @@ export class sassBuilder extends baseBuilder {
    */
   public async buildAll() {
     const entries = this.getEntryPoint();
+    if (this.generateIndex) {
+      //インデックスファイルの生成/更新
+      // this.generateIndexFile.bind(this)(this.srcDir);
+    }
     if (entries.size > 0) {
       const compileOption = this.getCompileOption();
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
