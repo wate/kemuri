@@ -4,6 +4,7 @@
   "description": "Mock Tool",
   "type": "module",
   "dependencies": {
+    "bulma": "^0.9.4",
     "jquery": "^3.7.1"
   },
   "devDependencies": {

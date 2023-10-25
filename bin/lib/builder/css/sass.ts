@@ -249,7 +249,7 @@ export class sassBuilder extends baseBuilder {
     if (option.indexFileName !== undefined) {
       this.setIndexFileName(option.indexFileName);
     }
-    let sassLoadPaths = [this.srcDir, path.join(process.cwd(), 'node_modules')];
+    let sassLoadPaths = [this.srcDir, 'node_modules'];
     if (option.loadPaths !== undefined) {
       sassLoadPaths = option.loadPaths;
     }
