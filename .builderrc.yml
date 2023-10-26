@@ -36,81 +36,72 @@
 ## ---------------
 ## HTML用の設定
 ## ---------------
-html:
-  ### ----------
-  ### 初期値
-  ### ----------
-  # srcDir: src
-  # outputDir: public
-  # exts:
-  #   - njk
-  #   - twig
-  # moduleExts: []
-  # ignore:
-  #   filePrefix: null
-  #   fileSuffix: null
-  #   dirPrefix: null
-  #   dirSuffix: null
-  #   dirNames: []
-  # compileOption: {}
-  # beautifyOption: {}
-  # varFileName: vars.yml
+# html:
+#   srcDir: src
+#   outputDir: public
+#   exts:
+#     - njk
+#     - twig
+#   moduleExts: []
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames: []
+#   compileOption: {}
+#   beautifyOption: {}
+#   varFileName: vars.yml
 ## ---------------
 ## CSS用の設定
 ## ---------------
-css:
-  ### ----------
-  ### 初期値
-  ### ----------
-  # srcDir: src
-  # outputDir: public/assets/css
-  # exts:
-  #   - scss
-  #   - sass
-  #   - css
-  # moduleExts: []
-  # ignore:
-  #   filePrefix: _
-  #   fileSuffix: null
-  #   dirPrefix: null
-  #   dirSuffix: null
-  #   dirNames: []
-  # compileOption: {}
-  # beautifyOption: {}
-  # style: null
-  # generateIndex: false
-  # indexFileName: _all.scss
-  # indexImportType: forward
-  # sourcemap: null
-  # loadPaths:
-  #   - ${srcDir}
-  #   - node_modules
+# css:
+#   srcDir: src
+#   outputDir: public/assets/css
+#   exts:
+#     - scss
+#     - sass
+#     - css
+#   moduleExts: []
+#   ignore:
+#     filePrefix: _
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames: []
+#   compileOption: {}
+#   beautifyOption: {}
+#   style: null
+#   generateIndex: false
+#   indexFileName: _all.scss
+#   indexImportType: forward
+#   sourcemap: null
+#   loadPaths:
+#     - ${srcDir}
+#     - node_modules
 ## ---------------
 ## JS用の設定
 ## ---------------
-js:
-  ### ----------
-  ### 初期値
-  ### ----------
-  # srcDir: src
-  # outputDir: public
-  # exts:
-  #   - js
-  #   - ts
-  # moduleExts:
-  #   - mjs
-  #   - mts
-  #   - cjs
-  #   - cts
-  # ignore:
-  #   filePrefix: null
-  #   fileSuffix: null
-  #   dirPrefix: null
-  #   dirSuffix: null
-  #   dirNames:
-  #     - node_modules
-  # compileOption: {}
-  # beautifyOption: {}
-  # globals: {}
-  # sourcemap: null
-  # minify: null
+# js:
+#   srcDir: src
+#   outputDir: public
+#   exts:
+#     - js
+#     - ts
+#   moduleExts:
+#     - mjs
+#     - mts
+#     - cjs
+#     - cts
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames:
+#       - node_modules
+#   compileOption: {}
+#   beautifyOption: {}
+#   globals: {}
+#   sourcemap: null
+#   minify: null
