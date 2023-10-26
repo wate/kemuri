@@ -4,7 +4,6 @@ import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
 import editorconfig from 'editorconfig';
-import chalk from 'chalk';
 import '../console';
 
 /**

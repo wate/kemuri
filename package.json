@@ -41,14 +41,15 @@
     "yargs": "^17.7.2"
   },
   "scripts": {
-    "mock:server": "tsx bin/server.ts",
-    "mock:watch": "tsx bin/builder.ts -w",
-    "mock:build": "tsx bin/builder.ts",
-    "mock:cleanup": "rimraf dist --preserve-root",
-    "mock:cleanup:assets": "run-p mock:cleanup:assets:*",
-    "mock:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
-    "mock:cleanup:assets:css": "rimraf dist/assets/css --preserve-root",
-    "builder:build": "rollup -i bin/builder.ts -o bin/builder.js -p typescript --format=cjs",
-    "server:build": "rollup -i bin/server.ts -o bin/server.js -p typescript --format=cjs"
+    "dev:server": "tsx bin/server.ts",
+    "dev:watch": "tsx bin/builder.ts -w",
+    "site:build": "tsx bin/builder.ts",
+    "site:cleanup": "rimraf dist --preserve-root",
+    "site:cleanup:assets": "run-p mock:cleanup:assets:*",
+    "site:cleanup:assets:js": "rimraf dist/assets/js --preserve-root",
+    "site:cleanup:assets:css": "rimraf dist/assets/css --preserve-root",
+    "build": "run-p build:*",
+    "build:builder": "rollup -i bin/builder.ts -o dist/builder.js -p typescript --format=cjs",
+    "build:server": "rollup -i bin/server.ts -o dist/server.js -p typescript --format=cjs"
   }
 }
