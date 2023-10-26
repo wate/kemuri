@@ -7,6 +7,18 @@
 #   # - css
 #   # - html
 ## ---------------
+## サーバーの設定
+## ---------------
+# server:
+#   baseDir: public
+#   port: 3000
+#   watch: true
+#   watchFiles: null
+#   open: true
+#   notify: false
+#   ui: false
+#   uiPort: 3001
+## ---------------
 ## 共通設定項目
 ## ---------------
 # srcDir: src
@@ -43,18 +55,6 @@ html:
   # compileOption: {}
   # beautifyOption: {}
   # varFileName: vars.yml
-  ### ----------
-  ### 設定値
-  ### ----------
-  srcDir: src
-  outputDir: dist
-  ignore:
-    filePrefix: _
-    fileSuffix: -bk
-    dirSuffix: -bk
-    dirNames:
-      - layout
-      - element
 ## ---------------
 ## CSS用の設定
 ## ---------------
@@ -85,16 +85,6 @@ css:
   # loadPaths:
   #   - ${srcDir}
   #   - node_modules
-  ### ----------
-  ### 設定値
-  ### ----------
-  srcDir: src/scss
-  outputDir: dist/assets/css
-  ignore:
-    filePrefix: _
-    fileSuffix: -bk
-    dirSuffix: -bk
-  generateIndex: true
 ## ---------------
 ## JS用の設定
 ## ---------------
@@ -124,14 +114,3 @@ js:
   # globals: {}
   # sourcemap: null
   # minify: null
-  ### ----------
-  ### 設定値
-  ### ----------
-  outputDir: dist/assets/js
-  ignore:
-    fileSuffix: -bk
-    dirSuffix: -bk
-    dirNames:
-      - node_modules
-      - vendor
-      - lib

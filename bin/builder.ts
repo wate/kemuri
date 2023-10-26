@@ -52,9 +52,6 @@ if (argv.minify !== undefined || mode === 'production') {
   cssOrverrideOption.style = 'compressed';
 }
 
-// console.log('jsOrverrideOption', jsOrverrideOption);
-// console.log('cssOrverrideOption', cssOrverrideOption);
-
 const builders = new Map();
 if (!configLoader.isDisable('js')) {
   const builderOption = configLoader.getJsOption(jsOrverrideOption);

@@ -54,7 +54,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static getOption(type: 'js' | 'css' | 'html', overrideOption?: any): any {
+  public static getOption(type: 'html' | 'css' | 'js', overrideOption?: any): any {
     const allConfig = configLoader.load();
     let builderConfig = {};
     if (allConfig) {
@@ -62,7 +62,7 @@ class configLoader {
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
         builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
       }
-      ['disabled', 'js', 'css', 'html'].forEach((removeKey) => {
+      ['disabled', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
     }
@@ -70,6 +70,18 @@ class configLoader {
       builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(overrideOption));
     }
     return builderConfig;
+  }
+  /**
+   * サーバーのオプションを取得する
+   * @returns
+   */
+  public static getServerOption(overrideOption?: any): object {
+    const allConfig = configLoader.load();
+    let serverOption = _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
+    if (overrideOption) {
+      serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
+    }
+    return serverOption;
   }
 
   /**
