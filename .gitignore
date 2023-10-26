@@ -39,5 +39,5 @@ pages.json
 **/vars.yml
 /src/*
 !/src/.gitkeep
-/dist/*
-!/dist/.gitkeep
+/public/*
+!/public/.gitkeep
