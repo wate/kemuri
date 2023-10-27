@@ -2,10 +2,17 @@
   "name": "mock-tool",
   "version": "1.0.0",
   "description": "Mock Tool",
+  "private": true,
+  "bin": {
+    "html-builder": "",
+    "css-builder": "",
+    "js-builder": ""
+  },
   "type": "module",
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
     "browser-sync": "^2.29.3",
     "chalk": "^5.3.0",
@@ -19,7 +26,6 @@
     "rimraf": "^5.0.5",
     "rollup": "^4.1.4",
     "sass": "^1.69.4",
-    "terser": "^5.22.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "yargs": "^17.7.2"
@@ -38,9 +44,9 @@
     "tsx": "^3.14.0"
   },
   "scripts": {
-    "dev:server": "tsx bin/server.ts",
-    "dev:watch": "tsx bin/builder.ts -w",
-    "site:build": "tsx bin/builder.ts",
+    "dev:server": "tsx lib/server.ts",
+    "dev:watch": "tsx lib/builder.ts -w",
+    "site:build": "tsx lib/builder.ts",
     "site:cleanup": "rimraf public/*",
     "site:cleanup:assets": "run-p mock:cleanup:assets:*",
     "site:cleanup:assets:js": "rimraf public/assets/js/*",

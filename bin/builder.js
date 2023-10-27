@@ -11,8 +11,8 @@ var rollup = require('rollup');
 var nodeResolve = require('@rollup/plugin-node-resolve');
 var commonjs = require('@rollup/plugin-commonjs');
 var typescript = require('@rollup/plugin-typescript');
+var terser = require('@rollup/plugin-terser');
 var js_beautify = require('js-beautify');
-var terser = require('terser');
 var chalk = require('chalk');
 var node_console = require('node:console');
 var sass = require('sass');
@@ -753,10 +753,14 @@ class typescriptBuilder extends baseBuilder {
                 exclude: this.ignoreDirNames,
                 compilerOptions: this.getCompileOption(),
             };
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+            if (this.minify !== undefined && this.minify) {
+                rollupPlugins.push(terser());
+            }
             bundle = await rollup.rollup({
                 external: Object.keys(this.globals),
                 input: srcPath,
-                plugins: [nodeResolve(), commonjs(), typescript(typescriptConfig)],
+                plugins: rollupPlugins,
             });
             const { output } = await bundle.generate({
                 globals: this.globals,
@@ -770,12 +774,7 @@ class typescriptBuilder extends baseBuilder {
                 }
                 else {
                     let outputCode = chunkOrAsset.code;
-                    if (this.minify !== undefined && this.minify) {
-                        const minifyResult = await terser.minify(outputCode, { sourceMap: this.sourcemap });
-                        // @ts-ignore
-                        outputCode = minifyResult.code;
-                    }
-                    else {
+                    if (this.minify === undefined && !this.minify) {
                         outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
                     fs__namespace.writeFileSync(path__namespace.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -806,6 +805,9 @@ class typescriptBuilder extends baseBuilder {
                     compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
                 };
                 const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+                if (this.minify !== undefined && this.minify) {
+                    rollupPlugins.push(terser());
+                }
                 bundle = await rollup.rollup({
                     external: Object.keys(this.globals),
                     input: Object.fromEntries(entries),
@@ -826,12 +828,7 @@ class typescriptBuilder extends baseBuilder {
                         outputPath = path__namespace.join(this.outputDir, chunkOrAsset.preliminaryFileName);
                         fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
                         let outputCode = chunkOrAsset.code;
-                        if (this.minify !== undefined && this.minify) {
-                            const minifyResult = await terser.minify(outputCode, { sourceMap: this.sourcemap });
-                            // @ts-ignore
-                            outputCode = minifyResult.code;
-                        }
-                        else {
+                        if (this.minify !== undefined || !this.minify) {
                             outputCode = js_beautify.js(outputCode, beautifyOption);
                         }
                         fs__namespace.writeFileSync(outputPath, outputCode.trim() + '\n');
