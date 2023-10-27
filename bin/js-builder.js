@@ -6,15 +6,14 @@ var glob = require('glob');
 var chokidar = require('chokidar');
 var rimraf = require('rimraf');
 var editorconfig = require('editorconfig');
-require('.console');
+var chalk = require('chalk');
+var node_console = require('node:console');
 var rollup = require('rollup');
 var nodeResolve = require('@rollup/plugin-node-resolve');
 var commonjs = require('@rollup/plugin-commonjs');
 var typescript = require('@rollup/plugin-typescript');
 var terser = require('@rollup/plugin-terser');
 var js_beautify = require('js-beautify');
-var chalk = require('chalk');
-var node_console = require('node:console');
 var cosmiconfig = require('cosmiconfig');
 var _ = require('lodash');
 var yargs = require('yargs');
@@ -41,6 +40,28 @@ var fs__namespace = /*#__PURE__*/_interopNamespaceDefault(fs);
 var path__namespace = /*#__PURE__*/_interopNamespaceDefault(path);
 var chokidar__namespace = /*#__PURE__*/_interopNamespaceDefault(chokidar);
 var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
+
+class ConsoleOverride extends node_console.Console {
+    constructor() {
+        super(process.stdout, process.stderr);
+    }
+    debug(message, ...optionalParams) {
+        return super.debug(chalk.gray(message), ...optionalParams);
+    }
+    info(message, ...optionalParams) {
+        return super.info(chalk.blue(message), ...optionalParams);
+    }
+    warn(message, ...optionalParams) {
+        return super.warn(chalk.yellow(message), ...optionalParams);
+    }
+    error(message, ...optionalParams) {
+        return super.error(chalk.red(message), ...optionalParams);
+    }
+    group(message, ...optionalParams) {
+        return super.group(chalk.cyan(message), ...optionalParams);
+    }
+}
+console = new ConsoleOverride();
 
 /**
  * ビルド処理の抽象クラス
@@ -557,28 +578,6 @@ class baseBuilder {
         this.buildAll();
     }
 }
-
-class ConsoleOverride extends node_console.Console {
-    constructor() {
-        super(process.stdout, process.stderr);
-    }
-    debug(message, ...optionalParams) {
-        return super.debug(chalk.gray(message), ...optionalParams);
-    }
-    info(message, ...optionalParams) {
-        return super.info(chalk.blue(message), ...optionalParams);
-    }
-    warn(message, ...optionalParams) {
-        return super.warn(chalk.yellow(message), ...optionalParams);
-    }
-    error(message, ...optionalParams) {
-        return super.error(chalk.red(message), ...optionalParams);
-    }
-    group(message, ...optionalParams) {
-        return super.group(chalk.cyan(message), ...optionalParams);
-    }
-}
-console = new ConsoleOverride();
 
 /**
  * ビルド処理の抽象クラス

@@ -2,7 +2,7 @@ import { typescriptBuilder, typescriptBuilderOption } from './js/typescript';
 import configLoader from './config';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
-import './../console';
+import '../console';
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
