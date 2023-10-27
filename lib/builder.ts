@@ -1,11 +1,11 @@
-import { typescriptBuilder, typescriptBuilderOption } from './lib/builder/js/typescript';
-import { sassBuilder, sassBuilderOption } from './lib/builder/css/sass';
-import { nunjucksBuilder, nunjucksBuilderOption } from './lib/builder/html/nunjucks';
-import configLoader from './lib/builder/config';
+import { typescriptBuilder, typescriptBuilderOption } from './builder/js/typescript';
+import { sassBuilder, sassBuilderOption } from './builder/css/sass';
+import { nunjucksBuilder, nunjucksBuilderOption } from './builder/html/nunjucks';
+import configLoader from './builder/config';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
-import './lib/console';
+import './console';
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))

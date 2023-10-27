@@ -46,7 +46,7 @@
     "site:cleanup:assets:js": "rimraf public/assets/js/*",
     "site:cleanup:assets:css": "rimraf public/assets/css/*",
     "build": "run-p build:*",
-    "build:builder": "rollup -i bin/builder.ts -o dist/builder.js -p typescript --format=cjs",
-    "build:server": "rollup -i bin/server.ts -o dist/server.js -p typescript --format=cjs"
+    "build:builder": "rollup -i lib/builder.ts -o bin/builder.js -p typescript --format=cjs",
+    "build:server": "rollup -i lib/server.ts -o bin/server.js -p typescript --format=cjs"
   }
 }

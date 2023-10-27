@@ -4,7 +4,7 @@ import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
 import editorconfig from 'editorconfig';
-import '../console';
+import '.console';
 
 /**
  * エントリポイント除外オプション
