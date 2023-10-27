@@ -51,7 +51,7 @@
     "site:css-build": "tsx lib/builder/css.ts",
     "site:js-build": "tsx lib/builder/js.ts",
     "site:cleanup": "rimraf public/*",
-    "site:cleanup:assets": "run-p mock:cleanup:assets:*",
+    "site:cleanup:assets": "run-p site:cleanup:assets:*",
     "site:cleanup:assets:js": "rimraf public/assets/js/*",
     "site:cleanup:assets:css": "rimraf public/assets/css/*",
     "build": "rollup -c",
