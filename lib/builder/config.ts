@@ -28,17 +28,25 @@ class configLoader {
     return configLoader.result ? configLoader.result.config : {};
   }
   /**
+   * 指定のビルダーが有効化されているか確認する
+   * @param type
+   * @returns
+   */
+  public static isEnable(type: 'js' | 'css' | 'html') {
+    const allConfig = configLoader.load();
+    if (allConfig && _.has(allConfig, 'enable') && _.get(allConfig, 'enable')) {
+      return _.get(allConfig, 'enable').includes(type);
+    }
+    return false;
+  }
+  /**
    * 指定のビルダーが無効化されているか確認する
    *
    * @param type
    * @returns
    */
   public static isDisable(type: 'js' | 'css' | 'html') {
-    const allConfig = configLoader.load();
-    if (allConfig && _.has(allConfig, 'disabled') && _.get(allConfig, 'disabled')) {
-      return _.get(allConfig, 'disabled').includes(type);
-    }
-    return false;
+    return !this.isEnable(type);
   }
   /**
    * 設定の指定のキーの値を取得する
@@ -62,7 +70,7 @@ class configLoader {
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
         builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
       }
-      ['disabled', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
+      ['enable', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
     }

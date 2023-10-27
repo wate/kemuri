@@ -1,8 +1,8 @@
 'use strict';
 
-var typescript = require('./lib/typescript.js');
-var sass = require('./lib/sass.js');
-var nunjucks = require('./lib/nunjucks.js');
+var js = require('./lib/js.js');
+var css = require('./lib/css.js');
+var html = require('./lib/html.js');
 var config = require('./lib/config.js');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
@@ -60,10 +60,12 @@ const argv = yargs(process.argv.slice(2))
     p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
     c: { type: 'string', alias: 'config', description: '設定ファイルの指定' },
-    sourcemap: { type: 'boolean', description: 'sourcemapファイルを出力する' },
-    minify: { type: 'boolean', description: 'minify化するか否か' },
+    html: { type: 'boolean', description: 'htmlビルダーを利用する' },
+    css: { type: 'boolean', description: 'cssビルダーを利用する' },
+    js: { type: 'boolean', description: 'jsビルダーを利用する' },
 })
     .parseSync();
+console.log(argv);
 let mode = 'develop';
 if (argv.mode !== undefined) {
     mode = String(argv.mode);
@@ -74,43 +76,59 @@ else if (argv.develop !== undefined) {
 else if (argv.production !== undefined) {
     mode = 'production';
 }
-/**
- * ソースマップの出力オプション
- */
-const jsOrverrideOption = {};
-const cssOrverrideOption = {};
-if (argv.sourcemap !== undefined) {
-    jsOrverrideOption.sourcemap = true;
-    cssOrverrideOption.sourcemap = true;
-}
-/**
- * minifyの出力オプション
- */
-if (argv.minify !== undefined || mode === 'production') {
-    jsOrverrideOption.minify = true;
-    cssOrverrideOption.style = 'compressed';
-}
-const builders = new Map();
-if (!config.configLoader.isDisable('js')) {
+// /**
+//  * ソースマップの出力オプション
+//  */
+// const cssOrverrideOption: sassBuilderOption = {};
+// if (argv.sourcemap !== undefined) {
+//   jsOrverrideOption.sourcemap = true;
+//   cssOrverrideOption.sourcemap = true;
+// }
+// /**
+//  * minifyの出力オプション
+//  */
+// if (argv.minify !== undefined || mode === 'production') {
+//   jsOrverrideOption.minify = true;
+//   cssOrverrideOption.style = 'compressed';
+// }
+const builders = [];
+if (config.configLoader.isEnable('js') || argv.js) {
+    const jsOrverrideOption = {};
+    if (argv.sourcemap !== undefined) {
+        jsOrverrideOption.sourcemap = true;
+    }
+    if (argv.minify !== undefined || mode === 'production') {
+        jsOrverrideOption.minify = true;
+    }
     const builderOption = config.configLoader.getJsOption(jsOrverrideOption);
     console.group(chalk.blue('javaScript Builder Option'));
     console.log(builderOption);
     console.groupEnd();
-    builders.set('js', new typescript.typescriptBuilder(builderOption));
+    builders.push(js.jsBuilder);
+    // builders.set('js', new typescriptBuilder(builderOption));
 }
-if (!config.configLoader.isDisable('css')) {
+if (config.configLoader.isEnable('css') || argv.css) {
+    const cssOrverrideOption = {};
+    if (argv.sourcemap !== undefined) {
+        cssOrverrideOption.sourcemap = true;
+    }
+    if (argv.minify !== undefined || mode === 'production') {
+        cssOrverrideOption.style = 'compressed';
+    }
     const builderOption = config.configLoader.getCssOption(cssOrverrideOption);
     console.group(chalk.blue('CSS Builder Option'));
     console.log(builderOption);
     console.groupEnd();
-    builders.set('css', new sass.sassBuilder(builderOption));
+    builders.push(css.cssBuilder);
+    // builders.set('css', new sassBuilder(builderOption));
 }
-if (!config.configLoader.isDisable('html')) {
+if (config.configLoader.isEnable('html') || argv.html) {
     const builderOption = config.configLoader.getHtmlOption();
     console.group(chalk.blue('HTML Builder Option'));
     console.log(builderOption);
     console.groupEnd();
-    builders.set('html', new nunjucks.nunjucksBuilder(builderOption));
+    builders.push(html.htmlBuilder);
+    // builders.set('html', new nunjucksBuilder(builderOption));
 }
 if (argv.watch) {
     builders.forEach((builder) => {

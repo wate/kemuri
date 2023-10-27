@@ -2,9 +2,9 @@ import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: {
-    'html-builder': 'lib/builder/html.ts',
-    'css-builder': 'lib/builder/css.ts',
-    'js-builder': 'lib/builder/js.ts',
+    'html-builder': 'lib/html-builder.ts',
+    'css-builder': 'lib/css-builder.ts',
+    'js-builder': 'lib/js-builder.ts',
     'builder': 'lib/builder.ts',
     'server': 'lib/server.ts',
   },

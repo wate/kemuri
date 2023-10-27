@@ -1,6 +1,6 @@
 'use strict';
 
-var sass = require('./lib/sass.js');
+var css = require('./lib/css.js');
 var config = require('./lib/config.js');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
@@ -50,23 +50,42 @@ const argv = yargs(process.argv.slice(2))
     },
     p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルの指定' }
+    style: { type: 'string', choices: ['expanded', 'compressed'], description: '出力形式を指定する' },
+    sourcemap: { type: 'boolean', description: 'sourcemapファイルを出力する' },
+    minify: { type: 'boolean', description: 'minify化するか否か' },
 })
     .parseSync();
+let mode = 'develop';
 if (argv.mode !== undefined) {
-    String(argv.mode);
+    mode = String(argv.mode);
 }
-else if (argv.develop !== undefined) ;
-else if (argv.production !== undefined) ;
+else if (argv.develop !== undefined) {
+    mode = 'develop';
+}
+else if (argv.production !== undefined) {
+    mode = 'production';
+}
 /**
- * コマンドライン引数で指定された設定ファイルを読み込む
+ * ソースマップの出力オプション
  */
 const orverrideOption = {};
-const builderOption = config.configLoader.getJsOption(orverrideOption);
-const builder = new sass.sassBuilder(builderOption);
+if (argv.sourcemap !== undefined && argv.sourcemap) {
+    orverrideOption.sourcemap = true;
+}
+/**
+ * 出力形式のオプション
+ */
+if (argv.style !== undefined) {
+    orverrideOption.style = argv.style;
+}
+else if (argv.minify !== undefined || mode === 'production') {
+    orverrideOption.style = 'compressed';
+}
+const builderOption = config.configLoader.getCssOption(orverrideOption);
+css.cssBuilder.setOption(builderOption);
 if (argv.watch) {
-    builder.watch();
+    css.cssBuilder.watch();
 }
 else {
-    builder.build();
+    css.cssBuilder.build();
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-var nunjucks = require('./lib/nunjucks.js');
+var html = require('./lib/html.js');
 var config = require('./lib/config.js');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
@@ -42,32 +42,13 @@ dotenv__namespace.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
-    m: {
-        type: 'string',
-        choices: ['develop', 'production'],
-        default: 'develop',
-        alias: 'mode',
-        description: 'ビルド処理のモード指定',
-    },
-    p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
-    d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルの指定' }
 })
     .parseSync();
-if (argv.mode !== undefined) {
-    String(argv.mode);
-}
-else if (argv.develop !== undefined) ;
-else if (argv.production !== undefined) ;
-/**
- * コマンドライン引数で指定された設定ファイルを読み込む
- */
-const orverrideOption = {};
-const builderOption = config.configLoader.getJsOption(orverrideOption);
-const builder = new nunjucks.nunjucksBuilder(builderOption);
+const builderOption = config.configLoader.getHtmlOption();
+html.htmlBuilder.setOption(builderOption);
 if (argv.watch) {
-    builder.watch();
+    html.htmlBuilder.watch();
 }
 else {
-    builder.build();
+    html.htmlBuilder.build();
 }

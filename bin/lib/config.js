@@ -40,17 +40,25 @@ class configLoader {
         return configLoader.result ? configLoader.result.config : {};
     }
     /**
+     * 指定のビルダーが有効化されているか確認する
+     * @param type
+     * @returns
+     */
+    static isEnable(type) {
+        const allConfig = configLoader.load();
+        if (allConfig && _.has(allConfig, 'enable') && _.get(allConfig, 'enable')) {
+            return _.get(allConfig, 'enable').includes(type);
+        }
+        return false;
+    }
+    /**
      * 指定のビルダーが無効化されているか確認する
      *
      * @param type
      * @returns
      */
     static isDisable(type) {
-        const allConfig = configLoader.load();
-        if (allConfig && _.has(allConfig, 'disabled') && _.get(allConfig, 'disabled')) {
-            return _.get(allConfig, 'disabled').includes(type);
-        }
-        return false;
+        return !this.isEnable(type);
     }
     /**
      * 設定の指定のキーの値を取得する
