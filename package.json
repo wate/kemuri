@@ -54,7 +54,7 @@
     "site:cleanup:assets": "run-p mock:cleanup:assets:*",
     "site:cleanup:assets:js": "rimraf public/assets/js/*",
     "site:cleanup:assets:css": "rimraf public/assets/css/*",
-    "build": "run-p build:*",
+    "build": "rollup -c",
     "build:builder": "rollup -i lib/builder.ts -o bin/builder.js -p typescript --format=cjs",
     "build:html-builder": "rollup -i lib/builder/html.ts -o bin/html-builder.js -p typescript --format=cjs",
     "build:css-builder": "rollup -i lib/builder/css.ts -o bin/css-builder.js -p typescript --format=cjs",
