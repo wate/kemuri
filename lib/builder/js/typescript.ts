@@ -120,10 +120,7 @@ export class typescriptBuilder extends baseBuilder {
    * @param option
    */
   constructor(option?: typescriptBuilderOption) {
-    super();
-    if (option) {
-      this.setOption(option);
-    }
+    super(option);
   }
 
   /**
@@ -247,7 +244,7 @@ export class typescriptBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
-    console.group('Build entory point files');
+    // console.group('Build entory point files');
     const entries = this.getEntryPoint();
     let bundle;
     let buildFailed = false;
@@ -300,6 +297,6 @@ export class typescriptBuilder extends baseBuilder {
     if (buildFailed) {
       throw new Error('Build Failed');
     }
-    console.groupEnd();
+    // console.groupEnd();
   }
 }
