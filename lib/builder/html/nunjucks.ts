@@ -43,10 +43,7 @@ export class nunjucksBuilder extends baseBuilder {
    * @param option
    */
   public constructor(option?: nunjucksBuilderOption) {
-    super();
-    if (option) {
-      this.setOption(option);
-    }
+    super(option);
   }
   /**
    * -------------------------

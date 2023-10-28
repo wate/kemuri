@@ -120,10 +120,7 @@ export class typescriptBuilder extends baseBuilder {
    * @param option
    */
   constructor(option?: typescriptBuilderOption) {
-    super();
-    if (option) {
-      this.setOption(option);
-    }
+    super(option);
   }
 
   /**

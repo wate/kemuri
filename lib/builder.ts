@@ -71,6 +71,7 @@ if (configLoader.isEnable('html') || argv.html) {
   console.group(chalk.blue('HTML Builder Option'));
   console.log(builderOption);
   console.groupEnd();
+  htmlBuilder.setOption(builderOption);
   builders.push(htmlBuilder);
 }
 

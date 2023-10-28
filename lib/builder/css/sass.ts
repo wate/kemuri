@@ -89,10 +89,7 @@ export class sassBuilder extends baseBuilder {
    * @param option
    */
   constructor(option?: sassBuilderOption) {
-    super();
-    if (option) {
-      this.setOption(option);
-    }
+    super(option);
   }
 
   /**
