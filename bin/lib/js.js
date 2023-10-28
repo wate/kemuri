@@ -40,7 +40,7 @@ class typescriptBuilder extends base.baseBuilder {
      * @param option
      */
     constructor(option) {
-        super();
+        super(option);
         /**
          * 出力先ディレクトリ
          */
@@ -118,9 +118,6 @@ class typescriptBuilder extends base.baseBuilder {
             // Skip type checking all .d.ts files.
             skipLibCheck: true,
         };
-        if (option) {
-            this.setOption(option);
-        }
     }
     /**
      * -------------------------

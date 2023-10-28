@@ -33,11 +33,9 @@ class configLoader {
      * @returns
      */
     static load() {
-        if (configLoader.result === undefined) {
-            const explorerSync = cosmiconfig.cosmiconfigSync('builder');
-            configLoader.result = explorerSync.search();
-        }
-        return configLoader.result ? configLoader.result.config : {};
+        const explorerSync = cosmiconfig.cosmiconfigSync('builder');
+        const result = explorerSync.search();
+        return result && result.config ? result.config : {};
     }
     /**
      * 指定のビルダーが有効化されているか確認する
@@ -82,7 +80,7 @@ class configLoader {
             if (_.has(allConfig, type) && _.get(allConfig, type)) {
                 builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
             }
-            ['disabled', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
+            ['enable', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
                 _.unset(builderConfig, removeKey);
             });
         }
@@ -124,26 +122,6 @@ class configLoader {
     static getJsOption(overrideOption) {
         return configLoader.getOption('js', overrideOption);
     }
-    /**
-     * コンパイラーを取得する
-     * @param type
-     */
-    static getCompiler(type) {
-        let compiler = _.get(configLoader.defaultCompiler, type);
-        const builderOption = this.getOption(type);
-        if (_.has(builderOption, 'compiler') && _.has(builderOption, 'compiler')) {
-            compiler = _.get(builderOption, 'compiler');
-        }
-        return compiler;
-    }
 }
-/**
- * デフォルトのコンパイラー
- */
-configLoader.defaultCompiler = {
-    js: 'typescript',
-    css: 'sass',
-    html: 'nunjucks',
-};
 
 exports.configLoader = configLoader;

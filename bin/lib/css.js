@@ -39,7 +39,7 @@ class sassBuilder extends base.baseBuilder {
      * @param option
      */
     constructor(option) {
-        super();
+        super(option);
         /**
          * 出力先ディレクトリ
          */
@@ -77,9 +77,6 @@ class sassBuilder extends base.baseBuilder {
          * インデックスファイルにインポートする際の方法
          */
         this.indexImportType = 'forward';
-        if (option) {
-            this.setOption(option);
-        }
     }
     /**
      * -------------------------

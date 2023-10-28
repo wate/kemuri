@@ -59,13 +59,11 @@ const argv = yargs(process.argv.slice(2))
     },
     p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルの指定' },
     html: { type: 'boolean', description: 'htmlビルダーを利用する' },
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
 })
     .parseSync();
-console.log(argv);
 let mode = 'develop';
 if (argv.mode !== undefined) {
     mode = String(argv.mode);
@@ -76,21 +74,6 @@ else if (argv.develop !== undefined) {
 else if (argv.production !== undefined) {
     mode = 'production';
 }
-// /**
-//  * ソースマップの出力オプション
-//  */
-// const cssOrverrideOption: sassBuilderOption = {};
-// if (argv.sourcemap !== undefined) {
-//   jsOrverrideOption.sourcemap = true;
-//   cssOrverrideOption.sourcemap = true;
-// }
-// /**
-//  * minifyの出力オプション
-//  */
-// if (argv.minify !== undefined || mode === 'production') {
-//   jsOrverrideOption.minify = true;
-//   cssOrverrideOption.style = 'compressed';
-// }
 const builders = [];
 if (config.configLoader.isEnable('js') || argv.js) {
     const jsOrverrideOption = {};
@@ -100,12 +83,12 @@ if (config.configLoader.isEnable('js') || argv.js) {
     if (argv.minify !== undefined || mode === 'production') {
         jsOrverrideOption.minify = true;
     }
-    const builderOption = config.configLoader.getJsOption(jsOrverrideOption);
+    const jsBuilderOption = config.configLoader.getJsOption(jsOrverrideOption);
     console.group(chalk.blue('javaScript Builder Option'));
-    console.log(builderOption);
+    console.log(jsBuilderOption);
     console.groupEnd();
+    js.jsBuilder.setOption(jsBuilderOption);
     builders.push(js.jsBuilder);
-    // builders.set('js', new typescriptBuilder(builderOption));
 }
 if (config.configLoader.isEnable('css') || argv.css) {
     const cssOrverrideOption = {};
@@ -115,20 +98,20 @@ if (config.configLoader.isEnable('css') || argv.css) {
     if (argv.minify !== undefined || mode === 'production') {
         cssOrverrideOption.style = 'compressed';
     }
-    const builderOption = config.configLoader.getCssOption(cssOrverrideOption);
+    const cssBuilderOption = config.configLoader.getCssOption(cssOrverrideOption);
     console.group(chalk.blue('CSS Builder Option'));
-    console.log(builderOption);
+    console.log(cssBuilderOption);
     console.groupEnd();
+    css.cssBuilder.setOption(cssBuilderOption);
     builders.push(css.cssBuilder);
-    // builders.set('css', new sassBuilder(builderOption));
 }
 if (config.configLoader.isEnable('html') || argv.html) {
-    const builderOption = config.configLoader.getHtmlOption();
+    const htmlBuilderOption = config.configLoader.getHtmlOption();
     console.group(chalk.blue('HTML Builder Option'));
-    console.log(builderOption);
+    console.log(htmlBuilderOption);
     console.groupEnd();
+    html.htmlBuilder.setOption(htmlBuilderOption);
     builders.push(html.htmlBuilder);
-    // builders.set('html', new nunjucksBuilder(builderOption));
 }
 if (argv.watch) {
     builders.forEach((builder) => {

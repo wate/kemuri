@@ -38,7 +38,7 @@ class nunjucksBuilder extends base.baseBuilder {
      * @param option
      */
     constructor(option) {
-        super();
+        super(option);
         /**
          * エントリポイントとなるファイルの拡張子
          */
@@ -55,9 +55,6 @@ class nunjucksBuilder extends base.baseBuilder {
          * テンプレート変数格納用メンバ変数
          */
         this.templateVars = {};
-        if (option) {
-            this.setOption(option);
-        }
     }
     /**
      * -------------------------
