@@ -380,7 +380,7 @@ export class sassBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
-    console.group('Build entory point files');
+    // console.group('Build entory point files');
     const entries = this.getEntryPoint();
     if (this.generateIndex) {
       //インデックスファイルの生成/更新
@@ -416,6 +416,6 @@ export class sassBuilder extends baseBuilder {
         }
       });
     }
-    console.groupEnd();
+    // console.groupEnd();
   }
 }

@@ -240,7 +240,7 @@ export class nunjucksBuilder extends baseBuilder {
    * 全ファイルのビルド処理
    */
   public async buildAll() {
-    console.group('Build entory point files');
+    // console.group('Build entory point files');
     const entries = this.getEntryPoint();
     if (entries.size > 0) {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
@@ -258,6 +258,6 @@ export class nunjucksBuilder extends baseBuilder {
         console.log('Compile: ' + srcFile + ' => ' + outputPath);
       });
     }
-    console.groupEnd();
+    // console.groupEnd();
   }
 }
