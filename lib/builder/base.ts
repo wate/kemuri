@@ -380,11 +380,12 @@ export abstract class baseBuilder {
    * ソースコードのパスを出力先のパスに変換する
    *
    * @param srcPath
+   * @param isFile
    * @returns
    */
-  protected convertOutputPath(srcPath: string) {
+  protected convertOutputPath(srcPath: string, isDir: boolean = false) {
     let outputName = path.basename(srcPath);
-    if (/\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
+    if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
       outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outpuExt;
     }
     const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
@@ -479,14 +480,6 @@ export abstract class baseBuilder {
     console.groupEnd();
   }
   /**
-   * ディレクトリ時のコールバック処理
-   * @param filePath
-   */
-  protected watchAddDirCallBack(filePath: string) {
-    console.group('Add directory: ' + filePath);
-    console.groupEnd();
-  }
-  /**
    * ファイル削除時のコールバック処理
    * @param filePath
    */
@@ -502,13 +495,22 @@ export abstract class baseBuilder {
     console.groupEnd();
   }
   /**
+   * ディレクトリ時のコールバック処理
+   * @param filePath
+   */
+  protected watchAddDirCallBack(filePath: string) {
+    console.group('Add directory: ' + filePath);
+    const outputPath = this.convertOutputPath(filePath, true);
+    console.groupEnd();
+  }
+  /**
    * ディレクトリ削除時のコールバック処理
    *
    * @param filePath
    */
   protected watchUnlinkDirCallBack(filePath: string) {
     console.group('Remove directory: ' + filePath);
-    const outputPath = this.convertOutputPath(filePath);
+    const outputPath = this.convertOutputPath(filePath, true);
     if (fs.existsSync(outputPath)) {
       rimraf(outputPath);
       console.log('Remove: ' + outputPath);
