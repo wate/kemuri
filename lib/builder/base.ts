@@ -380,7 +380,7 @@ export abstract class baseBuilder {
    * ソースコードのパスを出力先のパスに変換する
    *
    * @param srcPath
-   * @param isFile
+   * @param isDir
    * @returns
    */
   protected convertOutputPath(srcPath: string, isDir: boolean = false) {
