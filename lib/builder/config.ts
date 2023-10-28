@@ -2,30 +2,15 @@ import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
 import _ from 'lodash';
 
 class configLoader {
-  /**
-   * ロード結果の
-   */
-  protected static result?: CosmiconfigResult;
-
-  /**
-   * デフォルトのコンパイラー
-   */
-  protected static defaultCompiler = {
-    js: 'typescript',
-    css: 'sass',
-    html: 'nunjucks',
-  };
 
   /**
    * 設定ファイルをロードする
    * @returns
    */
   public static load(): any {
-    if (configLoader.result === undefined) {
-      const explorerSync = cosmiconfigSync('builder');
-      configLoader.result = explorerSync.search();
-    }
-    return configLoader.result ? configLoader.result.config : {};
+    const explorerSync = cosmiconfigSync('builder');
+    const result: CosmiconfigResult = explorerSync.search();
+    return result && result.config ? result.config : {};
   }
   /**
    * 指定のビルダーが有効化されているか確認する
@@ -85,7 +70,8 @@ class configLoader {
    */
   public static getServerOption(overrideOption?: any): object {
     const allConfig = configLoader.load();
-    let serverOption = _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
+    let serverOption =
+      _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
     if (overrideOption) {
       serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
     }
@@ -112,18 +98,6 @@ class configLoader {
    */
   public static getJsOption(overrideOption?: any) {
     return configLoader.getOption('js', overrideOption);
-  }
-  /**
-   * コンパイラーを取得する
-   * @param type
-   */
-  public static getCompiler(type: 'js' | 'css' | 'html'): string {
-    let compiler = _.get(configLoader.defaultCompiler, type);
-    const builderOption = this.getOption(type);
-    if (_.has(builderOption, 'compiler') && _.has(builderOption, 'compiler')) {
-      compiler = _.get(builderOption, 'compiler');
-    }
-    return compiler;
   }
 }
 

@@ -44,11 +44,11 @@ if (configLoader.isEnable('js') || argv.js) {
   if (argv.minify !== undefined || mode === 'production') {
     jsOrverrideOption.minify = true;
   }
-  const builderOption = configLoader.getJsOption(jsOrverrideOption);
+  const jsBuilderOption = configLoader.getJsOption(jsOrverrideOption);
   console.group(chalk.blue('javaScript Builder Option'));
-  console.log(builderOption);
+  console.log(jsBuilderOption);
   console.groupEnd();
-  jsBuilder.setOption(builderOption);
+  jsBuilder.setOption(jsBuilderOption);
   builders.push(jsBuilder);
 }
 if (configLoader.isEnable('css') || argv.css) {
@@ -59,19 +59,19 @@ if (configLoader.isEnable('css') || argv.css) {
   if (argv.minify !== undefined || mode === 'production') {
     cssOrverrideOption.style = 'compressed';
   }
-  const builderOption = configLoader.getCssOption(cssOrverrideOption);
+  const cssBuilderOption = configLoader.getCssOption(cssOrverrideOption);
   console.group(chalk.blue('CSS Builder Option'));
-  console.log(builderOption);
+  console.log(cssBuilderOption);
   console.groupEnd();
-  cssBuilder.setOption(builderOption);
+  cssBuilder.setOption(cssBuilderOption);
   builders.push(cssBuilder);
 }
 if (configLoader.isEnable('html') || argv.html) {
-  const builderOption = configLoader.getHtmlOption();
+  const htmlBuilderOption = configLoader.getHtmlOption();
   console.group(chalk.blue('HTML Builder Option'));
-  console.log(builderOption);
+  console.log(htmlBuilderOption);
   console.groupEnd();
-  htmlBuilder.setOption(builderOption);
+  htmlBuilder.setOption(htmlBuilderOption);
   builders.push(htmlBuilder);
 }
 
