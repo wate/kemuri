@@ -347,11 +347,12 @@ class baseBuilder {
      * ソースコードのパスを出力先のパスに変換する
      *
      * @param srcPath
+     * @param isDir
      * @returns
      */
-    convertOutputPath(srcPath) {
+    convertOutputPath(srcPath, isDir = false) {
         let outputName = path__namespace.basename(srcPath);
-        if (/\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
+        if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
             outputName = path__namespace.basename(srcPath, path__namespace.extname(srcPath)) + '.' + this.outpuExt;
         }
         const outputDir = path__namespace.dirname(path__namespace.relative(this.srcDir, srcPath));
@@ -442,14 +443,6 @@ class baseBuilder {
         console.groupEnd();
     }
     /**
-     * ディレクトリ時のコールバック処理
-     * @param filePath
-     */
-    watchAddDirCallBack(filePath) {
-        console.group('Add directory: ' + filePath);
-        console.groupEnd();
-    }
-    /**
      * ファイル削除時のコールバック処理
      * @param filePath
      */
@@ -465,13 +458,22 @@ class baseBuilder {
         console.groupEnd();
     }
     /**
+     * ディレクトリ時のコールバック処理
+     * @param filePath
+     */
+    watchAddDirCallBack(filePath) {
+        console.group('Add directory: ' + filePath);
+        this.convertOutputPath(filePath, true);
+        console.groupEnd();
+    }
+    /**
      * ディレクトリ削除時のコールバック処理
      *
      * @param filePath
      */
     watchUnlinkDirCallBack(filePath) {
         console.group('Remove directory: ' + filePath);
-        const outputPath = this.convertOutputPath(filePath);
+        const outputPath = this.convertOutputPath(filePath, true);
         if (fs.existsSync(outputPath)) {
             rimraf.rimraf(outputPath);
             console.log('Remove: ' + outputPath);
