@@ -4,9 +4,11 @@
   "description": "Mock Tool",
   "private": true,
   "bin": {
-    "html-builder": "",
-    "css-builder": "",
-    "js-builder": ""
+    "builder": "bin/bin/builder.js",
+    "html-builder": "bin/bin/html-builder.js",
+    "css-builder": "bin/css-builder.js",
+    "js-builder": "bin/js-builder.js",
+    "server": "bin/server.js"
   },
   "type": "module",
   "dependencies": {
