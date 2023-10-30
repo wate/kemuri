@@ -241,51 +241,45 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   public buildAll() {
     this.loadSnippetData();
-    console.log(this.snipptes);
     const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
-    // console.log(groupdSnippets);
     Object.keys(groupdSnippets).forEach((groupName) => {
       //出力先ファイルパス
       const outputPath = path.join(this.outputDir, groupName + '.' + this.outputExt);
       const snippetData: any = {};
       groupdSnippets[groupName].forEach((snippet: any) => {
+        let snippetPrefix: string[] = snippet.prefix;
+        if (snippet.extraSetting.prefix) {
+          if (snippet.extraSetting.orverwrite) {
+            snippetPrefix = snippet.extraSetting.prefix;
+          } else {
+            snippetPrefix = [...snippetPrefix, ...snippet.extraSetting.prefix];
+          }
+          snippetPrefix = _.uniq(snippetPrefix);
+        }
         Object.keys(snippet.code).forEach((lang) => {
           const snippetkey = snippet.name + '.' + lang;
           const snippetBody = snippet.code[lang];
-          const snippetPrefix: string[] = snippet.prefix;
-          if (snippet.extraSetting.prefix) {
-            if (snippet.extraSetting.prefix instanceof Array) {
+          let snippetScope: string[] = [lang];
+          if (snippet.extraSetting.scope) {
+            if (snippet.extraSetting.orverwrite) {
+              snippetScope = snippet.extraSetting.scope;
             } else {
-              snippet.extraSetting.prefix = [snippet.extraSetting.prefix];
+              snippetScope = [...snippetScope, ...snippet.extraSetting.scope];
             }
-            snippetPrefix.push(snippet.extraSetting.prefix);
+            snippetScope = _.uniq(snippetScope);
           }
-          const snippetScope: string[] = [snippet.lang];
           snippetData[snippetkey] = {
             prefix: snippetPrefix,
             body: snippetBody,
             scope: snippetScope.join(','),
           };
+          snippetData[snippetkey].scope = snippetScope.join(',');
           if (snippet.description) {
             snippetData[snippetkey]['description'] = snippet.description;
           }
         });
       });
-      // const snippets = groupdSnippets[groupName].map((snippet: any) => {
-
-      // groupdSnippets[groupName].map((snippet: any) => {
-      //   return {
-      //     scope: 'javascript,html',
-      //     prefix: snippet.prefix,
-      //     body: snippet.code,
-      //   }
-      // });
-      // "scope": "javascript,html",
-      // "prefix": "hello",
-      // "body": "$BLOCK_COMMENT_START Hello World $BLOCK_COMMENT_END"
-      console.log('Output: ' + outputPath);
-
-      // fs.writeFileSync(outputPath, JSON.stringify(groupdSnippets[groupName], null, 2));
+      fs.writeFileSync(outputPath, JSON.stringify(snippetData, null, 2));
     });
   }
 }
