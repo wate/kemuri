@@ -9,6 +9,7 @@ import { findAfter } from 'unist-util-find-after';
 import { visit } from 'unist-util-visit';
 import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
+import _ from 'lodash';
 import yaml from 'js-yaml';
 
 export class vscodeSnippetBuilder extends baseBuilder {
@@ -20,12 +21,17 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * 出力先ディレクトリ
    */
-  protected outputDir: string = '';
+  protected outputDir: string = '.vscode';
 
   /**
    * エントリポイントとなるファイルの拡張子
    */
   protected fileExts: string[] = ['md'];
+
+  /**
+   * 出力時の拡張子
+   */
+  protected outputExt: string = 'code-snippets';
 
   /**
    * 言語コードに対応する言語名のマップ
@@ -81,16 +87,46 @@ export class vscodeSnippetBuilder extends baseBuilder {
   }
 
   /**
+   * スニペット拡張設定の開始位置判定用メソッド
+   * @param node
+   * @returns
+   */
+  protected extraSettingTestFunc(node: any): any {
+    if (node.type === 'heading' && node.depth === 3) {
+      const textNode = find(node, { type: 'text' });
+      if (textNode.value === 'VSCode Extra Setting') {
+        return node;
+      }
+    }
+  }
+
+  /**
    * スニペットコードの終了位置を取得する
    * @param startPosition
    * @returns
    */
   protected getSnippetEndPosition(startPosition: any): any {
-    let endPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: 3, value: 'VSCode Extra Setting' });
+    let endPosition = findAfter(this.tree, startPosition, this.extraSettingTestFunc);
     if (!endPosition) {
       endPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: 2 });
     }
     return endPosition;
+  }
+  /**
+   *
+   * @param startPosition
+   * @returns
+   */
+  protected getSnippetExtraSetting(startPosition: any): any {
+    let extraSetting = null;
+    const extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc);
+    if (extraSettingStartNode) {
+      const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
+      if (extraSettingNode) {
+        extraSetting = yaml.load(extraSettingNode.value);
+      }
+    }
+    return extraSetting;
   }
 
   /**
@@ -145,6 +181,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
             } else {
               snippets = findAllAfter(this.tree, startPosition, { type: 'code' });
             }
+            const extraSetting = this.getSnippetExtraSetting(startPosition);
             if (snippets) {
               // メンバー変数に格納する
               snippets.forEach((snippet) => {
@@ -157,8 +194,26 @@ export class vscodeSnippetBuilder extends baseBuilder {
                     code: {},
                     prefix: [snippetName],
                     description: snippetDescription,
-                    extra_setting: {},
                   };
+                }
+                if (extraSetting) {
+                  const isOrverwrite = extraSetting['overwrite'] ?? false;
+                  if (extraSetting['description']) {
+                    this.snipptes[snippetName]['description'] = extraSetting['description'];
+                  }
+                  if (extraSetting['scope']) {
+                    this.snipptes[snippetName]['scope'] = extraSetting['scope'];
+                  }
+                  if (extraSetting['prefix']) {
+                    if (isOrverwrite) {
+                      this.snipptes[snippetName]['prefix'] = extraSetting['prefix'];
+                    } else {
+                      this.snipptes[snippetName]['prefix'] = [
+                        ...this.snipptes[snippetName]['prefix'],
+                        ...extraSetting['prefix'],
+                      ];
+                    }
+                  }
                 }
                 if (this.snipptes[snippetName]['code'][snippetLang] !== undefined) {
                   console.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
@@ -185,8 +240,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @param outputPath
    */
   public buildFile(srcPath: string, outputPath: string) {
-    this.loadSnippetData();
-    console.log(this.snipptes);
+    if (Object.keys(this.snipptes).length === 0) {
+      this.loadSnippetData();
+    }
   }
 
   /**
@@ -195,5 +251,43 @@ export class vscodeSnippetBuilder extends baseBuilder {
   public buildAll() {
     this.loadSnippetData();
     console.log(this.snipptes);
+    const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
+    // console.log(groupdSnippets);
+    Object.keys(groupdSnippets).forEach((groupName) => {
+      //出力先ファイルパス
+      const outputPath = path.join(this.outputDir, groupName + '.' + this.outputExt);
+      const snippetData: any = {};
+      groupdSnippets[groupName].forEach((snippet: any) => {
+        Object.keys(snippet.code).forEach((lang) => {
+          const snippetkey = snippet.name + '.' + lang;
+          const snippetBody = snippet.code[lang];
+          const snippetPrefix: string[] = snippet.prefix;
+          const snippetScope: string[] = [snippet.lang];
+          snippetData[snippetkey] = {
+            prefix: snippetPrefix,
+            body: snippetBody,
+            scope: snippetScope.join(','),
+          };
+          if (snippet.description) {
+            snippetData[snippetkey]['description'] = snippet.description;
+          }
+        });
+      });
+      // const snippets = groupdSnippets[groupName].map((snippet: any) => {
+
+      // groupdSnippets[groupName].map((snippet: any) => {
+      //   return {
+      //     scope: 'javascript,html',
+      //     prefix: snippet.prefix,
+      //     body: snippet.code,
+      //   }
+      // });
+      // "scope": "javascript,html",
+      // "prefix": "hello",
+      // "body": "$BLOCK_COMMENT_START Hello World $BLOCK_COMMENT_END"
+      console.log('Output: ' + outputPath);
+
+      // fs.writeFileSync(outputPath, JSON.stringify(groupdSnippets[groupName], null, 2));
+    });
   }
 }
