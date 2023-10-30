@@ -26,7 +26,7 @@ export class nunjucksBuilder extends baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outpuExt: string = 'html';
+  protected outputExt: string = 'html';
 
   /**
    * 変数ファイルの名前
@@ -224,7 +224,7 @@ export class nunjucksBuilder extends baseBuilder {
    */
   public async buildFile(srcPath: string, outputPath: string) {
     nunjucks.configure(this.srcDir, this.compileOption);
-    const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+    const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     this.loadTemplateVars();
     const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
@@ -242,22 +242,23 @@ export class nunjucksBuilder extends baseBuilder {
   public async buildAll() {
     // console.group('Build entory point files');
     const entries = this.getEntryPoint();
-    if (entries.size > 0) {
-      const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-      this.loadTemplateVars();
-      nunjucks.configure(this.srcDir, this.compileOption);
-      entries.forEach((srcFile, entryPoint) => {
-        const templatePath: string = path.relative(this.srcDir, srcFile);
-        const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
-        const templateVars = this.getTemplateVars(srcFile);
-        let html = nunjucks.render(templatePath, templateVars);
-        //@ts-ignore
-        html = js_beautify.html(html, beautifyOption);
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
-        console.log('Compile: ' + srcFile + ' => ' + outputPath);
-      });
+    if (entries.size === 0) {
+      return;
     }
+    const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+    this.loadTemplateVars();
+    nunjucks.configure(this.srcDir, this.compileOption);
+    entries.forEach((srcFile, entryPoint) => {
+      const templatePath: string = path.relative(this.srcDir, srcFile);
+      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+      const templateVars = this.getTemplateVars(srcFile);
+      let html = nunjucks.render(templatePath, templateVars);
+      //@ts-ignore
+      html = js_beautify.html(html, beautifyOption);
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+      console.log('Compile: ' + srcFile + ' => ' + outputPath);
+    });
     // console.groupEnd();
   }
 }

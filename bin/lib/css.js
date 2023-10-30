@@ -360,7 +360,7 @@ class sassBuilder extends base.baseBuilder {
      * 全ファイルのビルド処理
      */
     async buildAll() {
-        console.group('Build entory point files');
+        // console.group('Build entory point files');
         const entries = this.getEntryPoint();
         if (this.generateIndex) {
             //インデックスファイルの生成/更新
@@ -396,7 +396,7 @@ class sassBuilder extends base.baseBuilder {
                 }
             });
         }
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 

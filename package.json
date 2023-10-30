@@ -4,9 +4,11 @@
   "description": "Mock Tool",
   "private": true,
   "bin": {
-    "html-builder": "",
-    "css-builder": "",
-    "js-builder": ""
+    "builder": "bin/bin/builder.js",
+    "html-builder": "bin/bin/html-builder.js",
+    "css-builder": "bin/css-builder.js",
+    "js-builder": "bin/js-builder.js",
+    "server": "bin/server.js"
   },
   "type": "module",
   "dependencies": {
@@ -22,12 +24,20 @@
     "js-beautify": "^1.14.9",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "mdast-util-from-markdown": "^2.0.0",
+    "mdast-util-frontmatter": "^2.0.1",
     "nunjucks": "^3.2.4",
     "rimraf": "^5.0.5",
     "rollup": "^4.1.4",
     "sass": "^1.69.4",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
+    "unist-util-find": "^3.0.0",
+    "unist-util-find-after": "^5.0.0",
+    "unist-util-find-all-after": "^5.0.0",
+    "unist-util-find-all-between": "^2.1.0",
+    "unist-util-select": "^5.0.0",
+    "unist-util-visit": "^5.0.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -36,6 +46,7 @@
     "@types/js-beautify": "^1.14.2",
     "@types/js-yaml": "^4.0.8",
     "@types/lodash": "^4.14.200",
+    "@types/mdast": "^4.0.2",
     "@types/node": "^20.8.7",
     "@types/nunjucks": "^3.2.5",
     "@types/yargs": "^17.0.29",
@@ -44,8 +55,7 @@
     "tsx": "^3.14.0"
   },
   "scripts": {
-    "dev:server": "tsx lib/server.ts",
-    "dev:watch": "tsx lib/builder.ts -w",
+    "server": "tsx lib/server.ts",
     "builder": "yarn builder:build",
     "builder:watch": "tsx lib/builder.ts --html --css --js --watch",
     "builder:build": "tsx lib/builder.ts --html --css --js",
@@ -62,11 +72,6 @@
     "cleanup:assets:js": "rimraf public/assets/js/*",
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
-    "build": "rollup -c",
-    "build:builder": "rollup -i lib/builder.ts -o bin/builder.js -p typescript --format=cjs",
-    "build:html-builder": "rollup -i lib/builder/html.ts -o bin/html-builder.js -p typescript --format=cjs",
-    "build:css-builder": "rollup -i lib/builder/css.ts -o bin/css-builder.js -p typescript --format=cjs",
-    "build:js-builder": "rollup -i lib/builder/js.ts -o bin/js-builder.js -p typescript --format=cjs",
-    "build:server": "rollup -i lib/server.ts -o bin/server.js -p typescript --format=cjs"
+    "build": "rollup -c"
   }
 }

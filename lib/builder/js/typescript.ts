@@ -45,7 +45,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outpuExt = 'js';
+  protected outputExt = 'js';
 
   /**
    * ビルド時に設定するグローバルオブジェクトの内容
@@ -200,7 +200,7 @@ export class typescriptBuilder extends baseBuilder {
   public async buildFile(srcPath: string, outputPath: string) {
     let bundle;
     try {
-      const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+      const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
       const typescriptConfig = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
@@ -248,51 +248,52 @@ export class typescriptBuilder extends baseBuilder {
     const entries = this.getEntryPoint();
     let bundle;
     let buildFailed = false;
-    if (entries.size > 0) {
-      try {
-        const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-        const typescriptConfig = {
-          include: this.srcDir,
-          exclude: this.ignoreDirNames,
-          compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
-        };
-        const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
-        if (this.minify !== undefined && this.minify) {
-          rollupPlugins.push(terser());
-        }
-        bundle = await rollup({
-          external: Object.keys(this.globals),
-          input: Object.fromEntries(entries),
-          plugins: rollupPlugins,
-        });
-        const { output } = await bundle.generate({
-          globals: this.globals,
-          sourcemap: this.sourcemap,
-        });
-        let outputPath: string;
-        for (const chunkOrAsset of output) {
-          if (chunkOrAsset.type === 'asset') {
-            outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, chunkOrAsset.source);
-          } else {
-            outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            let outputCode = chunkOrAsset.code;
-            if (this.minify !== undefined || !this.minify) {
-              outputCode = js_beautify.js(outputCode, beautifyOption);
-            }
-            fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-            console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
+    if (entries.size === 0) {
+      return;
+    }
+    try {
+      const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+      const typescriptConfig = {
+        include: this.srcDir,
+        exclude: this.ignoreDirNames,
+        compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
+      };
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+      if (this.minify !== undefined && this.minify) {
+        rollupPlugins.push(terser());
+      }
+      bundle = await rollup({
+        external: Object.keys(this.globals),
+        input: Object.fromEntries(entries),
+        plugins: rollupPlugins,
+      });
+      const { output } = await bundle.generate({
+        globals: this.globals,
+        sourcemap: this.sourcemap,
+      });
+      let outputPath: string;
+      for (const chunkOrAsset of output) {
+        if (chunkOrAsset.type === 'asset') {
+          outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, chunkOrAsset.source);
+        } else {
+          outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          let outputCode = chunkOrAsset.code;
+          if (this.minify !== undefined || !this.minify) {
+            outputCode = js_beautify.js(outputCode, beautifyOption);
           }
+          fs.writeFileSync(outputPath, outputCode.trim() + '\n');
+          console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
         }
-      } catch (error) {
-        buildFailed = true;
-        console.error(error);
       }
-      if (bundle) {
-        await bundle.close();
-      }
+    } catch (error) {
+      buildFailed = true;
+      console.error(error);
+    }
+    if (bundle) {
+      await bundle.close();
     }
     if (buildFailed) {
       throw new Error('Build Failed');

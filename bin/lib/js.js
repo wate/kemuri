@@ -236,7 +236,7 @@ class typescriptBuilder extends base.baseBuilder {
      * 全ファイルのビルド処理
      */
     async buildAll() {
-        console.group('Build entory point files');
+        // console.group('Build entory point files');
         const entries = this.getEntryPoint();
         let bundle;
         let buildFailed = false;
@@ -291,7 +291,7 @@ class typescriptBuilder extends base.baseBuilder {
         if (buildFailed) {
             throw new Error('Build Failed');
         }
-        console.groupEnd();
+        // console.groupEnd();
     }
 }
 

@@ -101,7 +101,7 @@ export abstract class baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outpuExt: string = 'txt';
+  protected outputExt: string = 'txt';
 
   /**
    * コンパイラーのオプション
@@ -386,7 +386,7 @@ export abstract class baseBuilder {
   protected convertOutputPath(srcPath: string, isDir: boolean = false) {
     let outputName = path.basename(srcPath);
     if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
-      outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outpuExt;
+      outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
     }
     const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
     const outputPath = path.join(this.outputDir, outputDir, outputName);
@@ -583,6 +583,6 @@ export abstract class baseBuilder {
     this.buildAll();
   }
 
-  abstract buildFile(srcPath: string, outputPath: string): void;
-  abstract buildAll(): void;
+  public abstract buildFile(srcPath: string, outputPath: string): void;
+  public abstract buildAll(): void;
 }
