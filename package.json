@@ -66,6 +66,7 @@
     "js-builder": "yarn js-builder:build",
     "js-builder:watch": "tsx lib/js-builder.ts --watch",
     "js-builder:build": "tsx lib/js-builder.ts",
+    "snippet-builder:build": "tsx lib/snippet-builder.ts",
     "cleanup": "rimraf public/*",
     "cleanup:assets": "run-p site:cleanup:assets:*",
     "cleanup:assets:js": "rimraf public/assets/js/*",
