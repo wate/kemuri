@@ -200,7 +200,7 @@ export class typescriptBuilder extends baseBuilder {
   public async buildFile(srcPath: string, outputPath: string) {
     let bundle;
     try {
-      const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+      const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
       const typescriptConfig = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
@@ -252,7 +252,7 @@ export class typescriptBuilder extends baseBuilder {
       return;
     }
     try {
-      const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+      const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
       const typescriptConfig = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
