@@ -36,7 +36,6 @@
     "unist-util-find-after": "^5.0.0",
     "unist-util-find-all-after": "^5.0.0",
     "unist-util-find-all-between": "^2.1.0",
-    "unist-util-select": "^5.0.0",
     "unist-util-visit": "^5.0.0",
     "yargs": "^17.7.2"
   },
