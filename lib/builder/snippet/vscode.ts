@@ -10,9 +10,8 @@ import { visit } from 'unist-util-visit';
 import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import yaml from 'js-yaml';
-import { __classPrivateFieldIn } from 'tslib';
 
-export default class vscodeSnippetBuilder extends baseBuilder {
+export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
@@ -73,7 +72,12 @@ export default class vscodeSnippetBuilder extends baseBuilder {
    * @returns
    */
   protected getGroupName(filePath: string): string {
-    return path.relative(this.srcDir, filePath).split(path.sep)[0];
+    const srcPath = path.relative(this.srcDir, filePath);
+    if (srcPath.includes(path.sep)) {
+      return srcPath.split(path.sep)[0];
+    } else {
+      return path.basename(srcPath, path.extname(srcPath));
+    }
   }
 
   /**
@@ -121,18 +125,20 @@ export default class vscodeSnippetBuilder extends baseBuilder {
           if (snippetNameNode) {
             const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
             console.info('Snippet: ' + snippetName);
+            //スニペットの開始位置を取得する
+            const startPosition = node;
             //スニペットの説明を取得する
             let snippetDescription: string | null = null;
-            const firstParagraphNode = findAfter(this.tree, startIndex, { type: 'paragraph' });
+
+            let snippets = null;
+            const firstParagraphNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
             if (firstParagraphNode) {
-              const snippetDescriptionNode = find(node, { type: 'text' });
+              const snippetDescriptionNode = find(firstParagraphNode, { type: 'text' });
               if (snippetDescriptionNode) {
                 snippetDescription = snippetDescriptionNode.value;
               }
             }
             //スニペットのコードを取得する
-            let snippets = null;
-            const startPosition = node;
             const endPosition = this.getSnippetEndPosition(startPosition);
             if (endPosition) {
               snippets = findAllBetween(this.tree, startPosition, endPosition, { type: 'code' });
@@ -147,6 +153,7 @@ export default class vscodeSnippetBuilder extends baseBuilder {
                 if (this.snipptes[snippetName] === undefined) {
                   this.snipptes[snippetName] = {
                     name: snippetName,
+                    group: groupName,
                     code: {},
                     prefix: [snippetName],
                     description: snippetDescription,
@@ -188,6 +195,5 @@ export default class vscodeSnippetBuilder extends baseBuilder {
   public buildAll() {
     this.loadSnippetData();
     console.log(this.snipptes);
-
   }
 }
