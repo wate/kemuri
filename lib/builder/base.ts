@@ -583,6 +583,6 @@ export abstract class baseBuilder {
     this.buildAll();
   }
 
-  abstract buildFile(srcPath: string, outputPath: string): void;
-  abstract buildAll(): void;
+  public abstract buildFile(srcPath: string, outputPath: string): void;
+  public abstract buildAll(): void;
 }

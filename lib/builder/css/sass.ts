@@ -399,23 +399,24 @@ export class sassBuilder extends baseBuilder {
           });
       }
     }
-    if (entries.size > 0) {
-      const compileOption = this.getCompileOption();
-      const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-      entries.forEach((srcFile, entryPoint) => {
-        const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
-        const result = sass.compile(srcFile, compileOption);
-        if (compileOption.style !== 'compressed') {
-          result.css = js_beautify.css(result.css, beautifyOption);
-        }
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, result.css.trim() + '\n');
-        console.log('Compile: ' + srcFile + ' => ' + outputPath);
-        if (result.sourceMap) {
-          fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
-        }
-      });
+    if (entries.size === 0) {
+      return;
     }
+    const compileOption = this.getCompileOption();
+    const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+    entries.forEach((srcFile, entryPoint) => {
+      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
+      const result = sass.compile(srcFile, compileOption);
+      if (compileOption.style !== 'compressed') {
+        result.css = js_beautify.css(result.css, beautifyOption);
+      }
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, result.css.trim() + '\n');
+      console.log('Compile: ' + srcFile + ' => ' + outputPath);
+      if (result.sourceMap) {
+        fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+      }
+    });
     // console.groupEnd();
   }
 }

@@ -248,6 +248,10 @@ export class typescriptBuilder extends baseBuilder {
     const entries = this.getEntryPoint();
     let bundle;
     let buildFailed = false;
+    if (entries.length === 0) {
+      return;
+    }
+
     if (entries.size > 0) {
       try {
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
