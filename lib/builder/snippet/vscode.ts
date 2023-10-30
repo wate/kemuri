@@ -126,6 +126,12 @@ export class vscodeSnippetBuilder extends baseBuilder {
         const tmpExtraSetting = yaml.load(extraSettingNode.value);
         if (tmpExtraSetting) {
           extraSetting = tmpExtraSetting;
+          if (extraSetting.prefix !== undefined && extraSetting.prefix instanceof String) {
+            extraSetting.prefix = [extraSetting.prefix];
+          }
+          if (extraSetting.scope === undefined && extraSetting.scope instanceof String) {
+            extraSetting.scope = [extraSetting.scope];
+          }
         }
       }
     }
@@ -247,7 +253,11 @@ export class vscodeSnippetBuilder extends baseBuilder {
           const snippetkey = snippet.name + '.' + lang;
           const snippetBody = snippet.code[lang];
           const snippetPrefix: string[] = snippet.prefix;
-          if (snippet.extraSetting?.prefix) {
+          if (snippet.extraSetting.prefix) {
+            if (snippet.extraSetting.prefix instanceof Array) {
+            } else {
+              snippet.extraSetting.prefix = [snippet.extraSetting.prefix];
+            }
             snippetPrefix.push(snippet.extraSetting.prefix);
           }
           const snippetScope: string[] = [snippet.lang];
