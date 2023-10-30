@@ -45,7 +45,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outpuExt = 'js';
+  protected outputExt = 'js';
 
   /**
    * ビルド時に設定するグローバルオブジェクトの内容

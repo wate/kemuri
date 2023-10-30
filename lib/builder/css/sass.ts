@@ -47,7 +47,7 @@ export class sassBuilder extends baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outpuExt = 'css';
+  protected outputExt = 'css';
 
   /**
    * コンパイラーのオプション
@@ -364,7 +364,7 @@ export class sassBuilder extends baseBuilder {
    */
   public async buildFile(srcPath: string, outputPath: string) {
     const compileOption = this.getCompileOption();
-    const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+    const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     const result = sass.compile(srcPath, compileOption);
     if (compileOption.style !== 'compressed') {
       result.css = js_beautify.css(result.css, beautifyOption);
@@ -403,9 +403,9 @@ export class sassBuilder extends baseBuilder {
       return;
     }
     const compileOption = this.getCompileOption();
-    const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+    const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     entries.forEach((srcFile, entryPoint) => {
-      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outpuExt);
+      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
       const result = sass.compile(srcFile, compileOption);
       if (compileOption.style !== 'compressed') {
         result.css = js_beautify.css(result.css, beautifyOption);
