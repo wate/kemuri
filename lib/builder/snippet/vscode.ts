@@ -118,12 +118,15 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @returns
    */
   protected getSnippetExtraSetting(startPosition: any): any {
-    let extraSetting = null;
+    let extraSetting: any = {};
     const extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc);
     if (extraSettingStartNode) {
       const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
       if (extraSettingNode) {
-        extraSetting = yaml.load(extraSettingNode.value);
+        const tmpExtraSetting = yaml.load(extraSettingNode.value);
+        if (tmpExtraSetting) {
+          extraSetting = tmpExtraSetting;
+        }
       }
     }
     return extraSetting;
@@ -194,26 +197,8 @@ export class vscodeSnippetBuilder extends baseBuilder {
                     code: {},
                     prefix: [snippetName],
                     description: snippetDescription,
+                    extraSetting: extraSetting,
                   };
-                }
-                if (extraSetting) {
-                  const isOrverwrite = extraSetting['overwrite'] ?? false;
-                  if (extraSetting['description']) {
-                    this.snipptes[snippetName]['description'] = extraSetting['description'];
-                  }
-                  if (extraSetting['scope']) {
-                    this.snipptes[snippetName]['scope'] = extraSetting['scope'];
-                  }
-                  if (extraSetting['prefix']) {
-                    if (isOrverwrite) {
-                      this.snipptes[snippetName]['prefix'] = extraSetting['prefix'];
-                    } else {
-                      this.snipptes[snippetName]['prefix'] = [
-                        ...this.snipptes[snippetName]['prefix'],
-                        ...extraSetting['prefix'],
-                      ];
-                    }
-                  }
                 }
                 if (this.snipptes[snippetName]['code'][snippetLang] !== undefined) {
                   console.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
@@ -262,6 +247,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
           const snippetkey = snippet.name + '.' + lang;
           const snippetBody = snippet.code[lang];
           const snippetPrefix: string[] = snippet.prefix;
+          if (snippet.extraSetting?.prefix) {
+            snippetPrefix.push(snippet.extraSetting.prefix);
+          }
           const snippetScope: string[] = [snippet.lang];
           snippetData[snippetkey] = {
             prefix: snippetPrefix,
