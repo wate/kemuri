@@ -5,7 +5,6 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
-import '../../console';
 
 /**
  * HTMLビルドの設定オプション

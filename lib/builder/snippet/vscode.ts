@@ -8,7 +8,7 @@ import { find } from 'unist-util-find';
 import { findAfter } from 'unist-util-find-after';
 import { visit } from 'unist-util-visit';
 import { findAllAfter } from 'unist-util-find-all-after';
-import findAllBetween from 'unist-util-find-all-between';
+import findAllBetween from 'unist-util-find-all-between'
 import _ from 'lodash';
 import yaml from 'js-yaml';
 
@@ -161,7 +161,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
         meta = yaml.load(matter.value);
       }
       if (meta?.draft) {
-        console.info('Skip draft file:' + targetFile);
+        console.warn('Skip draft file:' + targetFile);
       } else {
         const namePrefix = meta?.prefix ? meta.prefix : '';
         const nameSuffix = meta?.suffix ? meta.suffix : '';

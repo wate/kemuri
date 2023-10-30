@@ -7,7 +7,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
-import '../../console';
 
 /**
  * JSビルドの設定オプション
