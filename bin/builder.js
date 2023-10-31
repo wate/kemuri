@@ -1,15 +1,15 @@
 'use strict';
 
-var js = require('./common/js.js');
-var css = require('./common/css.js');
-var html = require('./common/html.js');
-var config = require('./common/config.js');
+var js = require('./common/js.cjs');
+var css = require('./common/css.cjs');
+var html = require('./common/html.cjs');
+var config = require('./common/config.cjs');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
 var chalk = require('chalk');
 require('node:fs');
 require('node:path');
-require('./common/base.js');
+require('./common/base.cjs');
 require('glob');
 require('chokidar');
 require('rimraf');

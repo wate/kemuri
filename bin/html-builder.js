@@ -1,12 +1,12 @@
 'use strict';
 
-var html = require('./common/html.js');
-var config = require('./common/config.js');
+var html = require('./common/html.cjs');
+var config = require('./common/config.cjs');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
 require('node:fs');
 require('node:path');
-require('./common/base.js');
+require('./common/base.cjs');
 require('glob');
 require('chokidar');
 require('rimraf');

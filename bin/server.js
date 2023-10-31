@@ -1,7 +1,7 @@
 'use strict';
 
 var browserSync = require('browser-sync');
-var config = require('./common/config.js');
+var config = require('./common/config.cjs');
 var _ = require('lodash');
 var chalk = require('chalk');
 require('node:console');

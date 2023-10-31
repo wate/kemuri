@@ -2,7 +2,7 @@
 
 var fs = require('node:fs');
 var path = require('node:path');
-var base = require('./base.js');
+var base = require('./base.cjs');
 var glob = require('glob');
 var yaml = require('js-yaml');
 var js_beautify = require('js-beautify');
