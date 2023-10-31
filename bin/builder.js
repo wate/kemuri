@@ -1,4 +1,4 @@
-#!/usr/bin/env node --input-type=commonjs
+#!/usr/bin/env node
 'use strict';
 
 var js = require('./common/js.js');

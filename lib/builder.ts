@@ -1,4 +1,4 @@
-#!/usr/bin/env node --input-type=commonjs
+#!/usr/bin/env node
 
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';

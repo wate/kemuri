@@ -13,6 +13,7 @@ export default {
   output: {
     dir: 'bin',
     format: 'cjs',
-    chunkFileNames: "common/[name].js"
+    chunkFileNames: "common/[name].js",
+    // entryFileNames: "[name].js"
   },
 };

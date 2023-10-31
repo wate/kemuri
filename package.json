@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Mock Tool",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "bin": {
     "builder": "bin/bin/builder.js",
     "html-builder": "bin/bin/html-builder.js",
