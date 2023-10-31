@@ -9,7 +9,6 @@ var commonjs = require('@rollup/plugin-commonjs');
 var typescript = require('@rollup/plugin-typescript');
 var terser = require('@rollup/plugin-terser');
 var js_beautify = require('js-beautify');
-require('./config.js');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -61,7 +60,7 @@ class typescriptBuilder extends base.baseBuilder {
         /**
          * 出力時の拡張子
          */
-        this.outpuExt = 'js';
+        this.outputExt = 'js';
         /**
          * ビルド時に設定するグローバルオブジェクトの内容
          */
@@ -191,7 +190,7 @@ class typescriptBuilder extends base.baseBuilder {
     async buildFile(srcPath, outputPath) {
         let bundle;
         try {
-            const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
             const typescriptConfig = {
                 include: this.srcDir,
                 exclude: this.ignoreDirNames,
@@ -240,53 +239,54 @@ class typescriptBuilder extends base.baseBuilder {
         const entries = this.getEntryPoint();
         let bundle;
         let buildFailed = false;
-        if (entries.size > 0) {
-            try {
-                const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-                const typescriptConfig = {
-                    include: this.srcDir,
-                    exclude: this.ignoreDirNames,
-                    compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
-                };
-                const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
-                if (this.minify !== undefined && this.minify) {
-                    rollupPlugins.push(terser());
+        if (entries.size === 0) {
+            return;
+        }
+        try {
+            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+            const typescriptConfig = {
+                include: this.srcDir,
+                exclude: this.ignoreDirNames,
+                compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
+            };
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+            if (this.minify !== undefined && this.minify) {
+                rollupPlugins.push(terser());
+            }
+            bundle = await rollup.rollup({
+                external: Object.keys(this.globals),
+                input: Object.fromEntries(entries),
+                plugins: rollupPlugins,
+            });
+            const { output } = await bundle.generate({
+                globals: this.globals,
+                sourcemap: this.sourcemap,
+            });
+            let outputPath;
+            for (const chunkOrAsset of output) {
+                if (chunkOrAsset.type === 'asset') {
+                    outputPath = path__namespace.join(this.outputDir, chunkOrAsset.fileName);
+                    fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+                    fs__namespace.writeFileSync(outputPath, chunkOrAsset.source);
                 }
-                bundle = await rollup.rollup({
-                    external: Object.keys(this.globals),
-                    input: Object.fromEntries(entries),
-                    plugins: rollupPlugins,
-                });
-                const { output } = await bundle.generate({
-                    globals: this.globals,
-                    sourcemap: this.sourcemap,
-                });
-                let outputPath;
-                for (const chunkOrAsset of output) {
-                    if (chunkOrAsset.type === 'asset') {
-                        outputPath = path__namespace.join(this.outputDir, chunkOrAsset.fileName);
-                        fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
-                        fs__namespace.writeFileSync(outputPath, chunkOrAsset.source);
+                else {
+                    outputPath = path__namespace.join(this.outputDir, chunkOrAsset.preliminaryFileName);
+                    fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+                    let outputCode = chunkOrAsset.code;
+                    if (this.minify !== undefined || !this.minify) {
+                        outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
-                    else {
-                        outputPath = path__namespace.join(this.outputDir, chunkOrAsset.preliminaryFileName);
-                        fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
-                        let outputCode = chunkOrAsset.code;
-                        if (this.minify !== undefined || !this.minify) {
-                            outputCode = js_beautify.js(outputCode, beautifyOption);
-                        }
-                        fs__namespace.writeFileSync(outputPath, outputCode.trim() + '\n');
-                        console.log('Compile: ' + path__namespace.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
-                    }
+                    fs__namespace.writeFileSync(outputPath, outputCode.trim() + '\n');
+                    console.log('Compile: ' + path__namespace.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
                 }
             }
-            catch (error) {
-                buildFailed = true;
-                console.error(error);
-            }
-            if (bundle) {
-                await bundle.close();
-            }
+        }
+        catch (error) {
+            buildFailed = true;
+            console.error(error);
+        }
+        if (bundle) {
+            await bundle.close();
         }
         if (buildFailed) {
             throw new Error('Build Failed');

@@ -7,7 +7,6 @@ var glob = require('glob');
 var yaml = require('js-yaml');
 var js_beautify = require('js-beautify');
 var nunjucks = require('nunjucks');
-require('./config.js');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -38,7 +37,7 @@ class nunjucksBuilder extends base.baseBuilder {
      * @param option
      */
     constructor(option) {
-        super();
+        super(option);
         /**
          * エントリポイントとなるファイルの拡張子
          */
@@ -46,7 +45,7 @@ class nunjucksBuilder extends base.baseBuilder {
         /**
          * 出力時の拡張子
          */
-        this.outpuExt = 'html';
+        this.outputExt = 'html';
         /**
          * 変数ファイルの名前
          */
@@ -55,9 +54,6 @@ class nunjucksBuilder extends base.baseBuilder {
          * テンプレート変数格納用メンバ変数
          */
         this.templateVars = {};
-        if (option) {
-            this.setOption(option);
-        }
     }
     /**
      * -------------------------
@@ -241,7 +237,7 @@ class nunjucksBuilder extends base.baseBuilder {
      */
     async buildFile(srcPath, outputPath) {
         nunjucks.configure(this.srcDir, this.compileOption);
-        this.getBeautifyOption('dummy.' + this.outpuExt);
+        this.getBeautifyOption('dummy.' + this.outputExt);
         this.loadTemplateVars();
         const templatePath = path__namespace.relative(this.srcDir, srcPath);
         const templateVars = this.getTemplateVars(srcPath);
@@ -256,26 +252,29 @@ class nunjucksBuilder extends base.baseBuilder {
      * 全ファイルのビルド処理
      */
     async buildAll() {
-        console.group('Build entory point files');
+        // console.group('Build entory point files');
         const entries = this.getEntryPoint();
-        if (entries.size > 0) {
-            const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-            this.loadTemplateVars();
-            nunjucks.configure(this.srcDir, this.compileOption);
-            entries.forEach((srcFile, entryPoint) => {
-                const templatePath = path__namespace.relative(this.srcDir, srcFile);
-                const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outpuExt);
-                const templateVars = this.getTemplateVars(srcFile);
-                let html = nunjucks.render(templatePath, templateVars);
-                //@ts-ignore
-                html = js_beautify.html(html, beautifyOption);
-                fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
-                fs__namespace.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
-                console.log('Compile: ' + srcFile + ' => ' + outputPath);
-            });
+        if (entries.size === 0) {
+            return;
         }
-        console.groupEnd();
+        const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+        this.loadTemplateVars();
+        nunjucks.configure(this.srcDir, this.compileOption);
+        entries.forEach((srcFile, entryPoint) => {
+            const templatePath = path__namespace.relative(this.srcDir, srcFile);
+            const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outputExt);
+            const templateVars = this.getTemplateVars(srcFile);
+            let html = nunjucks.render(templatePath, templateVars);
+            //@ts-ignore
+            html = js_beautify.html(html, beautifyOption);
+            fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+            fs__namespace.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+            console.log('Compile: ' + srcFile + ' => ' + outputPath);
+        });
+        // console.groupEnd();
     }
 }
 
-exports.nunjucksBuilder = nunjucksBuilder;
+const htmlBuilder = new nunjucksBuilder();
+
+exports.htmlBuilder = htmlBuilder;

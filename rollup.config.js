@@ -12,6 +12,6 @@ export default {
   output: {
     dir: 'bin',
     format: 'cjs',
-    chunkFileNames: "lib/[name].js"
+    chunkFileNames: "common/[name].js"
   },
 };

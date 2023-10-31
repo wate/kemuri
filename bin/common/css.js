@@ -7,7 +7,6 @@ var glob = require('glob');
 var sass = require('sass');
 var rimraf = require('rimraf');
 var js_beautify = require('js-beautify');
-require('./config.js');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
@@ -60,7 +59,7 @@ class sassBuilder extends base.baseBuilder {
         /**
          * 出力時の拡張子
          */
-        this.outpuExt = 'css';
+        this.outputExt = 'css';
         /**
          * コンパイラーのオプション
          */
@@ -345,7 +344,7 @@ class sassBuilder extends base.baseBuilder {
      */
     async buildFile(srcPath, outputPath) {
         const compileOption = this.getCompileOption();
-        const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
+        const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         const result = sass__namespace.compile(srcPath, compileOption);
         if (compileOption.style !== 'compressed') {
             result.css = js_beautify.css(result.css, beautifyOption);
@@ -379,23 +378,24 @@ class sassBuilder extends base.baseBuilder {
                 });
             }
         }
-        if (entries.size > 0) {
-            const compileOption = this.getCompileOption();
-            const beautifyOption = this.getBeautifyOption('dummy.' + this.outpuExt);
-            entries.forEach((srcFile, entryPoint) => {
-                const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outpuExt);
-                const result = sass__namespace.compile(srcFile, compileOption);
-                if (compileOption.style !== 'compressed') {
-                    result.css = js_beautify.css(result.css, beautifyOption);
-                }
-                fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
-                fs__namespace.writeFileSync(outputPath, result.css.trim() + '\n');
-                console.log('Compile: ' + srcFile + ' => ' + outputPath);
-                if (result.sourceMap) {
-                    fs__namespace.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
-                }
-            });
+        if (entries.size === 0) {
+            return;
         }
+        const compileOption = this.getCompileOption();
+        const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+        entries.forEach((srcFile, entryPoint) => {
+            const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outputExt);
+            const result = sass__namespace.compile(srcFile, compileOption);
+            if (compileOption.style !== 'compressed') {
+                result.css = js_beautify.css(result.css, beautifyOption);
+            }
+            fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+            fs__namespace.writeFileSync(outputPath, result.css.trim() + '\n');
+            console.log('Compile: ' + srcFile + ' => ' + outputPath);
+            if (result.sourceMap) {
+                fs__namespace.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+            }
+        });
         // console.groupEnd();
     }
 }

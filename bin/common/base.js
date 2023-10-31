@@ -78,7 +78,7 @@ class baseBuilder {
         /**
          * 出力時の拡張子
          */
-        this.outpuExt = 'txt';
+        this.outputExt = 'txt';
         /**
          * コンパイラーのオプション
          */
@@ -353,7 +353,7 @@ class baseBuilder {
     convertOutputPath(srcPath, isDir = false) {
         let outputName = path__namespace.basename(srcPath);
         if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
-            outputName = path__namespace.basename(srcPath, path__namespace.extname(srcPath)) + '.' + this.outpuExt;
+            outputName = path__namespace.basename(srcPath, path__namespace.extname(srcPath)) + '.' + this.outputExt;
         }
         const outputDir = path__namespace.dirname(path__namespace.relative(this.srcDir, srcPath));
         const outputPath = path__namespace.join(this.outputDir, outputDir, outputName);
