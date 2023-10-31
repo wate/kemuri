@@ -10,10 +10,6 @@
     "js-builder": "bin/js-builder.js",
     "server": "bin/server.js"
   },
-  "files": [
-    "bin"
-  ],
-  "type": "module",
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
