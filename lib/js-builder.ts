@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import jsBuilder from './builder/js';
 import configLoader from './builder/config';
 import yargs from 'yargs';

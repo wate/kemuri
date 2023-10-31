@@ -1,22 +1,24 @@
+#!/usr/bin/env node
 'use strict';
 
-var css = require('./common/css.cjs');
-var config = require('./common/config.cjs');
+var css = require('./common/css.js');
+var config = require('./common/config.js');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
+require('./common/console.js');
 require('node:fs');
 require('node:path');
-require('./common/base.cjs');
+require('./common/base.js');
 require('glob');
 require('chokidar');
 require('rimraf');
 require('editorconfig');
 require('sass');
 require('js-beautify');
-require('chalk');
-require('node:console');
 require('cosmiconfig');
 require('lodash');
+require('chalk');
+require('node:console');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);

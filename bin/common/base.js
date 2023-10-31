@@ -6,7 +6,7 @@ var glob = require('glob');
 var chokidar = require('chokidar');
 var rimraf = require('rimraf');
 var editorconfig = require('editorconfig');
-require('./config.cjs');
+require('./console.js');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);

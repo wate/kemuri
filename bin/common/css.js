@@ -2,7 +2,7 @@
 
 var fs = require('node:fs');
 var path = require('node:path');
-var base = require('./base.cjs');
+var base = require('./base.js');
 var glob = require('glob');
 var sass = require('sass');
 var rimraf = require('rimraf');

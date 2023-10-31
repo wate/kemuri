@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import browserSync from 'browser-sync';
 import configLoader from './builder/config';
 import _, { get } from 'lodash';
@@ -5,6 +7,7 @@ import chalk from 'chalk';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import './console';
+dotenv.config();
 
 interface serverOption {
   baseDir?: string;

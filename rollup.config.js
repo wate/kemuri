@@ -7,11 +7,12 @@ export default {
     'js-builder': 'lib/js-builder.ts',
     'builder': 'lib/builder.ts',
     'server': 'lib/server.ts',
+    'snippet-builder': 'lib/snippet-builder.ts',
   },
   plugins: [typescript()],
   output: {
     dir: 'bin',
     format: 'cjs',
-    chunkFileNames: "common/[name].cjs"
+    chunkFileNames: "common/[name].js"
   },
 };

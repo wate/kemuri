@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Mock Tool",
   "private": true,
+  "type": "commonjs",
   "bin": {
     "builder": "bin/bin/builder.js",
     "html-builder": "bin/bin/html-builder.js",
@@ -71,6 +72,8 @@
     "cleanup:assets:js": "rimraf public/assets/js/*",
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
-    "build": "rollup -c"
+    "cli-build": "run-s cli-build:*",
+    "cli-build:rollup": "rollup -c --bundleConfigAsCjs",
+    "cli-build:chmod": "chmod 0755 bin/*.js"
   }
 }

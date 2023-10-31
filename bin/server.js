@@ -1,12 +1,35 @@
+#!/usr/bin/env node
 'use strict';
 
 var browserSync = require('browser-sync');
-var config = require('./common/config.cjs');
+var config = require('./common/config.js');
 var _ = require('lodash');
 var chalk = require('chalk');
-require('node:console');
+var dotenv = require('dotenv');
+require('./common/console.js');
 require('cosmiconfig');
+require('node:console');
 
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
+
+dotenv__namespace.config();
 const serverOption = config.configLoader.getServerOption();
 let htmlOutputDir = 'public';
 if (!config.configLoader.isDisable('html')) {

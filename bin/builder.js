@@ -1,15 +1,17 @@
+#!/usr/bin/env node --input-type=commonjs
 'use strict';
 
-var js = require('./common/js.cjs');
-var css = require('./common/css.cjs');
-var html = require('./common/html.cjs');
-var config = require('./common/config.cjs');
+var js = require('./common/js.js');
+var css = require('./common/css.js');
+var html = require('./common/html.js');
+var config = require('./common/config.js');
 var yargs = require('yargs');
 var dotenv = require('dotenv');
 var chalk = require('chalk');
+require('./common/console.js');
 require('node:fs');
 require('node:path');
-require('./common/base.cjs');
+require('./common/base.js');
 require('glob');
 require('chokidar');
 require('rimraf');
@@ -23,9 +25,9 @@ require('js-beautify');
 require('sass');
 require('js-yaml');
 require('nunjucks');
-require('node:console');
 require('cosmiconfig');
 require('lodash');
+require('node:console');
 
 function _interopNamespaceDefault(e) {
     var n = Object.create(null);
