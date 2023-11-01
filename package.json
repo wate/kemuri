@@ -68,7 +68,7 @@
     "js-builder:build": "tsx lib/js-builder.ts",
     "snippet-builder:build": "tsx lib/snippet-builder.ts",
     "cleanup": "rimraf public/*",
-    "cleanup:assets": "run-p site:cleanup:assets:*",
+    "cleanup:assets": "run-p cleanup:assets:*",
     "cleanup:assets:js": "rimraf public/assets/js/*",
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
