@@ -8,7 +8,7 @@ import { find } from 'unist-util-find';
 import { findAfter } from 'unist-util-find-after';
 import { visit } from 'unist-util-visit';
 import { findAllAfter } from 'unist-util-find-all-after';
-import findAllBetween from 'unist-util-find-all-between'
+import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
 
@@ -94,6 +94,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
   protected extraSettingTestFunc(node: any): any {
     if (node.type === 'heading' && node.depth === 3) {
       const textNode = find(node, { type: 'text' });
+      // @ts-ignore
       if (textNode.value === 'VSCode Extra Setting') {
         return node;
       }
@@ -123,14 +124,15 @@ export class vscodeSnippetBuilder extends baseBuilder {
     if (extraSettingStartNode) {
       const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
       if (extraSettingNode) {
+        // @ts-ignore
         const tmpExtraSetting = yaml.load(extraSettingNode.value);
         if (tmpExtraSetting) {
           extraSetting = tmpExtraSetting;
-          if (extraSetting.prefix !== undefined && extraSetting.prefix instanceof String) {
-            extraSetting.prefix = [extraSetting.prefix];
+          if (extraSetting.prefix !== undefined && extraSetting.prefix) {
+            extraSetting.prefix = typeof extraSetting.prefix === 'string' ? [extraSetting.prefix] : extraSetting.prefix;
           }
-          if (extraSetting.scope === undefined && extraSetting.scope instanceof String) {
-            extraSetting.scope = [extraSetting.scope];
+          if (extraSetting.scope === undefined && extraSetting.scope) {
+            extraSetting.scope = typeof extraSetting.scope === 'string' ? [extraSetting.scope] : extraSetting.scope;
           }
         }
       }
@@ -158,6 +160,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
       const matter = find(this.tree, { type: 'yaml' });
       let meta: any = {};
       if (matter) {
+        // @ts-ignore
         meta = yaml.load(matter.value);
       }
       if (meta?.draft) {
@@ -168,6 +171,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
         visit(this.tree, { type: 'heading', depth: 2 }, (node, index) => {
           let snippetNameNode = find(node, { type: 'text' });
           if (snippetNameNode) {
+            // @ts-ignore
             const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
             console.info('Snippet: ' + snippetName);
             //スニペットの開始位置を取得する
@@ -180,6 +184,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
             if (firstParagraphNode) {
               const snippetDescriptionNode = find(firstParagraphNode, { type: 'text' });
               if (snippetDescriptionNode) {
+                // @ts-ignore
                 snippetDescription = snippetDescriptionNode.value;
               }
             }
@@ -191,10 +196,14 @@ export class vscodeSnippetBuilder extends baseBuilder {
               snippets = findAllAfter(this.tree, startPosition, { type: 'code' });
             }
             const extraSetting = this.getSnippetExtraSetting(startPosition);
+            if (extraSetting.scope === undefined && meta.scope) {
+              extraSetting.scope = typeof meta.scope === 'string' ? [meta.scope] : meta.scope;
+            }
             if (snippets) {
               // メンバー変数に格納する
               snippets.forEach((snippet) => {
                 // スニペットの言語を取得する
+                // @ts-ignore
                 const snippetLang = this.languageMaps.get(snippet.lang) || snippet.lang;
                 if (this.snipptes[snippetName] === undefined) {
                   this.snipptes[snippetName] = {
@@ -210,6 +219,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
                   console.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
                   console.log(snippet);
                 }
+                // @ts-ignore
                 this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
               });
             }
