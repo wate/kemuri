@@ -27,6 +27,9 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected outputExt: string = 'html';
 
+  protected compileOption: nunjucks.ConfigureOptions = {
+    noCache: true
+  };
   /**
    * 変数ファイルの名前
    */
