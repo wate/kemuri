@@ -28,7 +28,7 @@ export class nunjucksBuilder extends baseBuilder {
   protected outputExt: string = 'html';
 
   protected compileOption: nunjucks.ConfigureOptions = {
-    noCache: true
+    noCache: true,
   };
   /**
    * 変数ファイルの名前
@@ -230,12 +230,11 @@ export class nunjucksBuilder extends baseBuilder {
     this.loadTemplateVars();
     const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
-    nunjucks.render(templatePath, templateVars, (error) => {
-      if (error) {
-        console.error(error.name + ' : ' + error.message);
-        throw error;
-      }
-    });
+    let html = nunjucks.render(templatePath, templateVars);
+    //@ts-ignore
+    html = js_beautify.html(html, beautifyOption);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+    fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
   }
 
   /**
