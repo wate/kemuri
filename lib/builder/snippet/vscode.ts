@@ -165,9 +165,25 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @returns
    */
   protected getSnippetEndPosition(startPosition: any): any {
-    let endPosition = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
-    if (!endPosition) {
-      endPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    let endPosition = nextSnippetPosition;
+    let extraSettingStartNode: any = null;
+    if (nextSnippetPosition) {
+      const extraSettingHeaders = findAllBetween(
+        this.tree,
+        startPosition,
+        nextSnippetPosition,
+        //@ts-ignore
+        this.extraSettingTestFunc.bind(this),
+      );
+      if (extraSettingHeaders.length > 0) {
+        extraSettingStartNode = extraSettingHeaders.pop();
+      }
+    } else {
+      extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+    }
+    if (extraSettingStartNode) {
+      endPosition = extraSettingStartNode;
     }
     return endPosition;
   }
@@ -178,7 +194,22 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   protected getSnippetExtraSetting(startPosition: any): any {
     let extraSetting: any = {};
-    const extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+    let extraSettingStartNode: any = null;
+    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    if (nextSnippetPosition) {
+      const extraSettingHeaders = findAllBetween(
+        this.tree,
+        startPosition,
+        nextSnippetPosition,
+        //@ts-ignore
+        this.extraSettingTestFunc.bind(this),
+      );
+      if (extraSettingHeaders.length > 0) {
+        extraSettingStartNode = extraSettingHeaders.pop();
+      }
+    } else {
+      extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+    }
     if (extraSettingStartNode) {
       const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
       if (extraSettingNode) {
