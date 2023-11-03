@@ -9,7 +9,8 @@
     "html-builder": "bin/html-builder.js",
     "css-builder": "bin/css-builder.js",
     "js-builder": "bin/js-builder.js",
-    "server": "bin/server.js"
+    "server": "bin/server.js",
+    "snippet-builder": "bin/snippet-builder.js"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
