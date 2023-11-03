@@ -13,7 +13,7 @@ enable:
 #   baseDir: public
 #   port: 3000
 #   watch: true
-#   watchFiles: null
+#   watchFiles: []
 #   open: true
 #   notify: false
 #   ui: false
