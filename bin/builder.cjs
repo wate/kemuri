@@ -1,33 +1,54 @@
 #!/usr/bin/env node
-import { j as jsBuilder } from './common/js.mjs';
-import { c as cssBuilder } from './common/css.mjs';
-import { h as htmlBuilder } from './common/html.mjs';
-import { c as configLoader } from './common/config.mjs';
-import yargs from 'yargs';
-import * as dotenv from 'dotenv';
-import chalk from 'chalk';
-import './common/console.mjs';
-import 'node:fs';
-import 'node:path';
-import './common/base.mjs';
-import 'glob';
-import 'chokidar';
-import 'rimraf';
-import 'editorconfig';
-import 'rollup';
-import '@rollup/plugin-node-resolve';
-import '@rollup/plugin-commonjs';
-import '@rollup/plugin-typescript';
-import '@rollup/plugin-terser';
-import 'js-beautify';
-import 'sass';
-import 'js-yaml';
-import 'nunjucks';
-import 'cosmiconfig';
-import 'lodash';
-import 'node:console';
+'use strict';
 
-dotenv.config();
+var js = require('./common/js.cjs');
+var css = require('./common/css.cjs');
+var html = require('./common/html.cjs');
+var config = require('./common/config.cjs');
+var yargs = require('yargs');
+var dotenv = require('dotenv');
+var chalk = require('chalk');
+require('./common/console.cjs');
+require('node:fs');
+require('node:path');
+require('./common/base.cjs');
+require('glob');
+require('chokidar');
+require('rimraf');
+require('editorconfig');
+require('rollup');
+require('@rollup/plugin-node-resolve');
+require('@rollup/plugin-commonjs');
+require('@rollup/plugin-typescript');
+require('@rollup/plugin-terser');
+require('js-beautify');
+require('sass');
+require('js-yaml');
+require('nunjucks');
+require('cosmiconfig');
+require('lodash');
+require('node:console');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
+
+dotenv__namespace.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
@@ -56,7 +77,7 @@ else if (argv.production !== undefined) {
     mode = 'production';
 }
 const builders = [];
-if (configLoader.isEnable('js') || argv.js) {
+if (config.configLoader.isEnable('js') || argv.js) {
     const jsOrverrideOption = {};
     if (argv.sourcemap !== undefined) {
         jsOrverrideOption.sourcemap = true;
@@ -64,14 +85,14 @@ if (configLoader.isEnable('js') || argv.js) {
     if (argv.minify !== undefined || mode === 'production') {
         jsOrverrideOption.minify = true;
     }
-    const jsBuilderOption = configLoader.getJsOption(jsOrverrideOption);
+    const jsBuilderOption = config.configLoader.getJsOption(jsOrverrideOption);
     console.group(chalk.blue('javaScript Builder Option'));
     console.log(jsBuilderOption);
     console.groupEnd();
-    jsBuilder.setOption(jsBuilderOption);
-    builders.push(jsBuilder);
+    js.jsBuilder.setOption(jsBuilderOption);
+    builders.push(js.jsBuilder);
 }
-if (configLoader.isEnable('css') || argv.css) {
+if (config.configLoader.isEnable('css') || argv.css) {
     const cssOrverrideOption = {};
     if (argv.sourcemap !== undefined) {
         cssOrverrideOption.sourcemap = true;
@@ -79,20 +100,20 @@ if (configLoader.isEnable('css') || argv.css) {
     if (argv.minify !== undefined || mode === 'production') {
         cssOrverrideOption.style = 'compressed';
     }
-    const cssBuilderOption = configLoader.getCssOption(cssOrverrideOption);
+    const cssBuilderOption = config.configLoader.getCssOption(cssOrverrideOption);
     console.group(chalk.blue('CSS Builder Option'));
     console.log(cssBuilderOption);
     console.groupEnd();
-    cssBuilder.setOption(cssBuilderOption);
-    builders.push(cssBuilder);
+    css.cssBuilder.setOption(cssBuilderOption);
+    builders.push(css.cssBuilder);
 }
-if (configLoader.isEnable('html') || argv.html) {
-    const htmlBuilderOption = configLoader.getHtmlOption();
+if (config.configLoader.isEnable('html') || argv.html) {
+    const htmlBuilderOption = config.configLoader.getHtmlOption();
     console.group(chalk.blue('HTML Builder Option'));
     console.log(htmlBuilderOption);
     console.groupEnd();
-    htmlBuilder.setOption(htmlBuilderOption);
-    builders.push(htmlBuilder);
+    html.htmlBuilder.setOption(htmlBuilderOption);
+    builders.push(html.htmlBuilder);
 }
 if (argv.watch) {
     builders.forEach((builder) => {

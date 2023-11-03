@@ -1,10 +1,32 @@
-import fs__default from 'node:fs';
-import * as path from 'node:path';
-import { glob } from 'glob';
-import * as chokidar from 'chokidar';
-import { rimraf, rimrafSync } from 'rimraf';
-import editorconfig from 'editorconfig';
-import './console.js';
+'use strict';
+
+var fs = require('node:fs');
+var path = require('node:path');
+var glob = require('glob');
+var chokidar = require('chokidar');
+var rimraf = require('rimraf');
+var editorconfig = require('editorconfig');
+require('./console.cjs');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var path__namespace = /*#__PURE__*/_interopNamespaceDefault(path);
+var chokidar__namespace = /*#__PURE__*/_interopNamespaceDefault(chokidar);
 
 /**
  * ビルド処理の抽象クラス
@@ -261,7 +283,7 @@ class baseBuilder {
      * @returns
      */
     globIgnoredFunc(p) {
-        const fileName = path.basename(p.name, path.extname(p.name));
+        const fileName = path__namespace.basename(p.name, path__namespace.extname(p.name));
         const prefixCheck = this.ignoreFilePrefix ? RegExp('^' + this.ignoreFilePrefix).test(fileName) : false;
         const suffixCheck = this.ignoreFileSuffix ? RegExp(this.ignoreFileSuffix + '$').test(fileName) : false;
         return prefixCheck || suffixCheck;
@@ -290,7 +312,7 @@ class baseBuilder {
                 childrenIgnored: this.globChildrenIgnoredFunc.bind(this),
             },
         };
-        const entryPointFiles = glob.sync(entryPointGlobPatetrn, globOption);
+        const entryPointFiles = glob.glob.sync(entryPointGlobPatetrn, globOption);
         return entryPointFiles;
     }
     /**
@@ -302,8 +324,8 @@ class baseBuilder {
     convertEntryPoint(entryPointFiles) {
         const entries = new Map();
         entryPointFiles.forEach((file) => {
-            const targetFile = path.relative(this.srcDir, file);
-            const key = path.join(path.dirname(targetFile), path.basename(targetFile, path.extname(targetFile)));
+            const targetFile = path__namespace.relative(this.srcDir, file);
+            const key = path__namespace.join(path__namespace.dirname(targetFile), path__namespace.basename(targetFile, path__namespace.extname(targetFile)));
             entries.set(key, file);
         });
         return entries;
@@ -329,12 +351,12 @@ class baseBuilder {
      * @returns
      */
     convertOutputPath(srcPath, isDir = false) {
-        let outputName = path.basename(srcPath);
+        let outputName = path__namespace.basename(srcPath);
         if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
-            outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
+            outputName = path__namespace.basename(srcPath, path__namespace.extname(srcPath)) + '.' + this.outputExt;
         }
-        const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
-        const outputPath = path.join(this.outputDir, outputDir, outputName);
+        const outputDir = path__namespace.dirname(path__namespace.relative(this.srcDir, srcPath));
+        const outputPath = path__namespace.join(this.outputDir, outputDir, outputName);
         return outputPath;
     }
     /**
@@ -363,7 +385,7 @@ class baseBuilder {
         this.getEntryPoint();
         const watchFilePattern = this.getWatchFilePattern.bind(this)();
         console.log(watchFilePattern);
-        this.watcher = chokidar.watch(watchFilePattern, this.getWatchOpton.bind(this)());
+        this.watcher = chokidar__namespace.watch(watchFilePattern, this.getWatchOpton.bind(this)());
         this.watcher
             .on('add', this.watchAddCallBack.bind(this))
             .on('change', this.watchChangeCallBack.bind(this))
@@ -428,8 +450,8 @@ class baseBuilder {
         console.group('Remove file: ' + filePath);
         if (Array.from(this.entryPoint.values()).includes(filePath)) {
             const outputPath = this.convertOutputPath(filePath);
-            if (fs__default.existsSync(outputPath)) {
-                rimraf(outputPath);
+            if (fs.existsSync(outputPath)) {
+                rimraf.rimraf(outputPath);
                 console.log('Remove: ' + outputPath);
             }
         }
@@ -452,8 +474,8 @@ class baseBuilder {
     watchUnlinkDirCallBack(filePath) {
         console.group('Remove directory: ' + filePath);
         const outputPath = this.convertOutputPath(filePath, true);
-        if (fs__default.existsSync(outputPath)) {
-            rimraf(outputPath);
+        if (fs.existsSync(outputPath)) {
+            rimraf.rimraf(outputPath);
             console.log('Remove: ' + outputPath);
         }
         console.groupEnd();
@@ -516,7 +538,7 @@ class baseBuilder {
      */
     build(cleanup) {
         if (cleanup) {
-            rimrafSync(this.outputDir, {
+            rimraf.rimrafSync(this.outputDir, {
                 preserveRoot: true,
             });
         }
@@ -524,4 +546,4 @@ class baseBuilder {
     }
 }
 
-export { baseBuilder as b };
+exports.baseBuilder = baseBuilder;

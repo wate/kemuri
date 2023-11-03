@@ -1,15 +1,36 @@
 #!/usr/bin/env node
-import browserSync from 'browser-sync';
-import { c as configLoader } from './common/config.mjs';
-import _ from 'lodash';
-import chalk from 'chalk';
-import yargs from 'yargs';
-import * as dotenv from 'dotenv';
-import './common/console.mjs';
-import 'cosmiconfig';
-import 'node:console';
+'use strict';
 
-dotenv.config();
+var browserSync = require('browser-sync');
+var config = require('./common/config.cjs');
+var _ = require('lodash');
+var chalk = require('chalk');
+var yargs = require('yargs');
+var dotenv = require('dotenv');
+require('./common/console.cjs');
+require('cosmiconfig');
+require('node:console');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
+
+dotenv__namespace.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: true, alias: 'watch', description: 'watchモードの指定' },
@@ -22,7 +43,7 @@ const argv = yargs(process.argv.slice(2))
     'ui-port': { type: 'boolean', default: false, alias: 'p', description: 'UI機能のポート番号' },
 })
     .parseSync();
-const serverOption = configLoader.getServerOption();
+const serverOption = config.configLoader.getServerOption();
 /**
  * browserSyncのベースディレクトリ
  */
@@ -31,8 +52,8 @@ if (argv.baseDir !== undefined) {
     browserSyncBaseDir = argv.baseDir;
 }
 else {
-    if (!configLoader.isEnable('html')) {
-        const htmlOption = configLoader.getHtmlOption();
+    if (!config.configLoader.isEnable('html')) {
+        const htmlOption = config.configLoader.getHtmlOption();
         if (_.has(htmlOption, 'outputDir')) {
             //@ts-ignore
             browserSyncBaseDir = _.get(htmlOption, 'outputDir');

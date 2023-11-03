@@ -1,17 +1,39 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { b as baseBuilder } from './base.js';
-import { rollup } from 'rollup';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import terser from '@rollup/plugin-terser';
-import js_beautify from 'js-beautify';
+'use strict';
+
+var fs = require('node:fs');
+var path = require('node:path');
+var base = require('./base.cjs');
+var rollup = require('rollup');
+var nodeResolve = require('@rollup/plugin-node-resolve');
+var commonjs = require('@rollup/plugin-commonjs');
+var typescript = require('@rollup/plugin-typescript');
+var terser = require('@rollup/plugin-terser');
+var js_beautify = require('js-beautify');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var fs__namespace = /*#__PURE__*/_interopNamespaceDefault(fs);
+var path__namespace = /*#__PURE__*/_interopNamespaceDefault(path);
 
 /**
  * ビルド処理の抽象クラス
  */
-class typescriptBuilder extends baseBuilder {
+class typescriptBuilder extends base.baseBuilder {
     /**
      * コンストラクタ
      * @param option
@@ -178,7 +200,7 @@ class typescriptBuilder extends baseBuilder {
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser());
             }
-            bundle = await rollup({
+            bundle = await rollup.rollup({
                 external: Object.keys(this.globals),
                 input: srcPath,
                 plugins: rollupPlugins,
@@ -187,18 +209,18 @@ class typescriptBuilder extends baseBuilder {
                 globals: this.globals,
                 sourcemap: this.sourcemap,
             });
-            let outputDir = path.dirname(outputPath);
-            fs.mkdirSync(outputDir, { recursive: true });
+            let outputDir = path__namespace.dirname(outputPath);
+            fs__namespace.mkdirSync(outputDir, { recursive: true });
             for (const chunkOrAsset of output) {
                 if (chunkOrAsset.type === 'asset') {
-                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
+                    fs__namespace.writeFileSync(path__namespace.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
                 }
                 else {
                     let outputCode = chunkOrAsset.code;
                     if (this.minify === undefined && !this.minify) {
                         outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
-                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
+                    fs__namespace.writeFileSync(path__namespace.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
                 }
             }
         }
@@ -231,7 +253,7 @@ class typescriptBuilder extends baseBuilder {
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser());
             }
-            bundle = await rollup({
+            bundle = await rollup.rollup({
                 external: Object.keys(this.globals),
                 input: Object.fromEntries(entries),
                 plugins: rollupPlugins,
@@ -243,19 +265,19 @@ class typescriptBuilder extends baseBuilder {
             let outputPath;
             for (const chunkOrAsset of output) {
                 if (chunkOrAsset.type === 'asset') {
-                    outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
-                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-                    fs.writeFileSync(outputPath, chunkOrAsset.source);
+                    outputPath = path__namespace.join(this.outputDir, chunkOrAsset.fileName);
+                    fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+                    fs__namespace.writeFileSync(outputPath, chunkOrAsset.source);
                 }
                 else {
-                    outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
-                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+                    outputPath = path__namespace.join(this.outputDir, chunkOrAsset.preliminaryFileName);
+                    fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
                     let outputCode = chunkOrAsset.code;
                     if (this.minify !== undefined || !this.minify) {
                         outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
-                    fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-                    console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
+                    fs__namespace.writeFileSync(outputPath, outputCode.trim() + '\n');
+                    console.log('Compile: ' + path__namespace.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
                 }
             }
         }
@@ -275,4 +297,4 @@ class typescriptBuilder extends baseBuilder {
 
 const jsBuilder = new typescriptBuilder();
 
-export { jsBuilder as j };
+exports.jsBuilder = jsBuilder;

@@ -1,56 +1,35 @@
 #!/usr/bin/env node
-'use strict';
+import { h as htmlBuilder } from './common/html.mjs';
+import { c as configLoader } from './common/config.mjs';
+import yargs from 'yargs';
+import * as dotenv from 'dotenv';
+import './common/console.mjs';
+import 'node:fs';
+import 'node:path';
+import './common/base.mjs';
+import 'glob';
+import 'chokidar';
+import 'rimraf';
+import 'editorconfig';
+import 'js-yaml';
+import 'js-beautify';
+import 'nunjucks';
+import 'cosmiconfig';
+import 'lodash';
+import 'chalk';
+import 'node:console';
 
-var html = require('./common/html.js');
-var config = require('./common/config.js');
-var yargs = require('yargs');
-var dotenv = require('dotenv');
-require('./common/console.js');
-require('node:fs');
-require('node:path');
-require('./common/base.js');
-require('glob');
-require('chokidar');
-require('rimraf');
-require('editorconfig');
-require('js-yaml');
-require('js-beautify');
-require('nunjucks');
-require('cosmiconfig');
-require('lodash');
-require('chalk');
-require('node:console');
-
-function _interopNamespaceDefault(e) {
-    var n = Object.create(null);
-    if (e) {
-        Object.keys(e).forEach(function (k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function () { return e[k]; }
-                });
-            }
-        });
-    }
-    n.default = e;
-    return Object.freeze(n);
-}
-
-var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
-
-dotenv__namespace.config();
+dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
 })
     .parseSync();
-const builderOption = config.configLoader.getHtmlOption();
-html.htmlBuilder.setOption(builderOption);
+const builderOption = configLoader.getHtmlOption();
+htmlBuilder.setOption(builderOption);
 if (argv.watch) {
-    html.htmlBuilder.watch();
+    htmlBuilder.watch();
 }
 else {
-    html.htmlBuilder.build();
+    htmlBuilder.build();
 }

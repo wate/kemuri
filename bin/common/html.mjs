@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { b as baseBuilder } from './base.js';
+import { b as baseBuilder } from './base.mjs';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';

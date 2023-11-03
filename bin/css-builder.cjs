@@ -1,24 +1,45 @@
 #!/usr/bin/env node
-import { c as cssBuilder } from './common/css.mjs';
-import { c as configLoader } from './common/config.mjs';
-import yargs from 'yargs';
-import * as dotenv from 'dotenv';
-import './common/console.mjs';
-import 'node:fs';
-import 'node:path';
-import './common/base.mjs';
-import 'glob';
-import 'chokidar';
-import 'rimraf';
-import 'editorconfig';
-import 'sass';
-import 'js-beautify';
-import 'cosmiconfig';
-import 'lodash';
-import 'chalk';
-import 'node:console';
+'use strict';
 
-dotenv.config();
+var css = require('./common/css.cjs');
+var config = require('./common/config.cjs');
+var yargs = require('yargs');
+var dotenv = require('dotenv');
+require('./common/console.cjs');
+require('node:fs');
+require('node:path');
+require('./common/base.cjs');
+require('glob');
+require('chokidar');
+require('rimraf');
+require('editorconfig');
+require('sass');
+require('js-beautify');
+require('cosmiconfig');
+require('lodash');
+require('chalk');
+require('node:console');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
+
+dotenv__namespace.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
@@ -62,11 +83,11 @@ if (argv.style !== undefined) {
 else if (argv.minify !== undefined || mode === 'production') {
     orverrideOption.style = 'compressed';
 }
-const builderOption = configLoader.getCssOption(orverrideOption);
-cssBuilder.setOption(builderOption);
+const builderOption = config.configLoader.getCssOption(orverrideOption);
+css.cssBuilder.setOption(builderOption);
 if (argv.watch) {
-    cssBuilder.watch();
+    css.cssBuilder.watch();
 }
 else {
-    cssBuilder.build();
+    css.cssBuilder.build();
 }

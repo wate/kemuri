@@ -72,8 +72,8 @@
     "cleanup:assets:js": "rimraf public/assets/js/*",
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
-    "cli-build": "run-s cli-build:*",
-    "cli-build:rollup": "rollup -c",
-    "cli-build:chmod": "chmod 0755 bin/*.js"
+    "build": "run-s build:*",
+    "build:rollup": "rollup -c",
+    "build:chmod": "chmod 0755 bin/*.js bin/*.cjs"
   }
 }

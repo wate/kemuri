@@ -1,49 +1,28 @@
 #!/usr/bin/env node
-'use strict';
+import { j as jsBuilder } from './common/js.mjs';
+import { c as configLoader } from './common/config.mjs';
+import yargs from 'yargs';
+import * as dotenv from 'dotenv';
+import './common/console.mjs';
+import 'node:fs';
+import 'node:path';
+import './common/base.mjs';
+import 'glob';
+import 'chokidar';
+import 'rimraf';
+import 'editorconfig';
+import 'rollup';
+import '@rollup/plugin-node-resolve';
+import '@rollup/plugin-commonjs';
+import '@rollup/plugin-typescript';
+import '@rollup/plugin-terser';
+import 'js-beautify';
+import 'cosmiconfig';
+import 'lodash';
+import 'chalk';
+import 'node:console';
 
-var js = require('./common/js.js');
-var config = require('./common/config.js');
-var yargs = require('yargs');
-var dotenv = require('dotenv');
-require('./common/console.js');
-require('node:fs');
-require('node:path');
-require('./common/base.js');
-require('glob');
-require('chokidar');
-require('rimraf');
-require('editorconfig');
-require('rollup');
-require('@rollup/plugin-node-resolve');
-require('@rollup/plugin-commonjs');
-require('@rollup/plugin-typescript');
-require('@rollup/plugin-terser');
-require('js-beautify');
-require('cosmiconfig');
-require('lodash');
-require('chalk');
-require('node:console');
-
-function _interopNamespaceDefault(e) {
-    var n = Object.create(null);
-    if (e) {
-        Object.keys(e).forEach(function (k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function () { return e[k]; }
-                });
-            }
-        });
-    }
-    n.default = e;
-    return Object.freeze(n);
-}
-
-var dotenv__namespace = /*#__PURE__*/_interopNamespaceDefault(dotenv);
-
-dotenv__namespace.config();
+dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
@@ -83,11 +62,11 @@ if (argv.sourcemap !== undefined && argv.sourcemap) {
 if (argv.minify !== undefined || mode === 'production') {
     orverrideOption.minify = true;
 }
-const builderOption = config.configLoader.getJsOption(orverrideOption);
-js.jsBuilder.setOption(builderOption);
+const builderOption = configLoader.getJsOption(orverrideOption);
+jsBuilder.setOption(builderOption);
 if (argv.watch) {
-    js.jsBuilder.watch();
+    jsBuilder.watch();
 }
 else {
-    js.jsBuilder.build();
+    jsBuilder.build();
 }

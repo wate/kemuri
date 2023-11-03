@@ -1,15 +1,38 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { b as baseBuilder } from './base.js';
-import { glob } from 'glob';
-import * as sass from 'sass';
-import { rimraf } from 'rimraf';
-import js_beautify from 'js-beautify';
+'use strict';
+
+var fs = require('node:fs');
+var path = require('node:path');
+var base = require('./base.cjs');
+var glob = require('glob');
+var sass = require('sass');
+var rimraf = require('rimraf');
+var js_beautify = require('js-beautify');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var fs__namespace = /*#__PURE__*/_interopNamespaceDefault(fs);
+var path__namespace = /*#__PURE__*/_interopNamespaceDefault(path);
+var sass__namespace = /*#__PURE__*/_interopNamespaceDefault(sass);
 
 /**
  * ビルド処理の抽象クラス
  */
-class sassBuilder extends baseBuilder {
+class sassBuilder extends base.baseBuilder {
     /**
      * コンストラクタ
      * @param option
@@ -117,7 +140,7 @@ class sassBuilder extends baseBuilder {
             return;
         }
         const indexMatchPatterns = ['./_*.' + this.convertGlobPattern(this.fileExts), './*/' + this.indexFileName];
-        const partialMatchFiles = glob
+        const partialMatchFiles = glob.glob
             .sync(indexMatchPatterns, {
             cwd: targetDir,
         })
@@ -126,9 +149,9 @@ class sassBuilder extends baseBuilder {
             return partialFile !== this.indexFileName;
         })
             .sort();
-        const indexFilePath = path.join(targetDir, this.indexFileName);
+        const indexFilePath = path__namespace.join(targetDir, this.indexFileName);
         if (partialMatchFiles.length === 0) {
-            rimraf(indexFilePath);
+            rimraf.rimraf(indexFilePath);
             console.log('Remove index file: ' + indexFilePath);
         }
         else {
@@ -137,7 +160,7 @@ class sassBuilder extends baseBuilder {
                 files: [],
             };
             partialMatchFiles.forEach((partialFile) => {
-                if (partialFile.includes(path.sep)) {
+                if (partialFile.includes(path__namespace.sep)) {
                     //@ts-ignore
                     partialFiles.children.push(partialFile);
                 }
@@ -163,20 +186,20 @@ class sassBuilder extends baseBuilder {
                 }));
             }
             const indexFileContent = indexFileContentLines.join('\n') + '\n';
-            if (fs.existsSync(indexFilePath)) {
-                const indexFileContentBefore = fs.readFileSync(indexFilePath, 'utf-8');
+            if (fs__namespace.existsSync(indexFilePath)) {
+                const indexFileContentBefore = fs__namespace.readFileSync(indexFilePath, 'utf-8');
                 if (indexFileContentBefore != indexFileContent) {
-                    fs.writeFileSync(indexFilePath, indexFileContent);
+                    fs__namespace.writeFileSync(indexFilePath, indexFileContent);
                     console.log('Update index file: ' + indexFilePath);
                 }
             }
             else {
-                fs.writeFileSync(indexFilePath, indexFileContent);
+                fs__namespace.writeFileSync(indexFilePath, indexFileContent);
                 console.log('Generate index file: ' + indexFilePath);
             }
         }
-        if (recursive && path.dirname(targetDir).startsWith(this.srcDir)) {
-            this.generateIndexFile(path.dirname(targetDir));
+        if (recursive && path__namespace.dirname(targetDir).startsWith(this.srcDir)) {
+            this.generateIndexFile(path__namespace.dirname(targetDir));
         }
     }
     /**
@@ -232,13 +255,13 @@ class sassBuilder extends baseBuilder {
      * @param filePath
      */
     watchAddCallBack(filePath) {
-        if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
+        if (this.generateIndex && path__namespace.basename(filePath) === this.indexFileName) {
             return;
         }
         console.group('Add file: ' + filePath);
         if (this.generateIndex) {
             // インデックスファイルの生成/更新
-            this.generateIndexFile.bind(this)(path.dirname(filePath));
+            this.generateIndexFile.bind(this)(path__namespace.dirname(filePath));
         }
         try {
             //エントリポイントを更新
@@ -263,13 +286,13 @@ class sassBuilder extends baseBuilder {
      * @returns
      */
     watchChangeCallBack(filePath) {
-        if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
+        if (this.generateIndex && path__namespace.basename(filePath) === this.indexFileName) {
             return;
         }
         console.group('Update file: ' + filePath);
         if (this.generateIndex) {
             // インデックスファイルの更新
-            this.generateIndexFile.bind(this)(path.dirname(filePath));
+            this.generateIndexFile.bind(this)(path__namespace.dirname(filePath));
         }
         try {
             if (Array.from(this.entryPoint.values()).includes(filePath)) {
@@ -293,18 +316,18 @@ class sassBuilder extends baseBuilder {
      * @returns
      */
     watchUnlinkCallBack(filePath) {
-        if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
+        if (this.generateIndex && path__namespace.basename(filePath) === this.indexFileName) {
             return;
         }
         console.group('Remove file: ' + filePath);
         if (this.generateIndex) {
             // インデックスファイルの更新
-            this.generateIndexFile.bind(this)(path.dirname(filePath));
+            this.generateIndexFile.bind(this)(path__namespace.dirname(filePath));
         }
         if (Array.from(this.entryPoint.values()).includes(filePath)) {
             this.entryPoint.delete(filePath);
             const outputPath = this.convertOutputPath(filePath);
-            rimraf(outputPath);
+            rimraf.rimraf(outputPath);
             console.log('Remove: ' + outputPath);
         }
         console.groupEnd();
@@ -322,14 +345,14 @@ class sassBuilder extends baseBuilder {
     async buildFile(srcPath, outputPath) {
         const compileOption = this.getCompileOption();
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-        const result = sass.compile(srcPath, compileOption);
+        const result = sass__namespace.compile(srcPath, compileOption);
         if (compileOption.style !== 'compressed') {
             result.css = js_beautify.css(result.css, beautifyOption);
         }
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, result.css.trim() + '\n');
+        fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+        fs__namespace.writeFileSync(outputPath, result.css.trim() + '\n');
         if (result.sourceMap) {
-            fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+            fs__namespace.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
         }
     }
     /**
@@ -340,12 +363,12 @@ class sassBuilder extends baseBuilder {
         const entries = this.getEntryPoint();
         if (this.generateIndex) {
             //インデックスファイルの生成/更新
-            const partialFilePattern = path.join(this.srcDir, '**/_*.' + this.convertGlobPattern(this.fileExts));
-            const partialFiles = glob.sync(partialFilePattern);
+            const partialFilePattern = path__namespace.join(this.srcDir, '**/_*.' + this.convertGlobPattern(this.fileExts));
+            const partialFiles = glob.glob.sync(partialFilePattern);
             if (partialFiles.length > 0) {
                 partialFiles
                     .map((partialFile) => {
-                    return path.dirname(partialFile);
+                    return path__namespace.dirname(partialFile);
                 })
                     .reduce((unique, item) => {
                     return unique.includes(item) ? unique : [...unique, item];
@@ -361,16 +384,16 @@ class sassBuilder extends baseBuilder {
         const compileOption = this.getCompileOption();
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         entries.forEach((srcFile, entryPoint) => {
-            const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
-            const result = sass.compile(srcFile, compileOption);
+            const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outputExt);
+            const result = sass__namespace.compile(srcFile, compileOption);
             if (compileOption.style !== 'compressed') {
                 result.css = js_beautify.css(result.css, beautifyOption);
             }
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, result.css.trim() + '\n');
+            fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+            fs__namespace.writeFileSync(outputPath, result.css.trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
             if (result.sourceMap) {
-                fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+                fs__namespace.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
             }
         });
         // console.groupEnd();
@@ -379,4 +402,4 @@ class sassBuilder extends baseBuilder {
 
 const cssBuilder = new sassBuilder();
 
-export { cssBuilder as c };
+exports.cssBuilder = cssBuilder;

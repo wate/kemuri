@@ -1,5 +1,7 @@
-import { cosmiconfigSync } from 'cosmiconfig';
-import _ from 'lodash';
+'use strict';
+
+var cosmiconfig = require('cosmiconfig');
+var _ = require('lodash');
 
 class configLoader {
     /**
@@ -7,7 +9,7 @@ class configLoader {
      * @returns
      */
     static load() {
-        const explorerSync = cosmiconfigSync('builder');
+        const explorerSync = cosmiconfig.cosmiconfigSync('builder');
         const result = explorerSync.search();
         return result && result.config ? result.config : {};
     }
@@ -98,4 +100,4 @@ class configLoader {
     }
 }
 
-export { configLoader as c };
+exports.configLoader = configLoader;

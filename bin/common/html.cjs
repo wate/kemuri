@@ -1,15 +1,37 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { b as baseBuilder } from './base.js';
-import { glob } from 'glob';
-import yaml from 'js-yaml';
-import js_beautify from 'js-beautify';
-import nunjucks from 'nunjucks';
+'use strict';
+
+var fs = require('node:fs');
+var path = require('node:path');
+var base = require('./base.cjs');
+var glob = require('glob');
+var yaml = require('js-yaml');
+var js_beautify = require('js-beautify');
+var nunjucks = require('nunjucks');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var fs__namespace = /*#__PURE__*/_interopNamespaceDefault(fs);
+var path__namespace = /*#__PURE__*/_interopNamespaceDefault(path);
 
 /**
  * ビルド処理の抽象クラス
  */
-class nunjucksBuilder extends baseBuilder {
+class nunjucksBuilder extends base.baseBuilder {
     /**
      * コンストラクタ
      * @param option
@@ -54,11 +76,11 @@ class nunjucksBuilder extends baseBuilder {
      */
     loadTemplateVars() {
         const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
-        const varFiles = glob.sync(globPatterns);
+        const varFiles = glob.glob.sync(globPatterns);
         varFiles.forEach((varFilePath) => {
-            const key = path.dirname(varFilePath);
+            const key = path__namespace.dirname(varFilePath);
             // @ts-ignore
-            this.templateVars[key] = yaml.load(fs.readFileSync(varFilePath));
+            this.templateVars[key] = yaml.load(fs__namespace.readFileSync(varFilePath));
         });
     }
     /**
@@ -69,14 +91,14 @@ class nunjucksBuilder extends baseBuilder {
     getTemplateVars(srcFile) {
         let templateVars = this.templateVars['.'] ?? {};
         let key = '';
-        const srcFilePaths = path.dirname(srcFile).split(path.sep);
+        const srcFilePaths = path__namespace.dirname(srcFile).split(path__namespace.sep);
         srcFilePaths.forEach((dirName) => {
-            key = path.join(key, dirName);
+            key = path__namespace.join(key, dirName);
             if (this.templateVars[key]) {
                 templateVars = Object.assign(templateVars, this.templateVars[key]);
             }
         });
-        templateVars['_scope'] = path.dirname(path.relative(this.srcDir, srcFile));
+        templateVars['_scope'] = path__namespace.dirname(path__namespace.relative(this.srcDir, srcFile));
         return templateVars;
     }
     /**
@@ -87,7 +109,7 @@ class nunjucksBuilder extends baseBuilder {
      */
     isRootVarFile(varFilePath) {
         const isProjectRootVarFile = varFilePath === this.varFileName;
-        const isSrcRootVarFile = path.join(this.srcDir, this.varFileName) === varFilePath;
+        const isSrcRootVarFile = path__namespace.join(this.srcDir, this.varFileName) === varFilePath;
         return isProjectRootVarFile || isSrcRootVarFile;
     }
     /**
@@ -127,7 +149,7 @@ class nunjucksBuilder extends baseBuilder {
     watchAddCallBack(filePath) {
         console.group('Add file: ' + filePath);
         try {
-            const addFileName = path.basename(filePath);
+            const addFileName = path__namespace.basename(filePath);
             if (addFileName !== this.varFileName) {
                 //エントリポイントを更新
                 this.getEntryPoint();
@@ -149,7 +171,7 @@ class nunjucksBuilder extends baseBuilder {
                 else {
                     //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
                     this.entryPoint.forEach((srcFile) => {
-                        if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+                        if (srcFile.startsWith(path__namespace.dirname(filePath) + path__namespace.sep)) {
                             const outputPath = this.convertOutputPath(srcFile);
                             this.buildFile(srcFile, outputPath);
                             console.log('Compile: ' + srcFile + ' => ' + outputPath);
@@ -171,7 +193,7 @@ class nunjucksBuilder extends baseBuilder {
     watchChangeCallBack(filePath) {
         console.group('Update file: ' + filePath);
         try {
-            const changeFileName = path.basename(filePath);
+            const changeFileName = path__namespace.basename(filePath);
             if (changeFileName !== this.varFileName) {
                 if (Array.from(this.entryPoint.values()).includes(filePath)) {
                     const outputPath = this.convertOutputPath(filePath);
@@ -191,7 +213,7 @@ class nunjucksBuilder extends baseBuilder {
                 else {
                     //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
                     this.entryPoint.forEach((srcFile) => {
-                        if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+                        if (srcFile.startsWith(path__namespace.dirname(filePath) + path__namespace.sep)) {
                             const outputPath = this.convertOutputPath(srcFile);
                             this.buildFile(srcFile, outputPath);
                             console.log('Compile: ' + srcFile + ' => ' + outputPath);
@@ -220,13 +242,13 @@ class nunjucksBuilder extends baseBuilder {
         nunjucks.configure(this.srcDir, this.compileOption);
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         this.loadTemplateVars();
-        const templatePath = path.relative(this.srcDir, srcPath);
+        const templatePath = path__namespace.relative(this.srcDir, srcPath);
         const templateVars = this.getTemplateVars(srcPath);
         let html = nunjucks.render(templatePath, templateVars);
         //@ts-ignore
         html = js_beautify.html(html, beautifyOption);
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+        fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+        fs__namespace.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
     }
     /**
      * 全ファイルのビルド処理
@@ -241,14 +263,14 @@ class nunjucksBuilder extends baseBuilder {
         this.loadTemplateVars();
         nunjucks.configure(this.srcDir, this.compileOption);
         entries.forEach((srcFile, entryPoint) => {
-            const templatePath = path.relative(this.srcDir, srcFile);
-            const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+            const templatePath = path__namespace.relative(this.srcDir, srcFile);
+            const outputPath = path__namespace.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const templateVars = this.getTemplateVars(srcFile);
             let html = nunjucks.render(templatePath, templateVars);
             //@ts-ignore
             html = js_beautify.html(html, beautifyOption);
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+            fs__namespace.mkdirSync(path__namespace.dirname(outputPath), { recursive: true });
+            fs__namespace.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
         });
         // console.groupEnd();
@@ -257,4 +279,4 @@ class nunjucksBuilder extends baseBuilder {
 
 const htmlBuilder = new nunjucksBuilder();
 
-export { htmlBuilder as h };
+exports.htmlBuilder = htmlBuilder;
