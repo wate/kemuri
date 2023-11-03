@@ -10,18 +10,10 @@ export default {
     'snippet-builder': 'lib/snippet-builder.ts',
   },
   plugins: [typescript()],
-  output: [
-    {
+  output: {
       dir: 'bin',
       format: 'esm',
       chunkFileNames: 'common/[name].mjs',
       entryFileNames: '[name].js',
-    },
-    {
-      dir: 'bin',
-      format: 'cjs',
-      chunkFileNames: 'common/[name].cjs',
-      entryFileNames: '[name].cjs',
-    },
-  ],
+  }
 };

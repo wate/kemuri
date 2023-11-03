@@ -63,6 +63,23 @@ class vscodeSnippetBuilder extends baseBuilder {
             ['yml', 'yaml'],
         ]);
         /**
+         * スニペットのヘッダーの深さ
+         */
+        this.snippetHeaderDeps = 2;
+        /**
+         * スニペット拡張設定のヘッダーの深さ
+         */
+        this.extraSettingHeaderDeps = 3;
+        /**
+         * スニペット拡張設定のヘッダーテキスト
+         */
+        this.extraSettingHeaderTexts = [
+            'VSCode Extra Setting',
+            'VSCode Extra Settings',
+            'VSCode Snippet Setting',
+            'VSCode Snippet Settings',
+        ];
+        /**
          * -------------------------
          * このクラスでのみ使用するメソッド
          * -------------------------
@@ -89,15 +106,42 @@ class vscodeSnippetBuilder extends baseBuilder {
         }
     }
     /**
+     * スニペットのヘッダーの深さを設定する
+     *
+     * @param snippetHeaderDeps
+     */
+    setSnippetHeaderDeps(headerDeps) {
+        this.snippetHeaderDeps = headerDeps;
+    }
+    /**
+     * 拡張設定のヘッダーの深さを設定する
+     *
+     * @param headerDeps
+     */
+    setExtraSettingHeaderDeps(headerDeps) {
+        this.extraSettingHeaderDeps = headerDeps;
+    }
+    /**
+     * 拡張設定のヘッダーテキストを設定する
+     *
+     * @param extraSettingHeaderTexts
+     */
+    setExtraSettingHeaderTexts(extraSettingHeaderTexts) {
+        this.extraSettingHeaderTexts = extraSettingHeaderTexts;
+        if (typeof this.extraSettingHeaderTexts === 'string') {
+            this.extraSettingHeaderTexts = [this.extraSettingHeaderTexts];
+        }
+    }
+    /**
      * スニペット拡張設定の開始位置判定用メソッド
      * @param node
      * @returns
      */
     extraSettingTestFunc(node) {
-        if (node.type === 'heading' && node.depth === 3) {
+        if (node.type === 'heading' && node.depth === this.extraSettingHeaderDeps) {
             const textNode = find(node, { type: 'text' });
             // @ts-ignore
-            if (textNode.value === 'VSCode Extra Setting') {
+            if (this.extraSettingHeaderTexts.includes(textNode.value)) {
                 return node;
             }
         }
@@ -108,20 +152,45 @@ class vscodeSnippetBuilder extends baseBuilder {
      * @returns
      */
     getSnippetEndPosition(startPosition) {
-        let endPosition = findAfter(this.tree, startPosition, this.extraSettingTestFunc);
-        if (!endPosition) {
-            endPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: 2 });
+        const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+        let endPosition = nextSnippetPosition;
+        let extraSettingStartNode = null;
+        if (nextSnippetPosition) {
+            const extraSettingHeaders = findAllBetween(this.tree, startPosition, nextSnippetPosition, 
+            //@ts-ignore
+            this.extraSettingTestFunc.bind(this));
+            if (extraSettingHeaders.length > 0) {
+                extraSettingStartNode = extraSettingHeaders.pop();
+            }
+        }
+        else {
+            extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+        }
+        if (extraSettingStartNode) {
+            endPosition = extraSettingStartNode;
         }
         return endPosition;
     }
     /**
-     *
+     * スニペットの拡張設定を取得する
      * @param startPosition
      * @returns
      */
     getSnippetExtraSetting(startPosition) {
         let extraSetting = {};
-        const extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc);
+        let extraSettingStartNode = null;
+        const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+        if (nextSnippetPosition) {
+            const extraSettingHeaders = findAllBetween(this.tree, startPosition, nextSnippetPosition, 
+            //@ts-ignore
+            this.extraSettingTestFunc.bind(this));
+            if (extraSettingHeaders.length > 0) {
+                extraSettingStartNode = extraSettingHeaders.pop();
+            }
+        }
+        else {
+            extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+        }
         if (extraSettingStartNode) {
             const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
             if (extraSettingNode) {
@@ -169,7 +238,7 @@ class vscodeSnippetBuilder extends baseBuilder {
             else {
                 const namePrefix = meta?.prefix ? meta.prefix : '';
                 const nameSuffix = meta?.suffix ? meta.suffix : '';
-                visit(this.tree, { type: 'heading', depth: 2 }, (node, index) => {
+                visit(this.tree, { type: 'heading', depth: this.snippetHeaderDeps }, (node, index) => {
                     let snippetNameNode = find(node, { type: 'text' });
                     if (snippetNameNode) {
                         // @ts-ignore
@@ -235,6 +304,24 @@ class vscodeSnippetBuilder extends baseBuilder {
      * 抽象化メソッドの実装
      * -------------------------
      */
+    /**
+     * ビルドオプションを設定する
+     *
+     * @param option
+     * @returns
+     */
+    setOption(option) {
+        super.setOption(option);
+        if (option.snippetHeaderDeps !== undefined && option.snippetHeaderDeps !== null) {
+            this.setSnippetHeaderDeps(option.snippetHeaderDeps);
+        }
+        if (option.extraSettingHeaderDeps !== undefined && option.extraSettingHeaderDeps !== null) {
+            this.setExtraSettingHeaderDeps(option.extraSettingHeaderDeps);
+        }
+        if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
+            this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
+        }
+    }
     /**
      * 単一ファイルのビルド処理
      * @param srcPath
