@@ -84,7 +84,7 @@ enable:
 ## ---------------
 # js:
 #   srcDir: src
-#   outputDir: public
+#   outputDir: public/assets/js
 #   exts:
 #     - js
 #     - ts
