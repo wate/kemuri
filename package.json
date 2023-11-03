@@ -73,7 +73,7 @@
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
     "cli-build": "run-s cli-build:*",
-    "cli-build:rollup": "rollup -c --bundleConfigAsCjs",
+    "cli-build:rollup": "rollup -c",
     "cli-build:chmod": "chmod 0755 bin/*.js"
   }
 }
