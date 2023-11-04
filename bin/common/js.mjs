@@ -44,6 +44,10 @@ class typescriptBuilder extends baseBuilder {
          */
         this.globals = {};
         /**
+         * Roolup.jsに指定する出力形式
+         */
+        this.outputFortmat = 'es';
+        /**
          * TypeScriptのデフォルトのコンパイルオプション
          */
         this.typeScriptCompolerOption = {
@@ -95,6 +99,14 @@ class typescriptBuilder extends baseBuilder {
             // Skip type checking all .d.ts files.
             skipLibCheck: true,
         };
+        /**
+         * Minyfy化のオプション
+         * https://github.com/terser/terser#minify-options
+         */
+        this.minifyOption = {
+            compress: {},
+            mangle: {}
+        };
     }
     /**
      * -------------------------
@@ -108,6 +120,14 @@ class typescriptBuilder extends baseBuilder {
      */
     setGlobals(globals) {
         this.globals = globals;
+    }
+    /**
+     * 出力形式を設定する
+     *
+     * @param format
+     */
+    setOutputFormat(format) {
+        this.outputFortmat = format;
     }
     /**
      * SourceMapファイル出力の可否
@@ -126,6 +146,14 @@ class typescriptBuilder extends baseBuilder {
         this.minify = minify;
     }
     /**
+     * minify化のオプションを設定する
+     *
+     * @param minifyOption
+     */
+    setMinfyOption(minifyOption) {
+        this.minifyOption = minifyOption;
+    }
+    /**
      * -------------------------
      * 既存メソッドのオーバーライド
      * -------------------------
@@ -141,11 +169,17 @@ class typescriptBuilder extends baseBuilder {
         if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
             this.setGlobals(option.globals);
         }
+        if (option.format !== undefined && option.format !== null) {
+            this.setOutputFormat(option.format);
+        }
         if (option.sourcemap !== undefined && option.sourcemap !== null) {
             this.setSourceMap(option.sourcemap);
         }
         if (option.minify !== undefined && option.minify !== null) {
             this.setMinfy(option.minify);
+        }
+        if (option.minifyOption !== undefined && option.minifyOption !== null) {
+            this.setMinfyOption(option.minifyOption);
         }
     }
     /**
@@ -176,7 +210,7 @@ class typescriptBuilder extends baseBuilder {
             };
             const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
             if (this.minify !== undefined && this.minify) {
-                rollupPlugins.push(terser());
+                rollupPlugins.push(terser(this.minifyOption));
             }
             bundle = await rollup({
                 external: Object.keys(this.globals),
@@ -185,6 +219,7 @@ class typescriptBuilder extends baseBuilder {
             });
             const { output } = await bundle.generate({
                 globals: this.globals,
+                format: this.outputFortmat,
                 sourcemap: this.sourcemap,
             });
             let outputDir = path.dirname(outputPath);
@@ -195,7 +230,7 @@ class typescriptBuilder extends baseBuilder {
                 }
                 else {
                     let outputCode = chunkOrAsset.code;
-                    if (this.minify === undefined && !this.minify) {
+                    if (this.minify === undefined || !this.minify) {
                         outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -229,7 +264,7 @@ class typescriptBuilder extends baseBuilder {
             };
             const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
             if (this.minify !== undefined && this.minify) {
-                rollupPlugins.push(terser());
+                rollupPlugins.push(terser(this.minifyOption));
             }
             bundle = await rollup({
                 external: Object.keys(this.globals),
@@ -238,6 +273,7 @@ class typescriptBuilder extends baseBuilder {
             });
             const { output } = await bundle.generate({
                 globals: this.globals,
+                format: this.outputFortmat,
                 sourcemap: this.sourcemap,
             });
             let outputPath;
@@ -251,7 +287,7 @@ class typescriptBuilder extends baseBuilder {
                     outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
                     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
                     let outputCode = chunkOrAsset.code;
-                    if (this.minify !== undefined || !this.minify) {
+                    if (this.minify === undefined || !this.minify) {
                         outputCode = js_beautify.js(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(outputPath, outputCode.trim() + '\n');

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import { b as baseBuilder } from './common/base.mjs';
-import * as fs from 'fs';
-import * as path from 'path';
-import { frontmatter } from 'micromark-extension-frontmatter';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { fromMarkdown } from 'mdast-util-from-markdown';
+import { frontmatter } from 'micromark-extension-frontmatter';
 import { frontmatterFromMarkdown } from 'mdast-util-frontmatter';
 import { find } from 'unist-util-find';
 import { findAfter } from 'unist-util-find-after';
@@ -14,8 +14,6 @@ import _ from 'lodash';
 import yaml from 'js-yaml';
 import * as dotenv from 'dotenv';
 import './common/console.mjs';
-import 'node:fs';
-import 'node:path';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
