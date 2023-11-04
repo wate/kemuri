@@ -6,8 +6,8 @@
   "type": "module",
   "bin": {
     "builder": "bin/builder.js",
-    "html-builder": "bin/html-builder.js",
     "css-builder": "bin/css-builder.js",
+    "html-builder": "bin/html-builder.js",
     "js-builder": "bin/js-builder.js",
     "server": "bin/server.js",
     "snippet-builder": "bin/snippet-builder.js"
