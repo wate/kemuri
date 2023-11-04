@@ -46,7 +46,7 @@ class typescriptBuilder extends baseBuilder {
         /**
          * Roolup.jsに指定する出力形式
          */
-        this.outputFortmat = 'es';
+        this.outputFortmat = 'iife';
         /**
          * TypeScriptのデフォルトのコンパイルオプション
          */

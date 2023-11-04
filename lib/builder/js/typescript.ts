@@ -60,7 +60,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * Roolup.jsに指定する出力形式
    */
-  private outputFortmat: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'es';
+  private outputFortmat: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'iife';
 
   /**
    * SourceMapファイル出力の可否
