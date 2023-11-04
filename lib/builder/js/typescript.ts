@@ -60,7 +60,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * Roolup.jsに指定する出力形式
    */
-  private outputFortmat: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'iife';
+  private outputFortmat: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'es';
 
   /**
    * SourceMapファイル出力の可否
@@ -131,7 +131,7 @@ export class typescriptBuilder extends baseBuilder {
    */
   protected minifyOption: object = {
     compress: {},
-    mangle: {},
+    mangle: {}
   };
   /**
    * コンストラクタ
@@ -160,7 +160,7 @@ export class typescriptBuilder extends baseBuilder {
    *
    * @param format
    */
-  public setOutputFormat(format: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd'): void {
+  public setOutputFormat(format: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd'): void {
     this.outputFortmat = format;
   }
   /**
@@ -267,7 +267,7 @@ export class typescriptBuilder extends baseBuilder {
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
         } else {
           let outputCode: string = chunkOrAsset.code;
-          if (this.minify === undefined && !this.minify) {
+          if (this.minify === undefined || !this.minify) {
             outputCode = js_beautify.js(outputCode, beautifyOption);
           }
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -323,7 +323,7 @@ export class typescriptBuilder extends baseBuilder {
           outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           let outputCode = chunkOrAsset.code;
-          if (this.minify !== undefined || !this.minify) {
+          if (this.minify === undefined || !this.minify) {
             outputCode = js_beautify.js(outputCode, beautifyOption);
           }
           fs.writeFileSync(outputPath, outputCode.trim() + '\n');
