@@ -102,6 +102,8 @@ enable:
 #       - node_modules
 #   compileOption: {}
 #   beautifyOption: {}
+#   format: iife
 #   globals: {}
-#   sourcemap: null
-#   minify: null
+#   sourcemap: false
+#   minify: false
+#   minifyOption: {}

@@ -12,9 +12,15 @@ import js_beautify from 'js-beautify';
  * JSビルドの設定オプション
  */
 export interface typescriptBuilderOption extends builderOption {
+  // https://rollupjs.org/configuration-options/#output-globals
   globals?: object;
+  // https://rollupjs.org/configuration-options/#output-format
+  format?: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
+  // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean;
   minify?: boolean;
+  // https://github.com/terser/terser#minify-options
+  minifyOption?: object;
 }
 
 /**
@@ -50,6 +56,11 @@ export class typescriptBuilder extends baseBuilder {
    * ビルド時に設定するグローバルオブジェクトの内容
    */
   private globals: any = {};
+
+  /**
+   * Roolup.jsに指定する出力形式
+   */
+  private outputFortmat: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'iife';
 
   /**
    * SourceMapファイル出力の可否
@@ -115,6 +126,13 @@ export class typescriptBuilder extends baseBuilder {
   };
 
   /**
+   * Minyfy化のオプション
+   * https://github.com/terser/terser#minify-options
+   */
+  protected minifyOption: object = {
+    compress: true,
+  };
+  /**
    * コンストラクタ
    * @param option
    */
@@ -137,6 +155,14 @@ export class typescriptBuilder extends baseBuilder {
     this.globals = globals;
   }
   /**
+   * 出力形式を設定する
+   *
+   * @param format
+   */
+  public setOutputFormat(format: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd'): void {
+    this.outputFortmat = format;
+  }
+  /**
    * SourceMapファイル出力の可否
    *
    * @param sourcemap
@@ -154,6 +180,14 @@ export class typescriptBuilder extends baseBuilder {
     this.minify = minify;
   }
   /**
+   * minify化のオプションを設定する
+   *
+   * @param minifyOption
+   */
+  public setMinfyOption(minifyOption: object): void {
+    this.minifyOption = minifyOption;
+  }
+  /**
    * -------------------------
    * 既存メソッドのオーバーライド
    * -------------------------
@@ -169,11 +203,17 @@ export class typescriptBuilder extends baseBuilder {
     if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
       this.setGlobals(option.globals);
     }
+    if (option.format !== undefined && option.format !== null) {
+      this.setOutputFormat(option.format);
+    }
     if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
     }
     if (option.minify !== undefined && option.minify !== null) {
       this.setMinfy(option.minify);
+    }
+    if (option.minifyOption !== undefined && option.minifyOption !== null) {
+      this.setMinfyOption(option.minifyOption);
     }
   }
 
@@ -207,7 +247,7 @@ export class typescriptBuilder extends baseBuilder {
       };
       const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
       if (this.minify !== undefined && this.minify) {
-        rollupPlugins.push(terser());
+        rollupPlugins.push(terser(this.minifyOption));
       }
       bundle = await rollup({
         external: Object.keys(this.globals),
@@ -216,6 +256,7 @@ export class typescriptBuilder extends baseBuilder {
       });
       const { output } = await bundle.generate({
         globals: this.globals,
+        format: this.outputFortmat,
         sourcemap: this.sourcemap,
       });
       let outputDir: string = path.dirname(outputPath);
@@ -259,7 +300,7 @@ export class typescriptBuilder extends baseBuilder {
       };
       const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
       if (this.minify !== undefined && this.minify) {
-        rollupPlugins.push(terser());
+        rollupPlugins.push(terser(this.minifyOption));
       }
       bundle = await rollup({
         external: Object.keys(this.globals),
@@ -268,6 +309,7 @@ export class typescriptBuilder extends baseBuilder {
       });
       const { output } = await bundle.generate({
         globals: this.globals,
+        format: this.outputFortmat,
         sourcemap: this.sourcemap,
       });
       let outputPath: string;
