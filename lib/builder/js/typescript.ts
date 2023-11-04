@@ -130,7 +130,8 @@ export class typescriptBuilder extends baseBuilder {
    * https://github.com/terser/terser#minify-options
    */
   protected minifyOption: object = {
-    compress: true,
+    compress: {},
+    mangle: {},
   };
   /**
    * コンストラクタ
