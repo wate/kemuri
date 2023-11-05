@@ -41,3 +41,7 @@ pages.json
 !/src/.gitkeep
 /public/*
 !/public/.gitkeep
+
+### screenshot
+screenshots/*
+!/screenshots/.gitkeep

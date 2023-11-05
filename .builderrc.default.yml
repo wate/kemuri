@@ -139,3 +139,24 @@
 #     - VSCode Extra Settings
 #     - VSCode Snippet Setting
 #     - VSCode Snippet Settings
+screenshot:
+  outputDir: screenshots
+  default:
+    type: chromium
+    width: 1920
+    height: 1080
+  fullPage: true
+  headless: true
+  targets:
+    desktop:
+      type: Desktop Chrome
+      width: 1920
+      height: 1080
+    tablet:
+      type: chromium
+      width: 1920
+      height: 1080
+    mobile:
+      type: chromium
+      width: 1920
+      height: 1080
