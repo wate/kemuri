@@ -42,9 +42,8 @@ const screenshotTargets: any = {};
 
 const headless: boolean = true;
 const fullPage: boolean = false;
-const retryLimit: number = 2;
+const retryLimit: number = 3;
 
-const sleep = (msec: number) => new Promise((resolve) => setTimeout(resolve, msec));
 if (pages.length === 0) {
   console.error('No pages found in pages.json');
   process.exit(1);
@@ -128,6 +127,7 @@ if (pages.length === 0) {
       do {
         try {
           await page.screenshot({ path: screenshotSavePath, fullPage: fullPage });
+          screenshotError = null;
           retry = false;
         } catch (error) {
           retry = true;
