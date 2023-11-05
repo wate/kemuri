@@ -52,9 +52,24 @@
 #   compileOption: {}
 #   beautifyOption: {}
 #   varFileName: vars.yml
-#   generateSiteMap: true
-#   ## サイトマップファイル出力時のベースURLの設定
 #   siteUrl: 'http://localhost:3000/'
+#   generateSiteMap: true
+#   sitemapTemplate: |
+#     <?xml version="1.0" encoding="UTF-8"?>
+#     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+#       {% for page in pages %}
+#       <url>
+#         <loc>{{ page.url }}</loc>
+#         <lastmod>{{ page_lastmod | default(page.lastmod) }}</lastmod>
+#         {% if page_changefreq is defined %}
+#         <changefreq>{{ page_changefreq }}</changefreq>
+#         {% endif %}
+#         {% if page_priority is defined %}
+#         <priority>{{ page_priority }}</priority>
+#         {% endif %}
+#       </url>
+#       {% endfor %}
+#     </urlset>
 #   generatePageList: true
 ## ---------------
 ## CSSのビルド設定
