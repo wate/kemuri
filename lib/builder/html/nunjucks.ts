@@ -1,17 +1,22 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { URL } from 'node:url';
 import { baseBuilder, builderOption } from '../base';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
 import console from '../../console';
+import { BlockLike } from 'typescript';
 
 /**
  * HTMLビルドの設定オプション
  */
 export interface nunjucksBuilderOption extends builderOption {
   varFileName?: string;
+  generateSiteMap?: boolean;
+  siteUrl?: string;
+  generatePageList?: boolean;
 }
 
 /**
@@ -35,6 +40,21 @@ export class nunjucksBuilder extends baseBuilder {
    * 変数ファイルの名前
    */
   protected varFileName: string = 'vars.yml';
+
+  /**
+   * サイトマップファイルの生成の可否
+   */
+  protected generateSiteMap: boolean = true;
+
+  /**
+   * サイトURL
+   */
+  protected siteUrl: string = 'http://localhost:3000/';
+
+  /**
+   * ページリストの生成の可否
+   */
+  protected generatePageList: boolean = true;
 
   /**
    * テンプレート変数格納用メンバ変数
@@ -61,6 +81,27 @@ export class nunjucksBuilder extends baseBuilder {
    */
   public setVarFileName(varFileName: string) {
     this.varFileName = varFileName;
+  }
+  /**
+   * サイトマップファイルの生成の可否を設定する
+   * @param generateSiteMap
+   */
+  public setGenerateSiteMap(generateSiteMap: boolean) {
+    this.generateSiteMap = generateSiteMap;
+  }
+  /**
+   * サイトのURLを設定する
+   * @param siteUrl
+   */
+  public setSiteUrl(siteUrl: string) {
+    this.siteUrl = siteUrl;
+  }
+  /**
+   * ページリストファイルの生成の可否を設定する
+   * @param generatePageList
+   */
+  public setGeneratePageList(generatePageList: boolean) {
+    this.generatePageList = generatePageList;
   }
 
   /**
@@ -105,6 +146,58 @@ export class nunjucksBuilder extends baseBuilder {
     const isSrcRootVarFile: boolean = path.join(this.srcDir, this.varFileName) === varFilePath;
     return isProjectRootVarFile || isSrcRootVarFile;
   }
+
+  /**
+   * サイトマップファイル/ページリストファイルを生成する
+   * @param sitemapFile
+   * @param pageListFile
+   * @returns
+   */
+  protected generateIndexFile(sitemapFile: boolean = true, pageListFile: boolean = false) {
+    const entries = this.getEntryPoint();
+    if (entries.size === 0 || (!sitemapFile && !pageListFile)) {
+      return;
+    }
+    const siteMapFileTemplate = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% for page in pages %}
+  <url>
+    <loc>{{ page.url }}</loc>
+    <lastmod>{{ page.lastmod }}</lastmod>
+  </url>
+  {% endfor %}
+</urlset>`;
+    const templateVars = {
+      pages: [],
+    };
+    entries.forEach((srcFile, entryPoint) => {
+      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+      const pageUrl = new URL('/' + path.relative(this.outputDir, outputPath), this.siteUrl).toString();
+      const pagelastmod = fs.statSync(srcFile).mtime.toISOString();
+      const pageInfo = {
+        srcFile: srcFile,
+        url: pageUrl,
+        lastmod: pagelastmod,
+        variables: this.getTemplateVars(srcFile),
+      };
+      //@ts-ignore
+      templateVars.pages.push(pageInfo);
+    });
+    if (sitemapFile) {
+      const sitemapFileContent = nunjucks.renderString(siteMapFileTemplate, templateVars);
+      const siteMapPath = path.join(this.outputDir, 'sitemap.xml');
+      fs.mkdirSync(path.dirname(siteMapPath), { recursive: true });
+      fs.writeFileSync(siteMapPath, sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n', 'utf-8');
+      console.log('Generate sitemap file: ' + siteMapPath);
+    }
+    if (pageListFile) {
+      const pageListFilePath = path.join(process.cwd(), 'pages.json');
+      fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
+      fs.writeFileSync(pageListFilePath, JSON.stringify(templateVars.pages, null, 2), 'utf-8');
+      console.log('Generate page list file: ' + pageListFilePath);
+    }
+  }
+
   /**
    * -------------------------
    * 既存メソッドのオーバーライド
@@ -121,7 +214,17 @@ export class nunjucksBuilder extends baseBuilder {
     if (option.varFileName !== undefined && option.varFileName) {
       this.setVarFileName(option.varFileName);
     }
+    if (option.generateSiteMap !== undefined) {
+      this.setGenerateSiteMap(option.generateSiteMap);
+    }
+    if (option.siteUrl !== undefined) {
+      this.setSiteUrl(option.siteUrl);
+    }
+    if (option.generatePageList !== undefined) {
+      this.setGeneratePageList(option.generatePageList);
+    }
   }
+
   /**
    * 監視対象ファイルのパターンを取得する
    * @returns
@@ -262,5 +365,10 @@ export class nunjucksBuilder extends baseBuilder {
       console.log('Compile: ' + srcFile + ' => ' + outputPath);
     });
     // console.groupEnd();
+
+    //サイトマップファイル/ページリストファイルの生成
+    if (this.generateSiteMap || this.generatePageList) {
+      this.generateIndexFile(this.generateSiteMap, this.generatePageList);
+    }
   }
 }

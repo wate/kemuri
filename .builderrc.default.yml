@@ -52,6 +52,10 @@
 #   compileOption: {}
 #   beautifyOption: {}
 #   varFileName: vars.yml
+#   generateSiteMap: true
+#   ## サイトマップファイル出力時のベースURLの設定
+#   siteUrl: 'http://localhost:3000/'
+#   generatePageList: true
 ## ---------------
 ## CSSのビルド設定
 ## ---------------
