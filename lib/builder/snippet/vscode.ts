@@ -51,7 +51,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
     ['md', 'markdown'],
     ['py', 'python'],
     ['rb', 'ruby'],
-    ['ru', 'rust'],
+    ['rs', 'rust'],
     ['sh', 'shellscript'],
     ['ts', 'typescript'],
     ['tsx', 'typescriptreact'],
@@ -71,7 +71,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * スニペット拡張設定のヘッダーテキスト
    */
-  protected extraSettingHeaderTexts: string | string[] = [
+  protected extraSettingHeaderTexts: string[] = [
     'VSCode Extra Setting',
     'VSCode Extra Settings',
     'VSCode Snippet Setting',
@@ -138,9 +138,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @param extraSettingHeaderTexts
    */
   public setExtraSettingHeaderTexts(extraSettingHeaderTexts: string | string[]): void {
-    this.extraSettingHeaderTexts = extraSettingHeaderTexts;
-    if (typeof this.extraSettingHeaderTexts === 'string') {
-      this.extraSettingHeaderTexts = [this.extraSettingHeaderTexts];
+    if (typeof extraSettingHeaderTexts === 'string') {
+      this.extraSettingHeaderTexts = [extraSettingHeaderTexts];
+    } else {
+      this.extraSettingHeaderTexts = extraSettingHeaderTexts;
     }
   }
 
@@ -152,8 +153,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
   protected extraSettingTestFunc(node: any): any {
     if (node.type === 'heading' && node.depth === this.extraSettingHeaderDeps) {
       const textNode = find(node, { type: 'text' });
+      const extraSettingHeaderTexts = this.extraSettingHeaderTexts.map((text: string) => text.toLowerCase());
       // @ts-ignore
-      if (this.extraSettingHeaderTexts.includes(textNode.value)) {
+      if (extraSettingHeaderTexts.includes(textNode.value.toLowerCase())) {
         return node;
       }
     }
