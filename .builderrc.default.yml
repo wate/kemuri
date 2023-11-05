@@ -126,6 +126,10 @@
 ## スニペットのビルド設定
 ## ---------------
 # snippet:
+#   srcDir: docs/snippet
+#   outputDir: .vscode
+#   exts:
+#     - md
 #   snippetHeaderLevel: 2
 #   extraSettingHeaderLevel: 3
 #   extraSettingHeaderTexts:
