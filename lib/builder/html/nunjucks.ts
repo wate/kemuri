@@ -149,13 +149,11 @@ export class nunjucksBuilder extends baseBuilder {
 
   /**
    * サイトマップファイル/ページリストファイルを生成する
-   * @param sitemapFile
-   * @param pageListFile
    * @returns
    */
-  protected generateIndexFile(sitemapFile: boolean = true, pageListFile: boolean = false) {
+  protected generateIndexFile() {
     const entries = this.getEntryPoint();
-    if (entries.size === 0 || (!sitemapFile && !pageListFile)) {
+    if (entries.size === 0 || (!this.generateSiteMap && !this.generatePageList)) {
       return;
     }
     const siteMapFileTemplate = `<?xml version="1.0" encoding="UTF-8"?>
@@ -163,7 +161,13 @@ export class nunjucksBuilder extends baseBuilder {
   {% for page in pages %}
   <url>
     <loc>{{ page.url }}</loc>
-    <lastmod>{{ page.lastmod }}</lastmod>
+    <lastmod>{{ page_lastmod | default(page.lastmod) }}</lastmod>
+    {% if page_changefreq is defined %}
+    <changefreq>{{ page_changefreq }}</changefreq>
+    {% endif %}
+    {% if page_priority is defined %}
+    <priority>{{ page_priority }}</priority>
+    {% endif %}
   </url>
   {% endfor %}
 </urlset>`;
@@ -183,15 +187,15 @@ export class nunjucksBuilder extends baseBuilder {
       //@ts-ignore
       templateVars.pages.push(pageInfo);
     });
-    if (sitemapFile) {
+    if (this.generateSiteMap) {
       const sitemapFileContent = nunjucks.renderString(siteMapFileTemplate, templateVars);
       const siteMapPath = path.join(this.outputDir, 'sitemap.xml');
       fs.mkdirSync(path.dirname(siteMapPath), { recursive: true });
       fs.writeFileSync(siteMapPath, sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n', 'utf-8');
       console.log('Generate sitemap file: ' + siteMapPath);
     }
-    if (pageListFile) {
-      const pageListFilePath = path.join(process.cwd(), 'pages.json');
+    if (this.generatePageList) {
+      const pageListFilePath = 'pages.json';
       fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
       fs.writeFileSync(pageListFilePath, JSON.stringify(templateVars.pages, null, 2), 'utf-8');
       console.log('Generate page list file: ' + pageListFilePath);
@@ -368,7 +372,7 @@ export class nunjucksBuilder extends baseBuilder {
 
     //サイトマップファイル/ページリストファイルの生成
     if (this.generateSiteMap || this.generatePageList) {
-      this.generateIndexFile(this.generateSiteMap, this.generatePageList);
+      this.generateIndexFile();
     }
   }
 }
