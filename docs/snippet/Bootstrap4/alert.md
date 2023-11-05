@@ -3,7 +3,6 @@ scope:
   - twig
   - nunjucks
 ---
-
 [Bootstrap4(Alert)](https://getbootstrap.com/docs/4.6/components/alerts/)
 =====================
 
