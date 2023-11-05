@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
 import _ from 'lodash';
-import console from '../console';
+import console from './console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

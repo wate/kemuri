@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import browserSync from 'browser-sync';
-import configLoader from './builder/config';
+import configLoader from './config';
 import _, { get } from 'lodash';
 import chalk from 'chalk';
 import yargs from 'yargs';

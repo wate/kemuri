@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import snippetBuilder from './builder/snippet';
-import configLoader from './builder/config';
+import configLoader from './config';
 import * as dotenv from 'dotenv';
 dotenv.config();
 

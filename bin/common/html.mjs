@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { URL } from 'node:url';
 import { b as baseBuilder } from './base.mjs';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
@@ -33,6 +34,36 @@ class nunjucksBuilder extends baseBuilder {
          */
         this.varFileName = 'vars.yml';
         /**
+         * サイトURL
+         */
+        this.siteUrl = 'http://127.0.0.1:3000/';
+        /**
+         * サイトマップファイルの生成の可否
+         */
+        this.generateSiteMap = true;
+        /**
+         * サイトマップファイルのテンプレート文字列
+         */
+        this.sitemapTemplate = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% for page in pages %}
+  <url>
+    <loc>{{ page.url }}</loc>
+    <lastmod>{{ page_lastmod | default(page.lastmod) }}</lastmod>
+    {% if page_changefreq is defined %}
+    <changefreq>{{ page_changefreq }}</changefreq>
+    {% endif %}
+    {% if page_priority is defined %}
+    <priority>{{ page_priority }}</priority>
+    {% endif %}
+  </url>
+  {% endfor %}
+</urlset>`;
+        /**
+         * ページリストの生成の可否
+         */
+        this.generatePageList = true;
+        /**
          * テンプレート変数格納用メンバ変数
          */
         this.templateVars = {};
@@ -49,6 +80,27 @@ class nunjucksBuilder extends baseBuilder {
      */
     setVarFileName(varFileName) {
         this.varFileName = varFileName;
+    }
+    /**
+     * サイトマップファイルの生成の可否を設定する
+     * @param generateSiteMap
+     */
+    setGenerateSiteMap(generateSiteMap) {
+        this.generateSiteMap = generateSiteMap;
+    }
+    /**
+     * サイトのURLを設定する
+     * @param siteUrl
+     */
+    setSiteUrl(siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+    /**
+     * ページリストファイルの生成の可否を設定する
+     * @param generatePageList
+     */
+    setGeneratePageList(generatePageList) {
+        this.generatePageList = generatePageList;
     }
     /**
      * テンプレート変数をロードする
@@ -68,7 +120,9 @@ class nunjucksBuilder extends baseBuilder {
      * @returns
      */
     getTemplateVars(srcFile) {
-        let templateVars = this.templateVars['.'] ?? {};
+        let templateVars = this.templateVars['.'] ?? {
+            siteUrl: this.siteUrl,
+        };
         let key = '';
         const srcFilePaths = path.dirname(srcFile).split(path.sep);
         srcFilePaths.forEach((dirName) => {
@@ -77,7 +131,11 @@ class nunjucksBuilder extends baseBuilder {
                 templateVars = Object.assign(templateVars, this.templateVars[key]);
             }
         });
-        templateVars['_scope'] = path.dirname(path.relative(this.srcDir, srcFile));
+        let pageScope = path.dirname(path.relative(this.srcDir, srcFile));
+        if (pageScope === '.') {
+            pageScope = '';
+        }
+        templateVars['_scope'] = pageScope;
         return templateVars;
     }
     /**
@@ -90,6 +148,56 @@ class nunjucksBuilder extends baseBuilder {
         const isProjectRootVarFile = varFilePath === this.varFileName;
         const isSrcRootVarFile = path.join(this.srcDir, this.varFileName) === varFilePath;
         return isProjectRootVarFile || isSrcRootVarFile;
+    }
+    /**
+     * サイトマップファイル/ページリストファイルを生成する
+     * @returns
+     */
+    generateIndexFile() {
+        const entries = this.getEntryPoint();
+        if (entries.size === 0 || (!this.generateSiteMap && !this.generatePageList)) {
+            return;
+        }
+        const pageList = [];
+        entries.forEach((srcFile, entryPoint) => {
+            const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+            const pageUrl = new URL('/' + path.relative(this.outputDir, outputPath), this.siteUrl).toString();
+            const pagelastmod = fs.statSync(srcFile).mtime.toISOString();
+            const pageInfo = {
+                srcFile: srcFile,
+                url: pageUrl,
+                lastmod: pagelastmod,
+                variables: this.getTemplateVars(srcFile),
+            };
+            pageList.push(pageInfo);
+        });
+        if (this.generateSiteMap) {
+            this.generateSitemapFile(pageList);
+        }
+        if (this.generatePageList) {
+            this.generatePageListFile(pageList);
+        }
+    }
+    /**
+     * サイトマップファイルを生成する
+     * @param pageList
+     */
+    generateSitemapFile(pageList) {
+        const sitemapFileContent = nunjucks.renderString(this.sitemapTemplate, { pages: pageList });
+        const siteMapPath = path.join(this.outputDir, 'sitemap.xml');
+        fs.mkdirSync(path.dirname(siteMapPath), { recursive: true });
+        fs.writeFileSync(siteMapPath, sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n', 'utf-8');
+        console.log('Generate sitemap file: ' + siteMapPath);
+    }
+    /**
+     * ページリストファイルを生成する
+     * @param pageList
+     */
+    generatePageListFile(pageList) {
+        const pageListFilePath = 'pages.json';
+        fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
+        fs.writeFileSync(pageListFilePath, JSON.stringify(pageList, null, 2), 'utf-8');
+        console.log('Generate page list file: ' + pageListFilePath);
     }
     /**
      * -------------------------
@@ -106,6 +214,15 @@ class nunjucksBuilder extends baseBuilder {
         super.setOption(option);
         if (option.varFileName !== undefined && option.varFileName) {
             this.setVarFileName(option.varFileName);
+        }
+        if (option.generateSiteMap !== undefined) {
+            this.setGenerateSiteMap(option.generateSiteMap);
+        }
+        if (option.siteUrl !== undefined) {
+            this.setSiteUrl(option.siteUrl);
+        }
+        if (option.generatePageList !== undefined) {
+            this.setGeneratePageList(option.generatePageList);
         }
     }
     /**
@@ -253,6 +370,10 @@ class nunjucksBuilder extends baseBuilder {
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
         });
         // console.groupEnd();
+        //サイトマップファイル/ページリストファイルの生成
+        if (this.generateSiteMap || this.generatePageList) {
+            this.generateIndexFile();
+        }
     }
 }
 
