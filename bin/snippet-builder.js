@@ -12,12 +12,14 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
+import { a as console, c as configLoader } from './common/config.mjs';
 import * as dotenv from 'dotenv';
-import './common/console.mjs';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
 import 'editorconfig';
+import 'node:url';
+import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
 
@@ -72,6 +74,8 @@ class vscodeSnippetBuilder extends baseBuilder {
          * スニペット拡張設定のヘッダーテキスト
          */
         this.extraSettingHeaderTexts = [
+            'Snippet Setting',
+            'Snippet Settings',
             'VSCode Extra Setting',
             'VSCode Extra Settings',
             'VSCode Snippet Setting',
@@ -313,11 +317,11 @@ class vscodeSnippetBuilder extends baseBuilder {
      */
     setOption(option) {
         super.setOption(option);
-        if (option.snippetHeaderDeps !== undefined && option.snippetHeaderDeps !== null) {
-            this.setSnippetHeaderDeps(option.snippetHeaderDeps);
+        if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
+            this.setSnippetHeaderDeps(option.snippetHeaderLevel);
         }
-        if (option.extraSettingHeaderDeps !== undefined && option.extraSettingHeaderDeps !== null) {
-            this.setExtraSettingHeaderDeps(option.extraSettingHeaderDeps);
+        if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
+            this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
         }
         if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
             this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
@@ -386,4 +390,6 @@ class vscodeSnippetBuilder extends baseBuilder {
 const snippetBuilder = new vscodeSnippetBuilder();
 
 dotenv.config();
+const builderOption = configLoader.getSnippetOption();
+snippetBuilder.setOption(builderOption);
 snippetBuilder.build();

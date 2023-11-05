@@ -5,6 +5,7 @@ import { glob } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
 import js_beautify from 'js-beautify';
+import { a as console } from './config.mjs';
 
 /**
  * ビルド処理の抽象クラス

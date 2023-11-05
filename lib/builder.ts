@@ -25,8 +25,15 @@ const argv = yargs(process.argv.slice(2))
     html: { type: 'boolean', description: 'htmlビルダーを利用する' },
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    init: { type: 'boolean', description: '設定ファイルを生成する' },
+    force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
   })
   .parseSync();
+
+if (argv.init) {
+  configLoader.init(argv.force);
+  process.exit(0);
+}
 
 let mode: string = 'develop';
 if (argv.mode !== undefined) {

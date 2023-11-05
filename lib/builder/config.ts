@@ -1,7 +1,28 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
 import _ from 'lodash';
+import console from '../console';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class configLoader {
+
+  /**
+   * 設定ファイルを生成する
+   * @param force
+   */
+  public static init(force?: boolean) {
+    const srcConfigFilePath = path.resolve(__dirname, '../../.builderrc.default.yml');
+    const destConfigFilePath = path.resolve(process.cwd(), '.builderrc.yml');
+    if (!fs.existsSync(destConfigFilePath) || force) {
+      fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
+    } else {
+      console.error('Configuration file(.builderrc.yml) already exists');
+    }
+  }
 
   /**
    * 設定ファイルをロードする

@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 import browserSync from 'browser-sync';
-import { c as configLoader } from './common/config.mjs';
+import { c as configLoader, a as console } from './common/config.mjs';
 import _ from 'lodash';
 import chalk from 'chalk';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
-import './common/console.mjs';
+import 'node:fs';
+import 'node:path';
+import 'node:url';
 import 'cosmiconfig';
 import 'node:console';
 

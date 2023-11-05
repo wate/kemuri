@@ -11,6 +11,7 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
+import console from '../../console';
 
 /**
  * スニペットビルダーの設定オプション

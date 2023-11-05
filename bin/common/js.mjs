@@ -7,6 +7,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
+import { a as console } from './config.mjs';
 
 /**
  * ビルド処理の抽象クラス

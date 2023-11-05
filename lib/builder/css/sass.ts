@@ -5,6 +5,7 @@ import { glob, Path } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
 import js_beautify from 'js-beautify';
+import console from '../../console';
 
 /**
  * CSSビルドの設定オプション

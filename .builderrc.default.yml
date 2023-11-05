@@ -1,0 +1,122 @@
+---
+## ---------------
+## ビルダーの有効化
+## ---------------
+# enable:
+#   - js
+#   - css
+#   - html
+## ---------------
+## サーバーの設定
+## ---------------
+# server:
+#   baseDir: public
+#   port: 3000
+#   watch: true
+#   watchFiles: []
+#   open: true
+#   notify: false
+#   ui: false
+#   uiPort: 3001
+## ---------------
+## 共通設定項目
+## ---------------
+# srcDir: src
+# outputDir: public
+# exts: []
+# moduleExts: []
+# ignore:
+#   filePrefix: null
+#   fileSuffix: null
+#   dirPrefix: null
+#   dirSuffix: null
+#   dirNames: []
+# compileOption: {}
+# beautifyOption: {}
+## ---------------
+## HTMLのビルド設定
+## ---------------
+# html:
+#   srcDir: src
+#   outputDir: public
+#   exts:
+#     - njk
+#     - twig
+#   moduleExts: []
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames: []
+#   compileOption: {}
+#   beautifyOption: {}
+#   varFileName: vars.yml
+## ---------------
+## CSSのビルド設定
+## ---------------
+# css:
+#   srcDir: src
+#   outputDir: public/assets/css
+#   exts:
+#     - scss
+#     - sass
+#     - css
+#   moduleExts: []
+#   ignore:
+#     filePrefix: _
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames: []
+#   compileOption: {}
+#   beautifyOption: {}
+#   style: null
+#   generateIndex: false
+#   indexFileName: _all.scss
+#   indexImportType: forward
+#   sourcemap: null
+#   loadPaths:
+#     - ${srcDir}
+#     - node_modules
+## ---------------
+## javaScriptのビルド設定
+## ---------------
+# js:
+#   srcDir: src
+#   outputDir: public/assets/js
+#   exts:
+#     - js
+#     - ts
+#   moduleExts:
+#     - mjs
+#     - mts
+#     - cjs
+#     - cts
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames:
+#       - node_modules
+#   compileOption: {}
+#   beautifyOption: {}
+#   format: iife
+#   globals: {}
+#   sourcemap: false
+#   minify: false
+#   minifyOption: {}
+## ---------------
+## スニペットのビルド設定
+## ---------------
+# snippet:
+#   snippetHeaderLevel: 2
+#   extraSettingHeaderLevel: 3
+#   extraSettingHeaderTexts:
+#     - Snippet Setting
+#     - Snippet Settings
+#     - VSCode Extra Setting
+#     - VSCode Extra Settings
+#     - VSCode Snippet Setting
+#     - VSCode Snippet Settings

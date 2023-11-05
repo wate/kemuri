@@ -1,7 +1,51 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
+import chalk from 'chalk';
+import { Console } from 'node:console';
 
+class ConsoleOverride extends Console {
+    constructor() {
+        super(process.stdout, process.stderr);
+    }
+    debug(message, ...optionalParams) {
+        return super.debug(chalk.gray(message), ...optionalParams);
+    }
+    info(message, ...optionalParams) {
+        return super.info(chalk.blue(message), ...optionalParams);
+    }
+    warn(message, ...optionalParams) {
+        return super.warn(chalk.yellow(message), ...optionalParams);
+    }
+    error(message, ...optionalParams) {
+        return super.error(chalk.red(message), ...optionalParams);
+    }
+    group(message, ...optionalParams) {
+        return super.group(chalk.cyan(message), ...optionalParams);
+    }
+}
+console = new ConsoleOverride();
+var console$1 = console;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 class configLoader {
+    /**
+     * 設定ファイルを生成する
+     * @param force
+     */
+    static init(force) {
+        const srcConfigFilePath = path.resolve(__dirname, '../../.builderrc.default.yml');
+        const destConfigFilePath = path.resolve(process.cwd(), '.builderrc.yml');
+        if (!fs.existsSync(destConfigFilePath) || force) {
+            fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
+        }
+        else {
+            console$1.error('Configuration file(.builderrc.yml) already exists');
+        }
+    }
     /**
      * 設定ファイルをロードする
      * @returns
@@ -65,6 +109,7 @@ class configLoader {
     }
     /**
      * サーバーのオプションを取得する
+     * @param overrideOption
      * @returns
      */
     static getServerOption(overrideOption) {
@@ -74,6 +119,19 @@ class configLoader {
             serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
         }
         return serverOption;
+    }
+    /**
+     * スニペットのオプションを取得する
+     * @param overrideOption
+     * @returns
+     */
+    static getSnippetOption(overrideOption) {
+        const allConfig = configLoader.load();
+        let snippetOption = _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+        if (overrideOption) {
+            snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
+        }
+        return snippetOption;
     }
     /**
      * HTMLビルダーのオプションを取得する
@@ -98,4 +156,4 @@ class configLoader {
     }
 }
 
-export { configLoader as c };
+export { console$1 as a, configLoader as c };

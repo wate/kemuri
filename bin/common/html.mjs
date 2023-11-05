@@ -5,6 +5,7 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
+import { a as console } from './config.mjs';
 
 /**
  * ビルド処理の抽象クラス

@@ -6,7 +6,6 @@ import { c as configLoader } from './common/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
-import './common/console.mjs';
 import 'node:fs';
 import 'node:path';
 import './common/base.mjs';
@@ -23,6 +22,7 @@ import 'js-beautify';
 import 'sass';
 import 'js-yaml';
 import 'nunjucks';
+import 'node:url';
 import 'cosmiconfig';
 import 'lodash';
 import 'node:console';
@@ -43,8 +43,14 @@ const argv = yargs(process.argv.slice(2))
     html: { type: 'boolean', description: 'htmlビルダーを利用する' },
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    init: { type: 'boolean', description: '設定ファイルを生成する' },
+    force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
 })
     .parseSync();
+if (argv.init) {
+    configLoader.init(argv.force);
+    process.exit(0);
+}
 let mode = 'develop';
 if (argv.mode !== undefined) {
     mode = String(argv.mode);

@@ -6,7 +6,7 @@ import _, { get } from 'lodash';
 import chalk from 'chalk';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
-import './console';
+import console from './console';
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))

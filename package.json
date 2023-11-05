@@ -62,6 +62,7 @@
     "builder": "pnpm builder:build",
     "builder:watch": "tsx lib/builder.ts --html --css --js --watch",
     "builder:build": "tsx lib/builder.ts --html --css --js",
+    "builder:init": "tsx lib/builder.ts --init",
     "html-builder:watch": "tsx lib/html-builder.ts --watch",
     "html-builder:build": "tsx lib/html-builder.ts",
     "css-builder": "pnpm css-builder:build",

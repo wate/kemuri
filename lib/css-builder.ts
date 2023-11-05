@@ -4,7 +4,6 @@ import cssBuilder from './builder/css';
 import configLoader from './builder/config';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
-import './console';
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
