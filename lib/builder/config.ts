@@ -66,9 +66,10 @@ class configLoader {
   }
   /**
    * サーバーのオプションを取得する
+   * @param overrideOption
    * @returns
    */
-  public static getServerOption(overrideOption?: any): object {
+  public static getServerOption(overrideOption?: object): object {
     const allConfig = configLoader.load();
     let serverOption =
       _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
@@ -76,6 +77,21 @@ class configLoader {
       serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
     }
     return serverOption;
+  }
+
+  /**
+   * スニペットのオプションを取得する
+   * @param overrideOption
+   * @returns
+   */
+  public static getSnippetOption(overrideOption?: object) {
+    const allConfig = configLoader.load();
+    let snippetOption =
+      _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+    if (overrideOption) {
+      snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
+    }
+    return snippetOption;
   }
 
   /**

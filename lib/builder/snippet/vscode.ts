@@ -16,8 +16,8 @@ import yaml from 'js-yaml';
  * スニペットビルダーの設定オプション
  */
 export interface vscodeSnippetBuilderOption extends builderOption {
-  snippetHeaderDeps?: number;
-  extraSettingHeaderDeps?: number;
+  snippetHeaderLevel?: number;
+  extraSettingHeaderLevel?: number;
   extraSettingHeaderTexts?: string | string[];
 }
 
@@ -72,6 +72,8 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * スニペット拡張設定のヘッダーテキスト
    */
   protected extraSettingHeaderTexts: string[] = [
+    'Snippet Setting',
+    'Snippet Settings',
     'VSCode Extra Setting',
     'VSCode Extra Settings',
     'VSCode Snippet Setting',
@@ -333,11 +335,11 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   public setOption(option: vscodeSnippetBuilderOption) {
     super.setOption(option);
-    if (option.snippetHeaderDeps !== undefined && option.snippetHeaderDeps !== null) {
-      this.setSnippetHeaderDeps(option.snippetHeaderDeps);
+    if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
+      this.setSnippetHeaderDeps(option.snippetHeaderLevel);
     }
-    if (option.extraSettingHeaderDeps !== undefined && option.extraSettingHeaderDeps !== null) {
-      this.setExtraSettingHeaderDeps(option.extraSettingHeaderDeps);
+    if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
+      this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
     }
     if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
       this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
