@@ -23,16 +23,12 @@
 ## ---------------
 # srcDir: src
 # outputDir: public
-# exts: []
-# moduleExts: []
 # ignore:
 #   filePrefix: null
 #   fileSuffix: null
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
-# compileOption: {}
-# beautifyOption: {}
 ## ---------------
 ## HTMLのビルド設定
 ## ---------------
