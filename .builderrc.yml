@@ -34,7 +34,7 @@ enable:
 # compileOption: {}
 # beautifyOption: {}
 ## ---------------
-## HTML用の設定
+## HTMLのビルド設定
 ## ---------------
 # html:
 #   srcDir: src
@@ -53,7 +53,7 @@ enable:
 #   beautifyOption: {}
 #   varFileName: vars.yml
 ## ---------------
-## CSS用の設定
+## CSSのビルド設定
 ## ---------------
 # css:
 #   srcDir: src
@@ -80,7 +80,7 @@ enable:
 #     - ${srcDir}
 #     - node_modules
 ## ---------------
-## JS用の設定
+## javaScriptのビルド設定
 ## ---------------
 # js:
 #   srcDir: src
@@ -107,3 +107,16 @@ enable:
 #   sourcemap: false
 #   minify: false
 #   minifyOption: {}
+## ---------------
+## スニペットのビルド設定
+## ---------------
+# snippet:
+#   snippetHeaderLevel: 2
+#   extraSettingHeaderLevel: 3
+#   extraSettingHeaderTexts:
+#     - Snippet Setting
+#     - Snippet Settings
+#     - VSCode Extra Setting
+#     - VSCode Extra Settings
+#     - VSCode Snippet Setting
+#     - VSCode Snippet Settings

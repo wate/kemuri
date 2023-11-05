@@ -54,7 +54,7 @@ class vscodeSnippetBuilder extends baseBuilder {
             ['md', 'markdown'],
             ['py', 'python'],
             ['rb', 'ruby'],
-            ['ru', 'rust'],
+            ['rs', 'rust'],
             ['sh', 'shellscript'],
             ['ts', 'typescript'],
             ['tsx', 'typescriptreact'],
@@ -125,9 +125,11 @@ class vscodeSnippetBuilder extends baseBuilder {
      * @param extraSettingHeaderTexts
      */
     setExtraSettingHeaderTexts(extraSettingHeaderTexts) {
-        this.extraSettingHeaderTexts = extraSettingHeaderTexts;
-        if (typeof this.extraSettingHeaderTexts === 'string') {
-            this.extraSettingHeaderTexts = [this.extraSettingHeaderTexts];
+        if (typeof extraSettingHeaderTexts === 'string') {
+            this.extraSettingHeaderTexts = [extraSettingHeaderTexts];
+        }
+        else {
+            this.extraSettingHeaderTexts = extraSettingHeaderTexts;
         }
     }
     /**
@@ -138,8 +140,9 @@ class vscodeSnippetBuilder extends baseBuilder {
     extraSettingTestFunc(node) {
         if (node.type === 'heading' && node.depth === this.extraSettingHeaderDeps) {
             const textNode = find(node, { type: 'text' });
+            const extraSettingHeaderTexts = this.extraSettingHeaderTexts.map((text) => text.toLowerCase());
             // @ts-ignore
-            if (this.extraSettingHeaderTexts.includes(textNode.value)) {
+            if (extraSettingHeaderTexts.includes(textNode.value.toLowerCase())) {
                 return node;
             }
         }
