@@ -36,8 +36,10 @@ if (fs.existsSync('./pages.json')) {
 const screenshotTargets: any = {};
 // const screenshotTargets: any = {
 //   desktop: { type: 'Desktop Chrome', width: 1920, height: 1080 },
-//   tablet: { type: 'iPad Mini landscape' },
-//   mobile: { type: 'iPhone 14 Pro' },
+//   tablet: { type: 'iPad Mini' },
+//   tablet_landscape: { type: 'iPad Mini landscape' },
+//   mobile: { type: 'iPhone 14 Pro Max' },
+//   mobile_landscape: { type: 'iPhone 14 Pro Max landscape' },
 // };
 
 const headless: boolean = true;
