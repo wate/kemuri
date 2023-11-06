@@ -25,7 +25,7 @@ interface Browser {
 }
 
 interface ScreenshotPage extends Browser {
-  group: string;
+  group?: string | null;
   url: string;
 }
 
@@ -58,7 +58,7 @@ if (pages.length === 0) {
   const screenshotPages: ScreenshotPage[] = [];
   if (Object.keys(screenshotTargets).length === 0) {
     pages.forEach((page: Page) => {
-      screenshotPages.push(_.merge(_.clone(defaultBrowser), { group: 'default', url: page.url }));
+      screenshotPages.push(_.merge(_.clone(defaultBrowser), { url: page.url }));
     });
   } else {
     Object.keys(screenshotTargets).forEach((groupName) => {
@@ -104,18 +104,23 @@ if (pages.length === 0) {
         }
       }
       const browser = browsers[screenshotPage.type];
-      if (!browserContexts[screenshotPage.group]) {
-        browserContexts[screenshotPage.group] = await browser.newContext({
+      let screenshotBaseSavePath = 'screenshots';
+      let screenshotGroup = 'default';
+      if (screenshotPage.group) {
+        screenshotGroup = screenshotPage.group;
+        screenshotBaseSavePath = path.join(screenshotBaseSavePath, screenshotPage.group);
+      }
+      if (!browserContexts[screenshotGroup]) {
+        browserContexts[screenshotGroup] = await browser.newContext({
           viewport: { width: screenshotPage.width, height: screenshotPage.height },
         });
       }
-      const context = browserContexts[screenshotPage.group];
+      const context = browserContexts[screenshotGroup];
       const testUrl = new URL(screenshotPage.url);
       const page = await context.newPage();
       const screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
       const screenshotSavePath = path.join(
-        'screenshots',
-        screenshotPage.group,
+        screenshotBaseSavePath,
         path.dirname(testUrl.pathname),
         screenshotSaveFileName,
       );
