@@ -6,8 +6,10 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import { js_beautify as beautify } from 'js-beautify';
+import js_beautify from 'js-beautify';
 import console from '../../console';
+
+const beautify = js_beautify.js;
 
 type outputFormat = 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
 

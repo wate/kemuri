@@ -29,6 +29,7 @@
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
+# beautifyOption: {}
 ## ---------------
 ## HTMLのビルド設定
 ## ---------------
@@ -148,16 +149,29 @@
 #   headless: true
 #   fullPage: false
 #   retryLimit: 3
-#   targets:
-#     desktop:
-#       type: Desktop Chrome
-#       width: 1920
-#       height: 1080
-#     tablet:
-#       type: iPad Mini
-#     tablet_landscape:
-#       type: iPad Mini landscape
-#     mobile:
-#       type: iPhone 14 Pro
-#     mobile_landscape:
-#       type: iPhone 14 Pro Max landscape
+#   ## ----------------
+#   ## 複数環境のスクリーンショットを取る場合は以下にターゲットを設定
+#   ##
+#   ## 「type」に指定可能な値は、以下に定義されているデバイス名
+#   ## https://github.com/microsoft/playwright/blob/main/packages/playwright-core/types/types.d.ts#L20235-L20362
+#   ## または、以下のいずれか
+#   ## * chromium
+#   ## * firefox
+#   ## * webkit
+#   ##
+#   ## ※デバイス名が指定ている場合は指定されたデバイス名に合わせてエンジンと画面(viewport)サイズが自動設定されます。
+#   ## サイズ(width/height)が指定されている場合は、自動設定された画面(viewport)サイズを上書きして設定します。
+#   ## ----------------
+#   # targets:
+#   #   desktop:
+#   #     type: Desktop Chrome
+#   #     width: 1920
+#   #     height: 1080
+#   #   tablet:
+#   #     type: iPad Mini
+#   #   tablet_landscape:
+#   #     type: iPad Mini landscape
+#   #   mobile:
+#   #     type: iPhone 14 Pro
+#   #   mobile_landscape:
+#   #     type: iPhone 14 Pro Max landscape

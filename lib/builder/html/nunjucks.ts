@@ -5,8 +5,10 @@ import { baseBuilder, builderOption } from '../base';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
-import { html_beautify as beautify } from 'js-beautify';
+import js_beautify from 'js-beautify';
 import console from '../../console';
+
+const beautify = js_beautify.html;
 
 /**
  * HTMLビルドの設定オプション

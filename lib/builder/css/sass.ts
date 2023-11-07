@@ -4,8 +4,10 @@ import { baseBuilder, builderOption } from '../base';
 import { glob, Path } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
-import { css_beautify as beautify } from 'js-beautify';
+import js_beautify from 'js-beautify';
 import console from '../../console';
+
+const beautify = js_beautify.css;
 
 /**
  * CSSビルドの設定オプション
