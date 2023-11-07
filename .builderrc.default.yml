@@ -140,6 +140,9 @@
 #     - VSCode Extra Settings
 #     - VSCode Snippet Setting
 #     - VSCode Snippet Settings
+## ---------------
+## スクリーンショットの設定
+## ---------------
 # screenshot:
 #   outputDir: screenshots
 #   default:
