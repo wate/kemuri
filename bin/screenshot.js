@@ -5,28 +5,42 @@ import { URL } from 'node:url';
 import { c as configLoader, a as console } from './common/config.mjs';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
+import yargs from 'yargs';
+import * as dotenv from 'dotenv';
 import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
 
+dotenv.config();
+const argv = yargs(process.argv.slice(2))
+    .options({
+    l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
+})
+    .parseSync();
 let pages = [];
 const screenshotOption = configLoader.getScreenshotOption();
 let sitemapLocation = null;
-if (_.has(screenshotOption, 'sitemapLocation')) {
-    sitemapLocation = _.get(screenshotOption, 'sitemapLocation');
+if (argv.location) {
+    sitemapLocation = argv.location;
 }
 else {
-    //@ts-ignore
-    const htmlOption = configLoader.getHtmlOption();
-    const htmloutputDir = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
-    const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
-    if (fs.existsSync('./pages.json')) {
-        sitemapLocation = './pages.json';
+    if (_.has(screenshotOption, 'sitemapLocation')) {
+        sitemapLocation = _.get(screenshotOption, 'sitemapLocation');
     }
-    else if (fs.existsSync(sitemapFilePath)) {
-        sitemapLocation = sitemapFilePath;
+    else {
+        //@ts-ignore
+        const htmlOption = configLoader.getHtmlOption();
+        const htmloutputDir = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
+        const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
+        if (fs.existsSync('./pages.json')) {
+            sitemapLocation = './pages.json';
+        }
+        else if (fs.existsSync(sitemapFilePath)) {
+            sitemapLocation = sitemapFilePath;
+        }
     }
 }
+console.info('Sitemap location: ' + sitemapLocation);
 if (/^https?:\/\//.test(sitemapLocation)) {
     const dom = new JSDOM(await (await fetch(sitemapLocation)).text());
     const urls = dom.window.document.querySelectorAll('url');
@@ -70,6 +84,7 @@ if (pages.length === 0) {
     process.exit(1);
 }
 else {
+    console.info('Start screenshot');
     let screenshotTargets = {};
     let headless = true;
     let fullPage = true;
@@ -209,7 +224,7 @@ else {
         }
         console.groupEnd();
     })).then(() => {
-        console.info('Screenshots saved');
+        console.info('End screenshot');
         process.exit(0);
     });
 }

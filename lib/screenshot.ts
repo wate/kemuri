@@ -12,7 +12,7 @@ dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
-    location: { type: 'string', description: 'サイトマップファイルのパスまたはURL', ailiase: 'l' },
+    l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
   })
   .parseSync();
 
@@ -61,6 +61,8 @@ if (argv.location) {
   }
 }
 
+console.info('Sitemap location: ' + sitemapLocation);
+
 if (/^https?:\/\//.test(sitemapLocation)) {
   const dom = new JSDOM(await (await fetch(sitemapLocation)).text());
   const urls = dom.window.document.querySelectorAll('url');
@@ -102,6 +104,7 @@ if (pages.length === 0) {
   console.error('page not found.');
   process.exit(1);
 } else {
+  console.info('Start screenshot');
   let screenshotTargets: any = {};
   let headless: boolean = true;
   let fullPage: boolean = true;
@@ -239,7 +242,7 @@ if (pages.length === 0) {
       console.groupEnd();
     }),
   ).then(() => {
-    console.info('Screenshots saved');
+    console.info('End screenshot');
     process.exit(0);
   });
 }
