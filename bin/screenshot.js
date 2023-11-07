@@ -28,7 +28,6 @@ else {
         height: 1080,
     };
     const screenshotOption = configLoader.getScreenshotOption();
-    console.log(screenshotOption);
     if (_.has(screenshotOption, 'outputDir') && _.get(screenshotOption, 'outputDir')) {
         //@ts-ignore{
         screenshotBaseSaveDir = _.get(screenshotOption, 'outputDir');
