@@ -69,7 +69,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static getOption(type: 'html' | 'css' | 'js', overrideOption?: object): object {
+  public static getOption(type: settingType, overrideOption?: object): object {
     const allConfig = configLoader.load();
     let builderConfig = {};
     if (allConfig) {
@@ -77,7 +77,8 @@ class configLoader {
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
         builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
       }
-      ['enable', 'server', 'html', 'css', 'js'].forEach((removeKey) => {
+      const removeKeys = ['enable', 'server', 'html', 'css', 'js', 'snippet', 'screenshot'];
+      removeKeys.forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
     }
