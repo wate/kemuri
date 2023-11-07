@@ -10,6 +10,7 @@
     "html-builder": "bin/html-builder.js",
     "js-builder": "bin/js-builder.js",
     "server": "bin/server.js",
+    "screenshot": "bin/screenshot.js",
     "snippet-builder": "bin/snippet-builder.js"
   },
   "dependencies": {
@@ -75,7 +76,7 @@
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build",
     "screenshot:cleanup": "rimraf screenshots/*",
-    "screenshot:screenshot": "tsx lib/screenshot.ts",
+    "screenshot:screenshot": "node bin/screenshot.js",
     "snippet-builder:build": "tsx lib/snippet-builder.ts",
     "cleanup:all": "rimraf public/*",
     "cleanup:assets": "run-p cleanup:assets:*",

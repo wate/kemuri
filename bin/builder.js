@@ -6,6 +6,7 @@ import { c as configLoader } from './common/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
+import './common/console.mjs';
 import 'node:fs';
 import 'node:path';
 import './common/base.mjs';

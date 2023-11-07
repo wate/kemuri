@@ -7,8 +7,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
-import { a as console } from './config.mjs';
+import { c as console } from './console.mjs';
 
+const beautify = js_beautify.js;
 /**
  * ビルド処理の抽象クラス
  */
@@ -106,7 +107,7 @@ class typescriptBuilder extends baseBuilder {
          */
         this.minifyOption = {
             compress: {},
-            mangle: {}
+            mangle: {},
         };
     }
     /**
@@ -232,7 +233,7 @@ class typescriptBuilder extends baseBuilder {
                 else {
                     let outputCode = chunkOrAsset.code;
                     if (this.minify === undefined || !this.minify) {
-                        outputCode = js_beautify.js(outputCode, beautifyOption);
+                        outputCode = beautify(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
                 }
@@ -289,7 +290,7 @@ class typescriptBuilder extends baseBuilder {
                     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
                     let outputCode = chunkOrAsset.code;
                     if (this.minify === undefined || !this.minify) {
-                        outputCode = js_beautify.js(outputCode, beautifyOption);
+                        outputCode = beautify(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(outputPath, outputCode.trim() + '\n');
                     console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);

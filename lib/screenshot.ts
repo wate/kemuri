@@ -43,7 +43,7 @@ const screenshotTargets: any = {
 };
 
 const headless: boolean = true;
-const fullPage: boolean = false;
+const fullPage: boolean = true;
 const retryLimit: number = 3;
 
 if (pages.length === 0) {

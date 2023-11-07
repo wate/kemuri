@@ -11,13 +11,14 @@ import 'glob';
 import 'chokidar';
 import 'rimraf';
 import 'editorconfig';
-import 'js-yaml';
-import 'js-beautify';
-import 'nunjucks';
-import 'cosmiconfig';
-import 'lodash';
+import './common/console.mjs';
 import 'chalk';
 import 'node:console';
+import 'js-yaml';
+import 'nunjucks';
+import 'js-beautify';
+import 'cosmiconfig';
+import 'lodash';
 
 dotenv.config();
 const argv = yargs(process.argv.slice(2))

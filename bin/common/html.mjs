@@ -4,10 +4,11 @@ import { URL } from 'node:url';
 import { b as baseBuilder } from './base.mjs';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
-import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
-import { a as console } from './config.mjs';
+import js_beautify from 'js-beautify';
+import { c as console } from './console.mjs';
 
+const beautify = js_beautify.html;
 /**
  * ビルド処理の抽象クラス
  */
@@ -341,8 +342,7 @@ class nunjucksBuilder extends baseBuilder {
         const templatePath = path.relative(this.srcDir, srcPath);
         const templateVars = this.getTemplateVars(srcPath);
         let html = nunjucks.render(templatePath, templateVars);
-        //@ts-ignore
-        html = js_beautify.html(html, beautifyOption);
+        html = beautify(html, beautifyOption);
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
     }
@@ -363,8 +363,7 @@ class nunjucksBuilder extends baseBuilder {
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const templateVars = this.getTemplateVars(srcFile);
             let html = nunjucks.render(templatePath, templateVars);
-            //@ts-ignore
-            html = js_beautify.html(html, beautifyOption);
+            html = beautify(html, beautifyOption);
             fs.mkdirSync(path.dirname(outputPath), { recursive: true });
             fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);

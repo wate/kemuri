@@ -3,31 +3,7 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
-import chalk from 'chalk';
-import { Console } from 'node:console';
-
-class ConsoleOverride extends Console {
-    constructor() {
-        super(process.stdout, process.stderr);
-    }
-    debug(message, ...optionalParams) {
-        return super.debug(chalk.gray(message), ...optionalParams);
-    }
-    info(message, ...optionalParams) {
-        return super.info(chalk.blue(message), ...optionalParams);
-    }
-    warn(message, ...optionalParams) {
-        return super.warn(chalk.yellow(message), ...optionalParams);
-    }
-    error(message, ...optionalParams) {
-        return super.error(chalk.red(message), ...optionalParams);
-    }
-    group(message, ...optionalParams) {
-        return super.group(chalk.cyan(message), ...optionalParams);
-    }
-}
-console = new ConsoleOverride();
-var console$1 = console;
+import { c as console } from './console.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,7 +19,7 @@ class configLoader {
             fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
         }
         else {
-            console$1.error('Configuration file(.builderrc.yml) already exists');
+            console.error('Configuration file(.builderrc.yml) already exists');
         }
     }
     /**
@@ -156,4 +132,4 @@ class configLoader {
     }
 }
 
-export { console$1 as a, configLoader as c };
+export { configLoader as c };
