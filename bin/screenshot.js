@@ -170,11 +170,13 @@ else {
         const context = browserContexts[screenshotGroup];
         const testUrl = new URL(screenshotPage.url);
         const page = await context.newPage();
+        let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
+        let screenshotSaveDirName = path.dirname(testUrl.pathname);
         if (/\/$/.test(testUrl.pathname)) {
-            testUrl.pathname += 'index.html';
+            screenshotSaveFileName = 'index.png';
+            screenshotSaveDirName = testUrl.pathname.replace(/\/$/, '');
         }
-        const screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-        const screenshotSavePath = path.join(screenshotSaveDir, path.dirname(testUrl.pathname), screenshotSaveFileName);
+        const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);
         await page.goto(testUrl.toString());
         if (!fs.existsSync(path.dirname(screenshotSavePath))) {
             fs.mkdirSync(path.dirname(screenshotSavePath), { recursive: true });
