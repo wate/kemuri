@@ -8,13 +8,14 @@ import console from './console';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-class configLoader {
+type settingType = 'js' | 'css' | 'html';
 
+class configLoader {
   /**
    * 設定ファイルを生成する
    * @param force
    */
-  public static init(force?: boolean) {
+  public static init(force?: boolean): void {
     const srcConfigFilePath = path.resolve(__dirname, '../../.builderrc.default.yml');
     const destConfigFilePath = path.resolve(process.cwd(), '.builderrc.yml');
     if (!fs.existsSync(destConfigFilePath) || force) {
@@ -38,7 +39,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static isEnable(type: 'js' | 'css' | 'html') {
+  public static isEnable(type: settingType): boolean {
     const allConfig = configLoader.load();
     if (allConfig && _.has(allConfig, 'enable') && _.get(allConfig, 'enable')) {
       return _.get(allConfig, 'enable').includes(type);
@@ -51,7 +52,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static isDisable(type: 'js' | 'css' | 'html') {
+  public static isDisable(type: settingType): boolean {
     return !this.isEnable(type);
   }
   /**
@@ -59,7 +60,7 @@ class configLoader {
    * @param key
    * @returns
    */
-  public static get(key: string, defaultValue?: any) {
+  public static get(key: string, defaultValue?: any): any {
     const allConfig = configLoader.load();
     return _.get(allConfig, key, defaultValue);
   }
@@ -68,7 +69,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static getOption(type: 'html' | 'css' | 'js', overrideOption?: any): any {
+  public static getOption(type: 'html' | 'css' | 'js', overrideOption?: object): object {
     const allConfig = configLoader.load();
     let builderConfig = {};
     if (allConfig) {
@@ -101,21 +102,6 @@ class configLoader {
   }
 
   /**
-   * スニペットのオプションを取得する
-   * @param overrideOption
-   * @returns
-   */
-  public static getSnippetOption(overrideOption?: object) {
-    const allConfig = configLoader.load();
-    let snippetOption =
-      _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
-    if (overrideOption) {
-      snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
-    }
-    return snippetOption;
-  }
-
-  /**
    * HTMLビルダーのオプションを取得する
    * @returns
    */
@@ -126,15 +112,44 @@ class configLoader {
    * CSSビルダーのオプションを取得する
    * @returns
    */
-  public static getCssOption(overrideOption?: any) {
+  public static getCssOption(overrideOption?: any): object {
     return configLoader.getOption('css', overrideOption);
   }
   /**
    * JSビルダーのオプションを取得する
    * @returns
    */
-  public static getJsOption(overrideOption?: any) {
+  public static getJsOption(overrideOption?: any): object {
     return configLoader.getOption('js', overrideOption);
+  }
+
+  /**
+   * スニペットのオプションを取得する
+   * @param overrideOption
+   * @returns
+   */
+  public static getSnippetOption(overrideOption?: object): object {
+    const allConfig = configLoader.load();
+    let snippetOption =
+      _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+    if (overrideOption) {
+      snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
+    }
+    return snippetOption;
+  }
+  /**
+   * スクリーンショットのオプションを取得する
+   * @param overrideOption
+   * @returns
+   */
+  public static getScreenshotOption(overrideOption?: object): object {
+    const allConfig = configLoader.load();
+    let screenshotOption =
+      _.has(allConfig, 'screenshot') && !_.isNull(_.get(allConfig, 'screenshot')) ? _.get(allConfig, 'screenshot') : {};
+    if (overrideOption) {
+      screenshotOption = _.merge(_.cloneDeep(screenshotOption), _.cloneDeep(screenshotOption));
+    }
+    return screenshotOption;
   }
 }
 

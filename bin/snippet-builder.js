@@ -12,17 +12,16 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
-import { c as console } from './common/console.mjs';
-import { c as configLoader } from './common/config.mjs';
+import { a as console, c as configLoader } from './common/config.mjs';
 import * as dotenv from 'dotenv';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
 import 'editorconfig';
-import 'chalk';
-import 'node:console';
 import 'node:url';
 import 'cosmiconfig';
+import 'chalk';
+import 'node:console';
 
 class vscodeSnippetBuilder extends baseBuilder {
     /**

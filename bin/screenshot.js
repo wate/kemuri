@@ -2,8 +2,9 @@ import { devices, chromium, webkit, firefox } from 'playwright';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { URL } from 'node:url';
-import { c as console } from './common/console.mjs';
+import { a as console, c as configLoader } from './common/config.mjs';
 import _ from 'lodash';
+import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
 
@@ -11,27 +12,47 @@ let pages = [];
 if (fs.existsSync('./pages.json')) {
     pages = JSON.parse(fs.readFileSync('./pages.json', 'utf8'));
 }
-// const screenshotTargets: any = {};
-const screenshotTargets = {
-    desktop: { type: 'Desktop Chrome', width: 1920, height: 1080 },
-    tablet: { type: 'iPad Mini' },
-    tablet_landscape: { type: 'iPad Mini landscape' },
-    mobile: { type: 'iPhone 14 Pro Max' },
-    mobile_landscape: { type: 'iPhone 14 Pro Max landscape' },
-};
-const headless = true;
-const fullPage = true;
-const retryLimit = 3;
 if (pages.length === 0) {
     console.error('No pages found in pages.json');
     process.exit(1);
 }
 else {
-    const defaultBrowser = {
+    let screenshotTargets = {};
+    let headless = true;
+    let fullPage = true;
+    let retryLimit = 3;
+    let screenshotBaseSaveDir = 'screenshots';
+    let defaultBrowser = {
         type: 'chromium',
         width: 1920,
         height: 1080,
     };
+    const screenshotOption = configLoader.getScreenshotOption();
+    console.log(screenshotOption);
+    if (_.has(screenshotOption, 'outputDir') && _.get(screenshotOption, 'outputDir')) {
+        //@ts-ignore{
+        screenshotBaseSaveDir = _.get(screenshotOption, 'outputDir');
+    }
+    if (_.has(screenshotOption, 'default') && _.get(screenshotOption, 'default')) {
+        //@ts-ignore
+        defaultBrowser = _.get(screenshotOption, 'default');
+    }
+    if (_.has(screenshotOption, 'headless')) {
+        //@ts-ignore
+        headless = _.get(screenshotOption, 'headless');
+    }
+    if (_.has(screenshotOption, 'fullPage')) {
+        //@ts-ignore
+        fullPage = _.get(screenshotOption, 'fullPage');
+    }
+    if (_.has(screenshotOption, 'retryLimit') && _.get(screenshotOption, 'retryLimit')) {
+        //@ts-ignore
+        retryLimit = _.get(screenshotOption, 'retryLimit');
+    }
+    if (_.has(screenshotOption, 'targets') && _.get(screenshotOption, 'targets')) {
+        //@ts-ignore
+        screenshotTargets = _.get(screenshotOption, 'targets');
+    }
     const screenshotPages = [];
     if (Object.keys(screenshotTargets).length === 0) {
         pages.forEach((page) => {
@@ -83,11 +104,12 @@ else {
             }
         }
         const browser = browsers[screenshotPage.type];
-        let screenshotBaseSavePath = 'screenshots';
+        let screenshotSaveDir = screenshotBaseSaveDir;
         let screenshotGroup = 'default';
+        const screenshotViewportSize = screenshotPage.width + 'x' + screenshotPage.height;
         if (screenshotPage.group) {
             screenshotGroup = screenshotPage.group;
-            screenshotBaseSavePath = path.join(screenshotBaseSavePath, screenshotPage.group);
+            screenshotSaveDir = path.join(screenshotBaseSaveDir, screenshotPage.group);
         }
         if (!browserContexts[screenshotGroup]) {
             browserContexts[screenshotGroup] = await browser.newContext({
@@ -98,7 +120,7 @@ else {
         const testUrl = new URL(screenshotPage.url);
         const page = await context.newPage();
         const screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-        const screenshotSavePath = path.join(screenshotBaseSavePath, path.dirname(testUrl.pathname), screenshotSaveFileName);
+        const screenshotSavePath = path.join(screenshotSaveDir, path.dirname(testUrl.pathname), screenshotSaveFileName);
         await page.goto(testUrl.toString());
         if (!fs.existsSync(path.dirname(screenshotSavePath))) {
             fs.mkdirSync(path.dirname(screenshotSavePath), { recursive: true });
@@ -122,7 +144,7 @@ else {
             }
         } while (retry && retryCount < retryLimit);
         await page.close();
-        console.group('Screenshot(' + screenshotPage.group + '): ' + screenshotPage.url);
+        console.group('[' + screenshotGroup + '(' + screenshotViewportSize + ')]: ' + screenshotPage.url);
         if (screenshotError) {
             console.error(screenshotError);
         }

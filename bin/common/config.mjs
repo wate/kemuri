@@ -3,7 +3,31 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
-import { c as console } from './console.mjs';
+import chalk from 'chalk';
+import { Console } from 'node:console';
+
+class ConsoleOverride extends Console {
+    constructor() {
+        super(process.stdout, process.stderr);
+    }
+    debug(message, ...optionalParams) {
+        return super.debug(chalk.gray(message), ...optionalParams);
+    }
+    info(message, ...optionalParams) {
+        return super.info(chalk.blue(message), ...optionalParams);
+    }
+    warn(message, ...optionalParams) {
+        return super.warn(chalk.yellow(message), ...optionalParams);
+    }
+    error(message, ...optionalParams) {
+        return super.error(chalk.red(message), ...optionalParams);
+    }
+    group(message, ...optionalParams) {
+        return super.group(chalk.cyan(message), ...optionalParams);
+    }
+}
+console = new ConsoleOverride();
+var console$1 = console;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +43,7 @@ class configLoader {
             fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
         }
         else {
-            console.error('Configuration file(.builderrc.yml) already exists');
+            console$1.error('Configuration file(.builderrc.yml) already exists');
         }
     }
     /**
@@ -97,19 +121,6 @@ class configLoader {
         return serverOption;
     }
     /**
-     * スニペットのオプションを取得する
-     * @param overrideOption
-     * @returns
-     */
-    static getSnippetOption(overrideOption) {
-        const allConfig = configLoader.load();
-        let snippetOption = _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
-        if (overrideOption) {
-            snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
-        }
-        return snippetOption;
-    }
-    /**
      * HTMLビルダーのオプションを取得する
      * @returns
      */
@@ -130,6 +141,32 @@ class configLoader {
     static getJsOption(overrideOption) {
         return configLoader.getOption('js', overrideOption);
     }
+    /**
+     * スニペットのオプションを取得する
+     * @param overrideOption
+     * @returns
+     */
+    static getSnippetOption(overrideOption) {
+        const allConfig = configLoader.load();
+        let snippetOption = _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+        if (overrideOption) {
+            snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
+        }
+        return snippetOption;
+    }
+    /**
+     * スクリーンショットのオプションを取得する
+     * @param overrideOption
+     * @returns
+     */
+    static getScreenshotOption(overrideOption) {
+        const allConfig = configLoader.load();
+        let screenshotOption = _.has(allConfig, 'screenshot') && !_.isNull(_.get(allConfig, 'screenshot')) ? _.get(allConfig, 'screenshot') : {};
+        if (overrideOption) {
+            screenshotOption = _.merge(_.cloneDeep(screenshotOption), _.cloneDeep(screenshotOption));
+        }
+        return screenshotOption;
+    }
 }
 
-export { configLoader as c };
+export { console$1 as a, configLoader as c };

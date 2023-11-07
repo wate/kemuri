@@ -150,7 +150,7 @@
 #     width: 1920
 #     height: 1080
 #   headless: true
-#   fullPage: false
+#   fullPage: true
 #   retryLimit: 3
 #   ## ----------------
 #   ## 複数環境のスクリーンショットを取る場合は以下にターゲットを設定

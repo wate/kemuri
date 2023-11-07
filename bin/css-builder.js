@@ -10,14 +10,13 @@ import 'glob';
 import 'chokidar';
 import 'rimraf';
 import 'editorconfig';
-import './common/console.mjs';
-import 'chalk';
-import 'node:console';
 import 'sass';
 import 'js-beautify';
 import 'node:url';
 import 'cosmiconfig';
 import 'lodash';
+import 'chalk';
+import 'node:console';
 
 dotenv.config();
 const argv = yargs(process.argv.slice(2))

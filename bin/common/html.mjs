@@ -6,7 +6,7 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import js_beautify from 'js-beautify';
-import { c as console } from './console.mjs';
+import { a as console } from './config.mjs';
 
 const beautify = js_beautify.html;
 /**

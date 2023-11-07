@@ -74,7 +74,7 @@
     "js-builder:watch": "tsx lib/js-builder.ts --watch",
     "js-builder:build": "tsx lib/js-builder.ts",
     "screenshot": "run-s screenshot:*",
-    "screenshot:rebuild": "run-s builder:build",
+    "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:cleanup": "rimraf screenshots/*",
     "screenshot:screenshot": "node bin/screenshot.js",
     "snippet-builder:build": "tsx lib/snippet-builder.ts",
@@ -83,9 +83,9 @@
     "cleanup:assets:js": "rimraf public/assets/js/*",
     "cleanup:assets:css": "rimraf public/assets/css/*",
     "----------": "",
-    "build": "run-s build:*",
-    "build:cleanup": "rimraf bin/*",
-    "build:build": "rollup -c",
-    "build:chmod": "chmod 0755 bin/*.js"
+    "bin-build": "run-s bin-build:*",
+    "bin-build:cleanup": "rimraf bin/*",
+    "bin-build:build": "rollup -c",
+    "bin-build:chmod": "chmod 0755 bin/*.js"
   }
 }

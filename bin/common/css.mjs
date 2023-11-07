@@ -5,7 +5,7 @@ import { glob } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
 import js_beautify from 'js-beautify';
-import { c as console } from './console.mjs';
+import { a as console } from './config.mjs';
 
 const beautify = js_beautify.css;
 /**
