@@ -5,12 +5,13 @@ import { URL } from 'node:url';
 import configLoader from './config';
 import console from './console';
 import _ from 'lodash';
+import { JSDOM } from 'jsdom';
 
 type Page = {
   url: string;
-  srcFile: string;
-  lastmod: string;
-  variables: object;
+  srcFile?: string;
+  lastmod?: string;
+  variables?: object;
 };
 
 interface Target {
@@ -31,12 +32,61 @@ interface ScreenshotPage extends Browser {
 }
 
 let pages: Page[] = [];
-if (fs.existsSync('./pages.json')) {
-  pages = JSON.parse(fs.readFileSync('./pages.json', 'utf8'));
+const screenshotOption = configLoader.getScreenshotOption();
+let sitemapLocation: any = null;
+if (_.has(screenshotOption, 'sitemapLocation')) {
+  sitemapLocation = _.get(screenshotOption, 'sitemapLocation');
+} else {
+  //@ts-ignore
+  const htmlOption = configLoader.getHtmlOption();
+  const htmloutputDir: any = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
+  const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
+  if (fs.existsSync('./pages.json')) {
+    sitemapLocation = './pages.json';
+  } else if (fs.existsSync(sitemapFilePath)) {
+    sitemapLocation = sitemapFilePath;
+  }
+}
+
+if (/^https?:\/\//.test(sitemapLocation)) {
+  const dom = new JSDOM(await (await fetch(sitemapLocation)).text());
+  const urls = dom.window.document.querySelectorAll('url');
+  urls.forEach((url) => {
+    const loc = url.querySelector('loc');
+    if (loc) {
+      //@ts-ignore
+      const page: Page = { url: loc.textContent };
+      pages.push(page);
+    }
+  });
+} else {
+  if (fs.existsSync(sitemapLocation)) {
+    const fileType = path.extname(sitemapLocation).toLocaleLowerCase();
+    switch (fileType) {
+      case '.json':
+        pages = JSON.parse(fs.readFileSync(sitemapLocation, 'utf8')).pages;
+        break;
+      case '.xml':
+        const dom = new JSDOM(fs.readFileSync(sitemapLocation, 'utf8'));
+        const urls = dom.window.document.querySelectorAll('url');
+        urls.forEach((url) => {
+          const loc = url.querySelector('loc');
+          if (loc) {
+            //@ts-ignore
+            const page: Page = { url: loc.textContent };
+            pages.push(page);
+          }
+        });
+        break;
+    }
+  } else {
+    console.error('sitemap not found.');
+    process.exit(1);
+  }
 }
 
 if (pages.length === 0) {
-  console.error('No pages found in pages.json');
+  console.error('page not found.');
   process.exit(1);
 } else {
   let screenshotTargets: any = {};
@@ -49,7 +99,6 @@ if (pages.length === 0) {
     width: 1920,
     height: 1080,
   };
-  const screenshotOption = configLoader.getScreenshotOption();
   if (_.has(screenshotOption, 'outputDir') && _.get(screenshotOption, 'outputDir')) {
     //@ts-ignore{
     screenshotBaseSaveDir = _.get(screenshotOption, 'outputDir');
@@ -138,6 +187,9 @@ if (pages.length === 0) {
       }
       const context = browserContexts[screenshotGroup];
       const testUrl = new URL(screenshotPage.url);
+      if (/\/$/.test(testUrl.pathname)) {
+        testUrl.pathname += 'index.html';
+      }
       const page = await context.newPage();
       const screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
       const screenshotSavePath = path.join(screenshotSaveDir, path.dirname(testUrl.pathname), screenshotSaveFileName);

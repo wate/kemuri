@@ -197,7 +197,7 @@ class nunjucksBuilder extends baseBuilder {
     generatePageListFile(pageList) {
         const pageListFilePath = 'pages.json';
         fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
-        fs.writeFileSync(pageListFilePath, JSON.stringify(pageList, null, 2), 'utf-8');
+        fs.writeFileSync(pageListFilePath, JSON.stringify({ pages: pageList }, null, 2), 'utf-8');
         console.log('Generate page list file: ' + pageListFilePath);
     }
     /**
