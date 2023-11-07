@@ -4,8 +4,8 @@ import { URL } from 'node:url';
 import { baseBuilder, builderOption } from '../base';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
-import js_beautify from 'js-beautify';
 import nunjucks from 'nunjucks';
+import { html_beautify as beautify } from 'js-beautify';
 import console from '../../console';
 
 /**
@@ -360,8 +360,7 @@ export class nunjucksBuilder extends baseBuilder {
     const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
     let html = nunjucks.render(templatePath, templateVars);
-    //@ts-ignore
-    html = js_beautify.html(html, beautifyOption);
+    html = beautify(html, beautifyOption);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
   }
@@ -383,8 +382,7 @@ export class nunjucksBuilder extends baseBuilder {
       const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
       const templateVars = this.getTemplateVars(srcFile);
       let html = nunjucks.render(templatePath, templateVars);
-      //@ts-ignore
-      html = js_beautify.html(html, beautifyOption);
+      html = beautify(html, beautifyOption);
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
       console.log('Compile: ' + srcFile + ' => ' + outputPath);

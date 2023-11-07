@@ -6,8 +6,10 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import js_beautify from 'js-beautify';
+import { js_beautify as beautify } from 'js-beautify';
 import console from '../../console';
+
+type outputFormat = 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
 
 /**
  * JSビルドの設定オプション
@@ -16,7 +18,7 @@ export interface typescriptBuilderOption extends builderOption {
   // https://rollupjs.org/configuration-options/#output-globals
   globals?: object;
   // https://rollupjs.org/configuration-options/#output-format
-  format?: 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
+  format?: outputFormat;
   // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean;
   minify?: boolean;
@@ -61,7 +63,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * Roolup.jsに指定する出力形式
    */
-  private outputFortmat: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd' = 'iife';
+  private outputFortmat: outputFormat = 'iife';
 
   /**
    * SourceMapファイル出力の可否
@@ -132,7 +134,7 @@ export class typescriptBuilder extends baseBuilder {
    */
   protected minifyOption: object = {
     compress: {},
-    mangle: {}
+    mangle: {},
   };
   /**
    * コンストラクタ
@@ -161,7 +163,7 @@ export class typescriptBuilder extends baseBuilder {
    *
    * @param format
    */
-  public setOutputFormat(format: 'es' | 'esm' | 'module' | 'iife' | 'cjs' | 'commonjs' | 'umd' | 'amd'): void {
+  public setOutputFormat(format: outputFormat): void {
     this.outputFortmat = format;
   }
   /**
@@ -269,7 +271,7 @@ export class typescriptBuilder extends baseBuilder {
         } else {
           let outputCode: string = chunkOrAsset.code;
           if (this.minify === undefined || !this.minify) {
-            outputCode = js_beautify.js(outputCode, beautifyOption);
+            outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
         }
@@ -325,7 +327,7 @@ export class typescriptBuilder extends baseBuilder {
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           let outputCode = chunkOrAsset.code;
           if (this.minify === undefined || !this.minify) {
-            outputCode = js_beautify.js(outputCode, beautifyOption);
+            outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(outputPath, outputCode.trim() + '\n');
           console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);

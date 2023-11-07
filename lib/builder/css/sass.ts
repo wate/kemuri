@@ -4,7 +4,7 @@ import { baseBuilder, builderOption } from '../base';
 import { glob, Path } from 'glob';
 import * as sass from 'sass';
 import { rimraf } from 'rimraf';
-import js_beautify from 'js-beautify';
+import { css_beautify as beautify } from 'js-beautify';
 import console from '../../console';
 
 /**
@@ -367,7 +367,7 @@ export class sassBuilder extends baseBuilder {
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     const result = sass.compile(srcPath, compileOption);
     if (compileOption.style !== 'compressed') {
-      result.css = js_beautify.css(result.css, beautifyOption);
+      result.css = beautify(result.css, beautifyOption);
     }
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, result.css.trim() + '\n');
@@ -408,7 +408,7 @@ export class sassBuilder extends baseBuilder {
       const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
       const result = sass.compile(srcFile, compileOption);
       if (compileOption.style !== 'compressed') {
-        result.css = js_beautify.css(result.css, beautifyOption);
+        result.css = beautify(result.css, beautifyOption);
       }
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, result.css.trim() + '\n');
