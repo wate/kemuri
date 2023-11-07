@@ -6,6 +6,15 @@ import configLoader from './config';
 import console from './console';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
+import yargs from 'yargs';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const argv = yargs(process.argv.slice(2))
+  .options({
+    location: { type: 'string', description: 'サイトマップファイルのパスまたはURL', ailiase: 'l' },
+  })
+  .parseSync();
 
 type Page = {
   url: string;
@@ -34,17 +43,21 @@ interface ScreenshotPage extends Browser {
 let pages: Page[] = [];
 const screenshotOption = configLoader.getScreenshotOption();
 let sitemapLocation: any = null;
-if (_.has(screenshotOption, 'sitemapLocation')) {
-  sitemapLocation = _.get(screenshotOption, 'sitemapLocation');
+if (argv.location) {
+  sitemapLocation = argv.location;
 } else {
-  //@ts-ignore
-  const htmlOption = configLoader.getHtmlOption();
-  const htmloutputDir: any = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
-  const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
-  if (fs.existsSync('./pages.json')) {
-    sitemapLocation = './pages.json';
-  } else if (fs.existsSync(sitemapFilePath)) {
-    sitemapLocation = sitemapFilePath;
+  if (_.has(screenshotOption, 'sitemapLocation')) {
+    sitemapLocation = _.get(screenshotOption, 'sitemapLocation');
+  } else {
+    //@ts-ignore
+    const htmlOption = configLoader.getHtmlOption();
+    const htmloutputDir: any = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
+    const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
+    if (fs.existsSync('./pages.json')) {
+      sitemapLocation = './pages.json';
+    } else if (fs.existsSync(sitemapFilePath)) {
+      sitemapLocation = sitemapFilePath;
+    }
   }
 }
 
