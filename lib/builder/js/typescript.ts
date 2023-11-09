@@ -58,29 +58,15 @@ export class typescriptBuilder extends baseBuilder {
   protected outputExt = 'js';
 
   /**
-   * ビルド時に設定するグローバルオブジェクトの内容
+   * -------------------------
+   * このクラス固有のメンバ変数/メソッド
+   * -------------------------
    */
-  private globals: any = {};
-
-  /**
-   * Roolup.jsに指定する出力形式
-   */
-  private outputFortmat: outputFormat = 'iife';
-
-  /**
-   * SourceMapファイル出力の可否
-   */
-  private sourcemap?: boolean;
-
-  /**
-   * minifyの可否
-   */
-  private minify?: boolean;
 
   /**
    * TypeScriptのデフォルトのコンパイルオプション
    */
-  private typeScriptCompolerOption = {
+  protected typeScriptCompoleOption = {
     /* ------------------------ */
     /* Language and Environment */
     /* ------------------------ */
@@ -131,6 +117,26 @@ export class typescriptBuilder extends baseBuilder {
   };
 
   /**
+   * ビルド時に設定するグローバルオブジェクトの内容
+   */
+  private globals: any = {};
+
+  /**
+   * Roolup.jsに指定する出力形式
+   */
+  private outputFortmat: outputFormat = 'iife';
+
+  /**
+   * SourceMapファイル出力の可否
+   */
+  private sourcemap?: boolean;
+
+  /**
+   * minifyの可否
+   */
+  private minify?: boolean;
+
+  /**
    * Minyfy化のオプション
    * https://github.com/terser/terser#minify-options
    */
@@ -138,19 +144,6 @@ export class typescriptBuilder extends baseBuilder {
     compress: {},
     mangle: {},
   };
-  /**
-   * コンストラクタ
-   * @param option
-   */
-  constructor(option?: typescriptBuilderOption) {
-    super(option);
-  }
-
-  /**
-   * -------------------------
-   * このクラス固有のメソッド
-   * -------------------------
-   */
 
   /**
    * グルーバルオブジェクトを設定する
@@ -224,18 +217,17 @@ export class typescriptBuilder extends baseBuilder {
   }
 
   /**
-   * コンパイルオプションを取得する
-   * @returns
-   */
-  protected getCompileOption(): any {
-    return Object.assign(this.typeScriptCompolerOption, this.compileOption);
-  }
-
-  /**
    * -------------------------
    * 抽象化メソッドの実装
    * -------------------------
    */
+  /**
+   * コンパイルオプションを取得する
+   * @returns
+   */
+  protected getCompileOption(): any {
+    return Object.assign(this.typeScriptCompoleOption, this.compileOption);
+  }
 
   /**
    * 単一ファイルのビルド処理
@@ -302,7 +294,7 @@ export class typescriptBuilder extends baseBuilder {
       const typescriptConfig = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
-        compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
+        compilerOptions: this.getCompileOption(),
       };
       const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
       if (this.minify !== undefined && this.minify) {

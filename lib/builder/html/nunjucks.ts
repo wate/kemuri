@@ -35,9 +35,19 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected outputExt: string = 'html';
 
+  /**
+   * コンパイルオプション
+   */
   protected compileOption: nunjucks.ConfigureOptions = {
     noCache: true,
   };
+
+  /**
+   * -------------------------
+   * このクラス固有のメンバ変数/メソッド
+   * -------------------------
+   */
+
   /**
    * 変数ファイルの名前
    */
@@ -82,18 +92,6 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected templateVars: any = {};
 
-  /**
-   * コンストラクタ
-   * @param option
-   */
-  public constructor(option?: nunjucksBuilderOption) {
-    super(option);
-  }
-  /**
-   * -------------------------
-   * このクラス固有のメソッド
-   * -------------------------
-   */
 
   /**
    * 変数ファイル名を設定する

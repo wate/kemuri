@@ -41,20 +41,15 @@ export class sassBuilder extends baseBuilder {
   protected ignoreFilePrefix = '_';
 
   /**
-   * エントリポイントから除外するディレクトリ名
-   * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
-   */
-  protected ignoreDirNames = [];
-
-  /**
    * 出力時の拡張子
    */
   protected outputExt = 'css';
 
   /**
-   * コンパイラーのオプション
+   * -------------------------
+   * このクラス固有のメンバ変数/メソッド
+   * -------------------------
    */
-  protected compilerOption: any = {};
 
   /**
    * 出力スタイルの設定
@@ -85,20 +80,6 @@ export class sassBuilder extends baseBuilder {
    * インデックスファイルにインポートする際の方法
    */
   private indexImportType: 'forward' | 'use' = 'forward';
-
-  /**
-   * コンストラクタ
-   * @param option
-   */
-  constructor(option?: sassBuilderOption) {
-    super(option);
-  }
-
-  /**
-   * -------------------------
-   * このクラス固有のメソッド
-   * -------------------------
-   */
 
   /**
    * 出力スタイルの設定
