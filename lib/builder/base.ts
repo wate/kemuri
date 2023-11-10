@@ -297,7 +297,7 @@ export abstract class baseBuilder {
    * エントリポイントのGlobパターンを取得する
    * @returns
    */
-  protected getEntryPointGlobPatetrn(): string | string[] {
+  protected getEntryPointGlobPatetrn(): string {
     return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
   }
 
@@ -445,7 +445,7 @@ export abstract class baseBuilder {
   protected watchAddCallBack(filePath: string) {
     console.group('Add file: ' + filePath);
     try {
-      //エントリポイントを更新
+      //エントリポイントを更新する
       this.getEntryPoint();
       if (Array.from(this.entryPoint.values()).includes(filePath)) {
         const outputPath = this.convertOutputPath(filePath);
@@ -491,11 +491,17 @@ export abstract class baseBuilder {
         rimraf(outputPath);
         console.log('Remove: ' + outputPath);
       }
+      //エントリポイントから該当ファイルのエントリを削除する
+      const entries = this.entryPoint.entries();
+      for (const entry of entries) {
+        this.entryPoint.delete(entry[0]);
+      }
+      this.entryPoint.delete(filePath);
     }
     console.groupEnd();
   }
   /**
-   * ディレクトリ時のコールバック処理
+   * ディレクトリ追加時のコールバック処理
    * @param filePath
    */
   protected watchAddDirCallBack(filePath: string) {
@@ -514,6 +520,13 @@ export abstract class baseBuilder {
     if (fs.existsSync(outputPath)) {
       rimraf(outputPath);
       console.log('Remove: ' + outputPath);
+    }
+    //エントリポイントから該当ディレクトリのエントリを削除する
+    const entries = this.entryPoint.entries();
+    for (const entry of entries) {
+      if (entry[1].startsWith(filePath)) {
+        this.entryPoint.delete(entry[0]);
+      }
     }
     console.groupEnd();
   }
