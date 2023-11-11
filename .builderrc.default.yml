@@ -49,7 +49,7 @@
 #   compileOption: {}
 #   beautifyOption: {}
 #   varFileName: vars.yml
-#   siteUrl: 'http://127.0.0.1:3000/'
+#   siteUrl: 'http://localhost:3000/'
 #   generateSiteMap: true
 #   sitemapTemplate: |
 #     <?xml version="1.0" encoding="UTF-8"?>

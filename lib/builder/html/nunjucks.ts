@@ -56,7 +56,7 @@ export class nunjucksBuilder extends baseBuilder {
   /**
    * サイトURL
    */
-  protected siteUrl: string = 'http://127.0.0.1:3000/';
+  protected siteUrl: string = 'http://localhost:3000/';
 
   /**
    * サイトマップファイルの生成の可否

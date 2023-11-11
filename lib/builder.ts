@@ -3,16 +3,18 @@
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
+import * as server from './server/browser-sync';
 import configLoader from './config';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
-import './console';
+import console from './console';
+
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
-    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
+    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモード' },
     m: {
       type: 'string',
       choices: ['develop', 'production'],
@@ -25,6 +27,7 @@ const argv = yargs(process.argv.slice(2))
     html: { type: 'boolean', description: 'htmlビルダーを利用する' },
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     init: { type: 'boolean', description: '設定ファイルを生成する' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
   })
@@ -88,6 +91,13 @@ if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
   });
+  if (argv.server) {
+    const browserSyncOption = server.getBrowserSyncOption();
+    console.group(chalk.blue('browserSync Server Option'));
+    console.log(browserSyncOption);
+    console.groupEnd();
+    server.run();
+  }
 } else {
   builders.forEach((builder) => {
     builder.build();
