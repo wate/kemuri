@@ -267,9 +267,11 @@ export class vscodeSnippetBuilder extends baseBuilder {
       } else {
         const namePrefix = meta?.prefix ? meta.prefix : '';
         const nameSuffix = meta?.suffix ? meta.suffix : '';
+        let snippetCount: number = 0;
         visit(this.tree, { type: 'heading', depth: this.snippetHeaderDeps }, (node, index) => {
           let snippetNameNode = find(node, { type: 'text' });
           if (snippetNameNode) {
+            snippetCount++;
             // @ts-ignore
             const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
             console.info('Snippet: ' + snippetName);
@@ -321,9 +323,14 @@ export class vscodeSnippetBuilder extends baseBuilder {
                 // @ts-ignore
                 this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
               });
+            } else {
+              console.warn('Not found snippet code: ' + snippetName);
             }
           }
         });
+        if (snippetCount === 0) {
+          console.warn('Not found snippets.');
+        }
       }
       console.groupEnd();
     });
