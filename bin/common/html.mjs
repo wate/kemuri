@@ -13,12 +13,8 @@ const beautify = js_beautify.html;
  * ビルド処理の抽象クラス
  */
 class nunjucksBuilder extends baseBuilder {
-    /**
-     * コンストラクタ
-     * @param option
-     */
-    constructor(option) {
-        super(option);
+    constructor() {
+        super(...arguments);
         /**
          * エントリポイントとなるファイルの拡張子
          */
@@ -27,9 +23,17 @@ class nunjucksBuilder extends baseBuilder {
          * 出力時の拡張子
          */
         this.outputExt = 'html';
+        /**
+         * コンパイルオプション
+         */
         this.compileOption = {
             noCache: true,
         };
+        /**
+         * -------------------------
+         * このクラス固有のメンバ変数/メソッド
+         * -------------------------
+         */
         /**
          * 変数ファイルの名前
          */
@@ -69,11 +73,6 @@ class nunjucksBuilder extends baseBuilder {
          */
         this.templateVars = {};
     }
-    /**
-     * -------------------------
-     * このクラス固有のメソッド
-     * -------------------------
-     */
     /**
      * 変数ファイル名を設定する
      *

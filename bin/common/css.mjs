@@ -12,12 +12,8 @@ const beautify = js_beautify.css;
  * ビルド処理の抽象クラス
  */
 class sassBuilder extends baseBuilder {
-    /**
-     * コンストラクタ
-     * @param option
-     */
-    constructor(option) {
-        super(option);
+    constructor() {
+        super(...arguments);
         /**
          * 出力先ディレクトリ
          */
@@ -31,18 +27,9 @@ class sassBuilder extends baseBuilder {
          */
         this.ignoreFilePrefix = '_';
         /**
-         * エントリポイントから除外するディレクトリ名
-         * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
-         */
-        this.ignoreDirNames = [];
-        /**
          * 出力時の拡張子
          */
         this.outputExt = 'css';
-        /**
-         * コンパイラーのオプション
-         */
-        this.compilerOption = {};
         /**
          * インデックスファイルの自動生成の可否
          */
@@ -56,11 +43,6 @@ class sassBuilder extends baseBuilder {
          */
         this.indexImportType = 'forward';
     }
-    /**
-     * -------------------------
-     * このクラス固有のメソッド
-     * -------------------------
-     */
     /**
      * 出力スタイルの設定
      *

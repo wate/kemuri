@@ -382,7 +382,7 @@ class baseBuilder {
     watchAddCallBack(filePath) {
         console.group('Add file: ' + filePath);
         try {
-            //エントリポイントを更新
+            //エントリポイントを更新する
             this.getEntryPoint();
             if (Array.from(this.entryPoint.values()).includes(filePath)) {
                 const outputPath = this.convertOutputPath(filePath);
@@ -432,11 +432,17 @@ class baseBuilder {
                 rimraf(outputPath);
                 console.log('Remove: ' + outputPath);
             }
+            //エントリポイントから該当ファイルのエントリを削除する
+            const entries = this.entryPoint.entries();
+            for (const entry of entries) {
+                this.entryPoint.delete(entry[0]);
+            }
+            this.entryPoint.delete(filePath);
         }
         console.groupEnd();
     }
     /**
-     * ディレクトリ時のコールバック処理
+     * ディレクトリ追加時のコールバック処理
      * @param filePath
      */
     watchAddDirCallBack(filePath) {
@@ -455,6 +461,13 @@ class baseBuilder {
         if (fs__default.existsSync(outputPath)) {
             rimraf(outputPath);
             console.log('Remove: ' + outputPath);
+        }
+        //エントリポイントから該当ディレクトリのエントリを削除する
+        const entries = this.entryPoint.entries();
+        for (const entry of entries) {
+            if (entry[1].startsWith(filePath)) {
+                this.entryPoint.delete(entry[0]);
+            }
         }
         console.groupEnd();
     }

@@ -14,12 +14,8 @@ const beautify = js_beautify.js;
  * ビルド処理の抽象クラス
  */
 class typescriptBuilder extends baseBuilder {
-    /**
-     * コンストラクタ
-     * @param option
-     */
-    constructor(option) {
-        super(option);
+    constructor() {
+        super(...arguments);
         /**
          * 出力先ディレクトリ
          */
@@ -42,17 +38,14 @@ class typescriptBuilder extends baseBuilder {
          */
         this.outputExt = 'js';
         /**
-         * ビルド時に設定するグローバルオブジェクトの内容
+         * -------------------------
+         * このクラス固有のメンバ変数/メソッド
+         * -------------------------
          */
-        this.globals = {};
-        /**
-         * Roolup.jsに指定する出力形式
-         */
-        this.outputFortmat = 'iife';
         /**
          * TypeScriptのデフォルトのコンパイルオプション
          */
-        this.typeScriptCompolerOption = {
+        this.typeScriptCompoleOption = {
             /* ------------------------ */
             /* Language and Environment */
             /* ------------------------ */
@@ -102,6 +95,14 @@ class typescriptBuilder extends baseBuilder {
             skipLibCheck: true,
         };
         /**
+         * ビルド時に設定するグローバルオブジェクトの内容
+         */
+        this.globals = {};
+        /**
+         * Roolup.jsに指定する出力形式
+         */
+        this.outputFortmat = 'iife';
+        /**
          * Minyfy化のオプション
          * https://github.com/terser/terser#minify-options
          */
@@ -110,11 +111,6 @@ class typescriptBuilder extends baseBuilder {
             mangle: {},
         };
     }
-    /**
-     * -------------------------
-     * このクラス固有のメソッド
-     * -------------------------
-     */
     /**
      * グルーバルオブジェクトを設定する
      *
@@ -185,17 +181,17 @@ class typescriptBuilder extends baseBuilder {
         }
     }
     /**
-     * コンパイルオプションを取得する
-     * @returns
-     */
-    getCompileOption() {
-        return Object.assign(this.typeScriptCompolerOption, this.compileOption);
-    }
-    /**
      * -------------------------
      * 抽象化メソッドの実装
      * -------------------------
      */
+    /**
+     * コンパイルオプションを取得する
+     * @returns
+     */
+    getCompileOption() {
+        return Object.assign(this.typeScriptCompoleOption, this.compileOption);
+    }
     /**
      * 単一ファイルのビルド処理
      * @param srcPath
@@ -262,7 +258,7 @@ class typescriptBuilder extends baseBuilder {
             const typescriptConfig = {
                 include: this.srcDir,
                 exclude: this.ignoreDirNames,
-                compilerOptions: Object.assign(this.typeScriptCompolerOption, this.compileOption),
+                compilerOptions: this.getCompileOption(),
             };
             const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
             if (this.minify !== undefined && this.minify) {

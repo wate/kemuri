@@ -13,6 +13,7 @@ import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
 import { a as console, c as configLoader } from './common/config.mjs';
+import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import 'glob';
 import 'chokidar';
@@ -104,7 +105,7 @@ class vscodeSnippetBuilder extends baseBuilder {
             return srcPath.split(path.sep)[0];
         }
         else {
-            return path.basename(srcPath, path.extname(srcPath));
+            return 'default';
         }
     }
     /**
@@ -216,9 +217,10 @@ class vscodeSnippetBuilder extends baseBuilder {
     }
     /**
      * スニペットデータをロードする
-     * @param name
+     * @param group
+     * @returns
      */
-    loadSnippetData() {
+    loadSnippetData(group) {
         const targetFiles = this.findEntryPointFiles();
         if (targetFiles.length === 0) {
             return;
@@ -226,6 +228,10 @@ class vscodeSnippetBuilder extends baseBuilder {
         targetFiles.forEach((targetFile) => {
             //スニペットのグループ名を取得する
             const groupName = this.getGroupName(targetFile);
+            if (group && group !== groupName) {
+                //グループ名に一致しない場合はスキップする
+                return;
+            }
             this.tree = fromMarkdown(fs.readFileSync(targetFile, 'utf-8'), {
                 extensions: [frontmatter('yaml')],
                 mdastExtensions: [frontmatterFromMarkdown('yaml')],
@@ -243,9 +249,11 @@ class vscodeSnippetBuilder extends baseBuilder {
             else {
                 const namePrefix = meta?.prefix ? meta.prefix : '';
                 const nameSuffix = meta?.suffix ? meta.suffix : '';
+                let snippetCount = 0;
                 visit(this.tree, { type: 'heading', depth: this.snippetHeaderDeps }, (node, index) => {
                     let snippetNameNode = find(node, { type: 'text' });
                     if (snippetNameNode) {
+                        snippetCount++;
                         // @ts-ignore
                         const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
                         console.info('Snippet: ' + snippetName);
@@ -298,50 +306,22 @@ class vscodeSnippetBuilder extends baseBuilder {
                                 this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
                             });
                         }
+                        else {
+                            console.warn('Not found snippet code: ' + snippetName);
+                        }
                     }
                 });
+                if (snippetCount === 0) {
+                    console.warn('Not found snippets.');
+                }
             }
             console.groupEnd();
         });
     }
     /**
-     * -------------------------
-     * 抽象化メソッドの実装
-     * -------------------------
+     * スニペットファイルを出力する
      */
-    /**
-     * ビルドオプションを設定する
-     *
-     * @param option
-     * @returns
-     */
-    setOption(option) {
-        super.setOption(option);
-        if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
-            this.setSnippetHeaderDeps(option.snippetHeaderLevel);
-        }
-        if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
-            this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
-        }
-        if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
-            this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
-        }
-    }
-    /**
-     * 単一ファイルのビルド処理
-     * @param srcPath
-     * @param outputPath
-     */
-    buildFile(srcPath, outputPath) {
-        if (Object.keys(this.snipptes).length === 0) {
-            this.loadSnippetData();
-        }
-    }
-    /**
-     * 全ファイルのビルド処理
-     */
-    buildAll() {
-        this.loadSnippetData();
+    buildSnippet() {
         const groupdSnippets = _.groupBy(this.snipptes, 'group');
         Object.keys(groupdSnippets).forEach((groupName) => {
             //出力先ファイルパス
@@ -385,11 +365,72 @@ class vscodeSnippetBuilder extends baseBuilder {
             fs.writeFileSync(outputPath, JSON.stringify(snippetData, null, 2));
         });
     }
+    /**
+     * -------------------------
+     * 抽象化メソッドの実装
+     * -------------------------
+     */
+    /**
+     * 元ファイルのパスから出力先のパスを取得する
+     * @param srcPath
+     * @returns
+     */
+    convertOutputPath(srcPath) {
+        const groupName = this.getGroupName(srcPath);
+        return path.join(this.outputDir, groupName + '.' + this.outputExt);
+    }
+    /**
+     * ビルドオプションを設定する
+     *
+     * @param option
+     * @returns
+     */
+    setOption(option) {
+        super.setOption(option);
+        if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
+            this.setSnippetHeaderDeps(option.snippetHeaderLevel);
+        }
+        if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
+            this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
+        }
+        if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
+            this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
+        }
+    }
+    /**
+     * 単一ファイルのビルド処理
+     * @param srcPath
+     * @param outputPath
+     */
+    buildFile(srcPath, outputPath) {
+        //ロード済みのスニペットデータをクリアする
+        this.snipptes = {};
+        const groupName = this.getGroupName(srcPath);
+        this.loadSnippetData(groupName);
+        this.buildSnippet();
+    }
+    /**
+     * 全ファイルのビルド処理
+     */
+    buildAll() {
+        this.loadSnippetData();
+        this.buildSnippet();
+    }
 }
 
 const snippetBuilder = new vscodeSnippetBuilder();
 
 dotenv.config();
+const argv = yargs(process.argv.slice(2))
+    .options({
+    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
+})
+    .parseSync();
 const builderOption = configLoader.getSnippetOption();
 snippetBuilder.setOption(builderOption);
-snippetBuilder.build();
+if (argv.watch) {
+    snippetBuilder.watch();
+}
+else {
+    snippetBuilder.build();
+}
