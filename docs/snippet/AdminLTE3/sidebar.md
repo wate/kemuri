@@ -61,7 +61,7 @@ lteside-search
 ```html
 <form class="form-inline" action="${1:#}">
   <div class="input-group">
-    <input class="form-control form-control-sidebar" type="search" name="keyword" id="sidevar-search" placeholder="検索キーワード" aria-label="検索">
+    <input class="form-control form-control-sidebar" type="search" name="keyword" id="sidevar-search" placeholder="keyword" aria-label="Search">
     <div class="input-group-append">
       <button class="btn btn-sidebar" type="submit">
         <i class="fas fa-search"></i>

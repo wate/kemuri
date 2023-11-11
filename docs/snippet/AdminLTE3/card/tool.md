@@ -33,7 +33,7 @@ prefix:
 
 ```
 
-ltecard:tool-times
+ltecard-tool-times
 ---------------------
 
 ```html

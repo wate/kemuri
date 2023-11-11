@@ -22,14 +22,14 @@ ltehead:item-dropdown
 
 ```html
 <li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" id="${1}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    ${2:ヘルプ}
+  <a class="nav-link dropdown-toggle" href="#" id="${1:Help}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    ${1:Help}
   </a>
   <div class="dropdown-menu" aria-labelledby="${1}">
-    <a class="dropdown-item" href="#">${3:FAQ}</a>
-    <a class="dropdown-item" href="#">${4:サポート}</a>
+    <a class="dropdown-item" href="#">${2:FAQ}</a>
+    <a class="dropdown-item" href="#">${3:Support}</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="#">${5:問い合わせ}</a>
+    <a class="dropdown-item" href="#">${4:Contact}</a>
   </div>
 </li>
 <!-- /.dropdown -->
@@ -46,7 +46,7 @@ ltehead-search
   <div class="navbar-search-block">
     <form class="form-inline" action="${1:#}">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" name="keyword" id="header-search" placeholder="検索キーワード" aria-label="検索">
+        <input class="form-control form-control-navbar" type="search" name="keyword" id="header-search" placeholder="keyword" aria-label="Search">
         <div class="input-group-append">
           <button class="btn btn-navbar" type="submit">
             <i class="fas fa-search"></i>

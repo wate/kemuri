@@ -34,14 +34,14 @@ ltelayout
         <li class="nav-item">
           <a href="/" class="nav-link">Home</a>
         </li>
-        <!-- ltehead:item -->
-        <!-- ltehead:item:dropdown -->
+        <!-- ltehead-item -->
+        <!-- ltehead-item-dropdown -->
       </ul>
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
-        <!-- ltehead:search -->
-        <!-- ltehead:messages -->
-        <!-- ltehead:notifications -->
+        <!-- ltehead-search -->
+        <!-- ltehead-messages -->
+        <!-- ltehead-notifications -->
         <li class="nav-item">
           <a class="nav-link" data-widget="fullscreen" href="#" role="button">
             <i class="fas fa-expand-arrows-alt"></i>
@@ -68,11 +68,11 @@ ltelayout
         <!-- Sidebar Menu -->
         <nav class="mt-2">
           <!--% include "element/sidebar.twig" %-->
-          <!-- lteside:user -->
-          <!-- lteside:search -->
+          <!-- lteside-user -->
+          <!-- lteside-search -->
           <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu">
-            <!-- lteside:item -->
-            <!-- lteside:item:tree -->
+            <!-- lteside-item -->
+            <!-- lteside-item-tree -->
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="fas fa-question-circle nav-icon"></i>
@@ -117,7 +117,8 @@ ltelayout
       <div class="content">
         <div class="container-fluid">
           <!--% block flash_msg %-->
-          <!-- tbalert:s -->
+          <!-- bsalert-success -->
+          <!-- bsalert-danger -->
           <!--% endblock %-->
           <!--% block content %-->
           ${1}
@@ -167,14 +168,14 @@ ltelayout-header
   <li class="nav-item">
     <a href="/" class="nav-link">Home</a>
   </li>
-  <!-- ltehead:item -->
-  <!-- ltehead:item:dropdown -->
+  <!-- ltehead-item -->
+  <!-- ltehead-item-dropdown -->
 </ul>
 <!-- Right navbar links -->
 <ul class="navbar-nav ml-auto">
-  <!-- ltehead:search -->
-  <!-- ltehead:messages -->
-  <!-- ltehead:notifications -->
+  <!-- ltehead-search -->
+  <!-- ltehead-messages -->
+  <!-- ltehead-notifications -->
   <li class="nav-item">
     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
       <i class="fas fa-expand-arrows-alt"></i>
@@ -194,11 +195,11 @@ ltelayout-sidebar
 [Main Sidebar Component](https://adminlte.io/docs/3.2/components/control-sidebar.html)
 
 ```html
-<!-- lteside:user -->
-<!-- lteside:search -->
+<!-- lteside-user -->
+<!-- lteside-search -->
 <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu">
-  <!-- lteside:item -->
-  <!-- lteside:item:tree -->
+  <!-- lteside-item -->
+  <!-- lteside-item-tree -->
   <li class="nav-item">
     <a href="#" class="nav-link">
       <i class="fas fa-question-circle nav-icon"></i>
