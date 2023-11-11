@@ -75,6 +75,7 @@
     "js-builder": "run-s js-builder:build",
     "js-builder:watch": "tsx lib/js-builder.ts --watch",
     "js-builder:build": "tsx lib/js-builder.ts",
+    "snippet-builder:watch": "tsx lib/snippet-builder.ts --watch",
     "snippet-builder:build": "tsx lib/snippet-builder.ts",
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",

@@ -1,5 +1,5 @@
 ---
-suffix: "-outline-lg"
+suffix: "-lg-outline"
 scope: 
   - twig
   - nunjucks
@@ -7,42 +7,42 @@ scope:
 [Bootstrap4(Link)](https://getbootstrap.com/docs/4.6/components/buttons/)
 =====================
 
-bslink-p
+bslink-primary
 ---------------------
 
 ```html
 <a href="${1:#}" class="btn btn-outline-primary btn-lg">${2:Primary}</a>
 ```
 
-bslink-sec
+bslink-secondary
 ---------------------
 
 ```html
 <a href="${1:#}" class="btn btn-outline-secondary btn-lg">${2:Secondary}</a>
 ```
 
-bslink-s
+bslink-success
 ---------------------
 
 ```html
 <a href="${1:#}" class="btn btn-outline-success btn-lg">${2:Success}</a>
 ```
 
-bslink-i
+bslink-info
 ---------------------
 
 ```html
 <a href="${1:#}" class="btn btn-outline-info btn-lg">${2:Info}</a>
 ```
 
-bslink-w
+bslink-warning
 ---------------------
 
 ```html
 <a href="${1:#}" class="btn btn-outline-warning btn-lg">${2:Warning}</a>
 ```
 
-bslink-d
+bslink-danger
 ---------------------
 
 ```html

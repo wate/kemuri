@@ -329,48 +329,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
     });
   }
   /**
-   * -------------------------
-   * 抽象化メソッドの実装
-   * -------------------------
+   * スニペットファイルを出力する
    */
-  /**
-   * ビルドオプションを設定する
-   *
-   * @param option
-   * @returns
-   */
-  public setOption(option: vscodeSnippetBuilderOption) {
-    super.setOption(option);
-    if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
-      this.setSnippetHeaderDeps(option.snippetHeaderLevel);
-    }
-    if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
-      this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
-    }
-    if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
-      this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
-    }
-  }
-
-  /**
-   * 単一ファイルのビルド処理
-   * @param srcPath
-   * @param outputPath
-   */
-  public buildFile(srcPath: string, outputPath: string) {
-    if (Object.keys(this.snipptes).length === 0) {
-      this.loadSnippetData();
-    }
-    const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
-
-
-  }
-
-  /**
-   * 全ファイルのビルド処理
-   */
-  public buildAll() {
-    this.loadSnippetData();
+  protected buildSnippet(): void {
     const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
     Object.keys(groupdSnippets).forEach((groupName) => {
       //出力先ファイルパス
@@ -411,5 +372,60 @@ export class vscodeSnippetBuilder extends baseBuilder {
       });
       fs.writeFileSync(outputPath, JSON.stringify(snippetData, null, 2));
     });
+  }
+  /**
+   * -------------------------
+   * 抽象化メソッドの実装
+   * -------------------------
+   */
+
+  /**
+   * 元ファイルのパスから出力先のパスを取得する
+   * @param srcPath
+   * @returns
+   */
+  protected convertOutputPath(srcPath: string): string {
+    const groupName = this.getGroupName(srcPath);
+    return path.join(this.outputDir, groupName + '.' + this.outputExt);
+  }
+
+  /**
+   * ビルドオプションを設定する
+   *
+   * @param option
+   * @returns
+   */
+  public setOption(option: vscodeSnippetBuilderOption) {
+    super.setOption(option);
+    if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
+      this.setSnippetHeaderDeps(option.snippetHeaderLevel);
+    }
+    if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
+      this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
+    }
+    if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
+      this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
+    }
+  }
+
+  /**
+   * 単一ファイルのビルド処理
+   * @param srcPath
+   * @param outputPath
+   */
+  public buildFile(srcPath: string, outputPath: string) {
+    //ロード済みのスニペットデータをクリアする
+    this.snipptes = {};
+    const groupName = this.getGroupName(srcPath);
+    this.loadSnippetData(groupName);
+    this.buildSnippet();
+  }
+
+  /**
+   * 全ファイルのビルド処理
+   */
+  public buildAll() {
+    this.loadSnippetData();
+    this.buildSnippet();
   }
 }

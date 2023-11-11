@@ -6,7 +6,7 @@ scope:
 [Bootstrap4(Input Group)](https://getbootstrap.com/docs/4.6/components/input-group/)
 =====================
 
-bsin-group-l
+bsin-group-left
 --------------------
 
 ```html
@@ -19,7 +19,7 @@ bsin-group-l
 <!-- /.input-group -->
 ```
 
-bsin-group-r
+bsin-group-right
 --------------------
 
 ```html
@@ -46,4 +46,11 @@ bsin-group-lr
   </div>
 </div>
 <!-- /.input-group -->
+```
+
+### VSCode Snippet Setting
+
+```yml
+prefix:
+  - bsin-group-both
 ```

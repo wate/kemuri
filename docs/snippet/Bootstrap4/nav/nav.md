@@ -33,7 +33,7 @@ bsnav-item
 </li>
 ```
 
-bsnav:item-active
+bsnav-item-active
 ---------------------
 
 ```html

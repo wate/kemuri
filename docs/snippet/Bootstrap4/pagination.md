@@ -75,4 +75,3 @@ bspagination-right
 </ul>
 <!-- /.pagination-->
 ```
-
