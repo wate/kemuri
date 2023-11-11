@@ -15,7 +15,7 @@ ltecard-header
 </div>
 ```
 
-ltecard-tool
+ltecard-tools
 ---------------------
 
 ```html

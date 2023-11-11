@@ -25,7 +25,7 @@ ltepage-login
 </head>
 <body class="hold-transition login-page">
   <div class="login-box">
-    <!-- tbalert:d -->
+    <!-- bsalert-danger -->
     <div class="card card-outline card-primary">
       <div class="card-header text-center">
         <h1>${1:AppName}</h1>

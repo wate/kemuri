@@ -6,7 +6,7 @@ scope:
 [AdminLte(Box)](https://adminlte.io/docs/3.2/components/boxes.html)
 =======================
 
-ltesmallbox:p
+ltesmallbox-primary
 ---------------------
 
 ```html
@@ -24,7 +24,7 @@ ltesmallbox:p
 </div>
 ```
 
-ltesmallbox:sec
+ltesmallbox-secondary
 ---------------------
 
 ```html
@@ -42,7 +42,7 @@ ltesmallbox:sec
 </div>
 ```
 
-ltesmallbox:s
+ltesmallbox-success
 ---------------------
 
 ```html
@@ -60,7 +60,7 @@ ltesmallbox:s
 </div>
 ```
 
-ltesmallbox:i
+ltesmallbox-info
 ---------------------
 
 ```html
@@ -78,7 +78,7 @@ ltesmallbox:i
 </div>
 ```
 
-ltesmallbox:w
+ltesmallbox-warning
 ---------------------
 
 ```html
@@ -96,7 +96,7 @@ ltesmallbox:w
 </div>
 ```
 
-ltesmallbox:d
+ltesmallbox-danger
 ---------------------
 
 ```html
@@ -114,7 +114,7 @@ ltesmallbox:d
 </div>
 ```
 
-ltesmallbox:light
+ltesmallbox-light
 ---------------------
 
 ```html
@@ -132,7 +132,7 @@ ltesmallbox:light
 </div>
 ```
 
-ltesmallbox:dark
+ltesmallbox-dark
 ---------------------
 
 ```html

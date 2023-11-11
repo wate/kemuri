@@ -7,7 +7,7 @@ scope:
 [AdminLte(Color)](https://adminlte.io/themes/v3/pages/UI/general.html)
 =======================
 
-ltecolor-bg
+ltecolor-bg-example
 ----------------------
 
 ```html
@@ -44,7 +44,7 @@ ltecolor-bg
 -->
 ```
 
-ltecolor-txt
+ltecolor-text-example
 ----------------------
 
 ```html

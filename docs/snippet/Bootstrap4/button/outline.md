@@ -7,42 +7,42 @@ scope:
 [Bootstrap4(Button)](https://getbootstrap.com/docs/4.6/components/buttons/)
 =====================
 
-bsbtn-p
+bsbtn-primary
 ---------------------
 
 ```html
 <button type="${1:submit}" class="btn btn-outline-primary">${2:Primary}</button>
 ```
 
-bsbtn-sec
+bsbtn-secondary
 ---------------------
 
 ```html
 <button type="${1:submit}" class="btn btn-outline-secondary">${2:Secondary}</button>
 ```
 
-bsbtn-s
+bsbtn-success
 ---------------------
 
 ```html
 <button type="${1:submit}" class="btn btn-outline-success">${2:Success}</button>
 ```
 
-bsbtn-i
+bsbtn-info
 ---------------------
 
 ```html
 <button type="${1:submit}" class="btn btn-outline-info">${2:Info}</button>
 ```
 
-bsbtn-w
+bsbtn-warning
 ---------------------
 
 ```html
 <button type="${1:submit}" class="btn btn-outline-warning">${2:Warning}</button>
 ```
 
-bsbtn-d
+bsbtn-danger
 ---------------------
 
 ```html
