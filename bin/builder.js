@@ -2,7 +2,8 @@
 import { j as jsBuilder } from './common/js.mjs';
 import { c as cssBuilder } from './common/css.mjs';
 import { h as htmlBuilder } from './common/html.mjs';
-import { c as configLoader } from './common/config.mjs';
+import { g as getBrowserSyncOption, r as run } from './common/browser-sync.mjs';
+import { c as configLoader, a as console } from './common/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
@@ -23,14 +24,15 @@ import 'sass';
 import 'node:url';
 import 'js-yaml';
 import 'nunjucks';
-import 'cosmiconfig';
+import 'browser-sync';
 import 'lodash';
+import 'cosmiconfig';
 import 'node:console';
 
 dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
-    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
+    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモード' },
     m: {
         type: 'string',
         choices: ['develop', 'production'],
@@ -43,6 +45,7 @@ const argv = yargs(process.argv.slice(2))
     html: { type: 'boolean', description: 'htmlビルダーを利用する' },
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     init: { type: 'boolean', description: '設定ファイルを生成する' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
 })
@@ -104,6 +107,13 @@ if (argv.watch) {
     builders.forEach((builder) => {
         builder.watch();
     });
+    if (argv.server) {
+        const browserSyncOption = getBrowserSyncOption();
+        console.group(chalk.blue('browserSync Server Option'));
+        console.log(browserSyncOption);
+        console.groupEnd();
+        run();
+    }
 }
 else {
     builders.forEach((builder) => {
