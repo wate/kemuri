@@ -114,7 +114,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
     if (srcPath.includes(path.sep)) {
       return srcPath.split(path.sep)[0];
     } else {
-      return path.basename(srcPath, path.extname(srcPath));
+      return 'default';
     }
   }
 
@@ -236,9 +236,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
 
   /**
    * スニペットデータをロードする
-   * @param name
+   * @param group
+   * @returns
    */
-  protected loadSnippetData(): void {
+  protected loadSnippetData(group?: string): void {
     const targetFiles = this.findEntryPointFiles();
     if (targetFiles.length === 0) {
       return;
@@ -246,6 +247,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
     targetFiles.forEach((targetFile) => {
       //スニペットのグループ名を取得する
       const groupName = this.getGroupName(targetFile);
+      if (group && group !== groupName) {
+        //グループ名に一致しない場合はスキップする
+        return;
+      }
       this.tree = fromMarkdown(fs.readFileSync(targetFile, 'utf-8'), {
         extensions: [frontmatter('yaml')],
         mdastExtensions: [frontmatterFromMarkdown('yaml')],
@@ -356,6 +361,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
     if (Object.keys(this.snipptes).length === 0) {
       this.loadSnippetData();
     }
+    const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
+
+
   }
 
   /**
