@@ -10,7 +10,7 @@ blmimage
 </figure>
 ```
 
-blmimage-rounded
+blmimage-round
 --------
 
 ```html

@@ -47,6 +47,7 @@ bsin-select
   <label for="${1:select_field}" class="control-label">${2:Select field}</label>
   <select name="${1:select_field}" id="${1:select_field}" class="form-control">
     <option value="">--</option>
+    <option value="">--</option>
   </select>
 </div>
 <!-- /.form-group -->
