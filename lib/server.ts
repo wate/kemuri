@@ -50,7 +50,7 @@ if (argv.baseDir !== undefined) {
   }
 }
 /**
- * browserSyncのUIオプション
+ * browserSyncのオプション
  */
 let browserSyncPort: number = 3000;
 if (argv.port !== undefined) {
@@ -60,6 +60,7 @@ if (argv.port !== undefined) {
   //@ts-ignore
   browserSyncPort = _.get(serverOption, 'port');
 }
+
 /**
  * browserSyncのwatchオプション
  */
