@@ -1,6 +1,6 @@
 {
-  "name": "mock-tool",
-  "version": "1.0.0",
+  "name": "kemuri",
+  "version": "0.1.0",
   "description": "Mock Tool",
   "private": true,
   "type": "module",
