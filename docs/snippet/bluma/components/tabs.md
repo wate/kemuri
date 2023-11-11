@@ -1,7 +1,6 @@
 [Bulma(Components/Tabs)](https://bulma.io/documentation/components/tabs/)
 =====================
 
-
 blmtabs
 ----------
 
