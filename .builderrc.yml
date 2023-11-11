@@ -36,19 +36,21 @@ enable:
 ## ---------------
 ## HTMLのビルド設定
 ## ---------------
-# html:
+html:
 #   srcDir: src
 #   outputDir: public
 #   exts:
 #     - njk
 #     - twig
 #   moduleExts: []
-#   ignore:
-#     filePrefix: null
-#     fileSuffix: null
-#     dirPrefix: null
-#     dirSuffix: null
-#     dirNames: []
+  ignore:
+    # filePrefix: null
+    # fileSuffix: null
+    # dirPrefix: null
+    # dirSuffix: null
+    dirNames:
+      - element
+      - layout
 #   compileOption: {}
 #   beautifyOption: {}
 #   varFileName: vars.yml
@@ -80,33 +82,16 @@ enable:
 #     - ${srcDir}
 #     - node_modules
 ## ---------------
-## javaScriptのビルド設定
+## JavaScriptのビルド設定
 ## ---------------
-# js:
-#   srcDir: src
-#   outputDir: public/assets/js
-#   exts:
-#     - js
-#     - ts
-#   moduleExts:
-#     - mjs
-#     - mts
-#     - cjs
-#     - cts
-#   ignore:
-#     filePrefix: null
-#     fileSuffix: null
-#     dirPrefix: null
-#     dirSuffix: null
-#     dirNames:
-#       - node_modules
-#   compileOption: {}
-#   beautifyOption: {}
-#   format: iife
-#   globals: {}
-#   sourcemap: false
-#   minify: false
-#   minifyOption: {}
+js:
+  outputDir: public/assets/js
+  ignore:
+    filePrefix: _
+    dirPrefix: _
+    dirNames:
+      - node_modules
+      - vendor
 ## ---------------
 ## スニペットのビルド設定
 ## ---------------
@@ -120,3 +105,16 @@ enable:
 #     - VSCode Extra Settings
 #     - VSCode Snippet Setting
 #     - VSCode Snippet Settings
+## ---------------
+## スクリーンショットの設定
+## ---------------
+screenshot:
+  targets:
+    desktop:
+      type: Desktop Chrome
+      width: 1920
+      height: 1080
+    mobile:
+      type: iPhone 14 Pro
+    mobile_landscape:
+      type: iPhone 14 Pro landscape
