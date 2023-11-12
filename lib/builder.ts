@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import * as fs from 'node:fs';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
@@ -33,7 +34,52 @@ const argv = yargs(process.argv.slice(2))
   .parseSync();
 
 if (argv.init) {
-  configLoader.init(argv.force);
+  if (fs.existsSync('.builderrc.yml')) {
+    if (argv.force) {
+      configLoader.init(argv.force);
+      console.log(chalk.green('Configuration file(.builderrc.yml) has been overwritten.'));
+    } else {
+      console.warn('Configuration file(.builderrc.yml) already exists.');
+    }
+  } else {
+    configLoader.init(argv.force);
+    console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
+  }
+  const createDirectories: string[] = [];
+  const htmlBuilderOption = configLoader.getHtmlOption();
+  //@ts-ignore
+  createDirectories.push(htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src');
+  //@ts-ignore
+  createDirectories.push(htmlBuilderOption.outputDir !== undefined ? htmlBuilderOption.outputDir : 'public');
+  const jsBuilderOption = configLoader.getJsOption();
+  //@ts-ignore
+  createDirectories.push(jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src');
+  //@ts-ignore
+  createDirectories.push(jsBuilderOption.outputDir !== undefined ? jsBuilderOption.outputDir : 'public/assets/js');
+  const cssBuilderOption = configLoader.getCssOption();
+  //@ts-ignore
+  createDirectories.push(cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src');
+  //@ts-ignore
+  createDirectories.push(cssBuilderOption.outputDir !== undefined ? cssBuilderOption.outputDir : 'public/assets/css');
+  const snippetBuilderOption = configLoader.getSnippetOption();
+  //@ts-ignore
+  createDirectories.push(snippetBuilderOption.srcDir !== undefined ? snippetBuilderOption.srcDir : 'docs/snippets');
+  //@ts-ignore
+  createDirectories.push(snippetBuilderOption.outputDir !== undefined ? snippetBuilderOption.outputDir : '.vscode');
+  const screenshotOption = configLoader.getScreenshotOption();
+  //@ts-ignore
+  createDirectories.push(screenshotOption.outputDir !== undefined ? screenshotOption.outputDir : 'screenshots');
+  createDirectories
+    .reduce((unique: string[], item: string) => {
+      return unique.includes(item) ? unique : [...unique, item];
+    }, [])
+    .sort()
+    .forEach((dir) => {
+      if (!fs.existsSync(dir)) {
+        console.log(chalk.green('Create directory: ' + dir));
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    });
   process.exit(0);
 }
 
