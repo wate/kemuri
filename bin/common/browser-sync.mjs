@@ -13,6 +13,7 @@ function getBrowserSyncOption() {
         notify: false,
         ui: false,
         watch: true,
+        browser: 'default',
         server: {
             baseDir: 'public',
         },
@@ -50,11 +51,18 @@ function getBrowserSyncOption() {
         browserSyncOption.files = _.get(serverOption, 'watchFiles');
     }
     /**
-     * ブラウザopenのオプション
+     * ブラウザ起動のオプション
      */
     if (_.has(serverOption, 'open')) {
         //@ts-ignore
         browserSyncOption.open = _.get(serverOption, 'open');
+    }
+    /**
+     * ブラウザオプション
+     */
+    if (_.has(serverOption, 'browser')) {
+        //@ts-ignore
+        browserSyncOption.browser = _.get(serverOption, 'browser');
     }
     /**
      * UIオプション

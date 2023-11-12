@@ -107,16 +107,16 @@ if (argv.watch) {
     builders.forEach((builder) => {
         builder.watch();
     });
-    if (argv.server) {
-        const browserSyncOption = getBrowserSyncOption();
-        console.group(chalk.blue('browserSync Server Option'));
-        console.log(browserSyncOption);
-        console.groupEnd();
-        run();
-    }
 }
 else {
     builders.forEach((builder) => {
         builder.build();
     });
+}
+if (argv.server) {
+    const browserSyncOption = getBrowserSyncOption();
+    console.group(chalk.blue('browserSync Server Option'));
+    console.log(browserSyncOption);
+    console.groupEnd();
+    run();
 }
