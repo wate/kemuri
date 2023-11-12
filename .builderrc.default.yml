@@ -147,6 +147,8 @@
 # screenshot:
 #   ## スクリーンショットの保存先ディレクトリ
 #   outputDir: screenshots
+#   ## ディレクトリを作成せずにフラットにスクリーンショットを保存する
+#   saveFlatPath: false
 #   ## デフォルトのブラウザ設定
 #   default:
 #     type: chromium

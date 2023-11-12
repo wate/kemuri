@@ -2,10 +2,10 @@
 ## ---------------
 ## ビルダーの有効化
 ## ---------------
-enable:
-  - js
-  - css
-  - html
+# enable:
+#   - js
+#   - css
+#   - html
 ## ---------------
 ## サーバーの設定
 ## ---------------
@@ -15,6 +15,7 @@ enable:
 #   watch: true
 #   watchFiles: []
 #   open: true
+#   browser: default
 #   notify: false
 #   ui: false
 #   uiPort: 3001
@@ -23,37 +24,51 @@ enable:
 ## ---------------
 # srcDir: src
 # outputDir: public
-# exts: []
-# moduleExts: []
 # ignore:
 #   filePrefix: null
 #   fileSuffix: null
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
-# compileOption: {}
 # beautifyOption: {}
 ## ---------------
 ## HTMLのビルド設定
 ## ---------------
-html:
+# html:
 #   srcDir: src
 #   outputDir: public
 #   exts:
 #     - njk
 #     - twig
 #   moduleExts: []
-  ignore:
-    # filePrefix: null
-    # fileSuffix: null
-    # dirPrefix: null
-    # dirSuffix: null
-    dirNames:
-      - element
-      - layout
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames: []
 #   compileOption: {}
 #   beautifyOption: {}
 #   varFileName: vars.yml
+#   siteUrl: 'http://localhost:3000/'
+#   generateSiteMap: true
+#   sitemapTemplate: |
+#     <?xml version="1.0" encoding="UTF-8"?>
+#     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+#       {% for page in pages %}
+#       <url>
+#         <loc>{{ page.url }}</loc>
+#         <lastmod>{{ page_lastmod | default(page.lastmod) }}</lastmod>
+#         {% if page_changefreq is defined %}
+#         <changefreq>{{ page_changefreq }}</changefreq>
+#         {% endif %}
+#         {% if page_priority is defined %}
+#         <priority>{{ page_priority }}</priority>
+#         {% endif %}
+#       </url>
+#       {% endfor %}
+#     </urlset>
+#   generatePageList: true
 ## ---------------
 ## CSSのビルド設定
 ## ---------------
@@ -82,20 +97,41 @@ html:
 #     - ${srcDir}
 #     - node_modules
 ## ---------------
-## JavaScriptのビルド設定
+## javaScriptのビルド設定
 ## ---------------
-js:
-  outputDir: public/assets/js
-  ignore:
-    filePrefix: _
-    dirPrefix: _
-    dirNames:
-      - node_modules
-      - vendor
+# js:
+#   srcDir: src
+#   outputDir: public/assets/js
+#   exts:
+#     - js
+#     - ts
+#   moduleExts:
+#     - mjs
+#     - mts
+#     - cjs
+#     - cts
+#   ignore:
+#     filePrefix: null
+#     fileSuffix: null
+#     dirPrefix: null
+#     dirSuffix: null
+#     dirNames:
+#       - node_modules
+#   compileOption: {}
+#   beautifyOption: {}
+#   format: iife
+#   globals: {}
+#   sourcemap: false
+#   minify: false
+#   minifyOption: {}
 ## ---------------
 ## スニペットのビルド設定
 ## ---------------
 # snippet:
+#   srcDir: docs/snippet
+#   outputDir: .vscode
+#   exts:
+#     - md
 #   snippetHeaderLevel: 2
 #   extraSettingHeaderLevel: 3
 #   extraSettingHeaderTexts:
@@ -108,13 +144,46 @@ js:
 ## ---------------
 ## スクリーンショットの設定
 ## ---------------
-screenshot:
-  targets:
-    desktop:
-      type: Desktop Chrome
-      width: 1920
-      height: 1080
-    mobile:
-      type: iPhone 14 Pro
-    mobile_landscape:
-      type: iPhone 14 Pro landscape
+# screenshot:
+#   ## スクリーンショットの保存先ディレクトリ
+#   outputDir: screenshots
+#   ## ディレクトリを作成せずにフラットにスクリーンショットを保存する
+#   saveFlatPath: false
+#   ## デフォルトのブラウザ設定
+#   default:
+#     type: chromium
+#     width: 1920
+#     height: 1080
+#   ## ヘッドレスモードで実行するか否か
+#   headless: true
+#   ## ページ全体のスクリーンショットを取得するか否か
+#   fullPage: true
+#   ## 最大再試行回数
+#   retryLimit: 3
+#   ## ----------------
+#   ## サイトマップファイルを直接指定する場合は「sitemapLocation」の項目を設定する
+#   ## ----------------
+#   # sitemapLocation: https://localhost:3000/sitemap.xml
+#   ## ----------------
+#   ## 複数環境のスクリーンショットを取る場合は「targets」の項目を設定する
+#   ##
+#   ## 「type」に指定可能な値は、chromium / firefox / webkitのいずれか
+#   ## または、以下に定義されているデバイス名
+#   ## https://github.com/microsoft/playwright/blob/main/packages/playwright-core/types/types.d.ts#L20235-L20362
+#   ##
+#   ## ※デバイス名が指定ている場合は指定されたデバイス名に合わせてエンジンと画面(viewport)サイズが自動設定されます。
+#   ## サイズ(width / height)が指定されている場合は画面(viewport)サイズを上書きして設定します。
+#   ## ----------------
+#   # targets:
+#   #   desktop:
+#   #     type: Desktop Chrome
+#   #     width: 1920
+#   #     height: 1080
+#   #   tablet:
+#   #     type: iPad Mini
+#   #   tablet_landscape:
+#   #     type: iPad Mini landscape
+#   #   mobile:
+#   #     type: iPhone 14 Pro
+#   #   mobile_landscape:
+#   #     type: iPhone 14 Pro landscape

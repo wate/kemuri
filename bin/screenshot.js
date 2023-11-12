@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
+import sanitize from 'sanitize-filename';
 import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
@@ -90,6 +91,7 @@ else {
     let fullPage = true;
     let retryLimit = 3;
     let screenshotBaseSaveDir = 'screenshots';
+    let saveFlatPath = false;
     let defaultBrowser = {
         type: 'chromium',
         width: 1920,
@@ -114,6 +116,10 @@ else {
     if (_.has(screenshotOption, 'retryLimit') && _.get(screenshotOption, 'retryLimit')) {
         //@ts-ignore
         retryLimit = _.get(screenshotOption, 'retryLimit');
+    }
+    if (_.has(screenshotOption, 'saveFlatPath')) {
+        //@ts-ignore
+        saveFlatPath = _.get(screenshotOption, 'saveFlatPath');
     }
     if (_.has(screenshotOption, 'targets') && _.get(screenshotOption, 'targets')) {
         //@ts-ignore
@@ -186,10 +192,15 @@ else {
         const testUrl = new URL(screenshotPage.url);
         const page = await context.newPage();
         let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-        let screenshotSaveDirName = path.dirname(testUrl.pathname);
+        let screenshotSaveDirName = path.dirname(testUrl.pathname).replace(/^\//, '');
         if (/\/$/.test(testUrl.pathname)) {
             screenshotSaveFileName = 'index.png';
             screenshotSaveDirName = testUrl.pathname.replace(/\/$/, '');
+        }
+        if (saveFlatPath) {
+            // フラットなパスで保存する場合
+            screenshotSaveFileName = sanitize(path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_'));
+            screenshotSaveDirName = '';
         }
         const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);
         await page.goto(testUrl.toString());
