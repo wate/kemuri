@@ -3,5 +3,10 @@
   "editor.tabCompletion": "onlySnippets",
   "files.associations": {
     "*.{njk,twig}": "html"
-  }
+  },
+  // @see https://marketplace.visualstudio.com/items?itemName=ionutvmi.path-autocomplete
+  "path-autocomplete.pathMappings": {
+    "/": "${folder}/src",
+    "$root": "${folder}/src",
+  },
 }
