@@ -15,6 +15,7 @@
 #   watch: true
 #   watchFiles: []
 #   open: true
+#   browser: default
 #   notify: false
 #   ui: false
 #   uiPort: 3001

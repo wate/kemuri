@@ -9,7 +9,6 @@ import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
 import console from './console';
-
 dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
@@ -91,15 +90,15 @@ if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
   });
-  if (argv.server) {
-    const browserSyncOption = server.getBrowserSyncOption();
-    console.group(chalk.blue('browserSync Server Option'));
-    console.log(browserSyncOption);
-    console.groupEnd();
-    server.run();
-  }
 } else {
   builders.forEach((builder) => {
     builder.build();
   });
+}
+if (argv.server) {
+  const browserSyncOption = server.getBrowserSyncOption();
+  console.group(chalk.blue('browserSync Server Option'));
+  console.log(browserSyncOption);
+  console.groupEnd();
+  server.run();
 }

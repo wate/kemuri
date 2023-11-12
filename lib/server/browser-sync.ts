@@ -2,13 +2,14 @@ import browserSync from 'browser-sync';
 import configLoader from '../config';
 import _ from 'lodash';
 
-export interface serverOption {
+export interface browserSyncServerOption {
   baseDir?: string;
   port?: number;
   watch?: boolean;
-  watchFiles?: string | string[];
+  watchFiles?: string | string[] | boolean;
   notify?: boolean;
   open?: boolean;
+  browser?: string | string[];
   ui?: boolean;
   uiPort?: number;
 }
@@ -24,6 +25,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     notify: false,
     ui: false,
     watch: true,
+    browser: 'default',
     server: {
       baseDir: 'public',
     },
@@ -64,13 +66,19 @@ export function getBrowserSyncOption(): browserSync.Options {
   }
 
   /**
-   * ブラウザopenのオプション
+   * ブラウザ起動のオプション
    */
   if (_.has(serverOption, 'open')) {
     //@ts-ignore
     browserSyncOption.open = _.get(serverOption, 'open');
   }
-
+  /**
+   * ブラウザオプション
+   */
+  if (_.has(serverOption, 'browser')) {
+    //@ts-ignore
+    browserSyncOption.browser = _.get(serverOption, 'browser');
+  }
   /**
    * UIオプション
    */
