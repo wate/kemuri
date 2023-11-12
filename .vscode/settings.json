@@ -1,3 +1,12 @@
 {
-  "editor.snippetSuggestions": "top"
+  "editor.snippetSuggestions": "inline",
+  "editor.tabCompletion": "onlySnippets",
+  "files.associations": {
+    "*.{njk,twig}": "html"
+  },
+  // @see https://marketplace.visualstudio.com/items?itemName=ionutvmi.path-autocomplete
+  "path-autocomplete.pathMappings": {
+    "$root": "${folder}/src",
+    "/": "${folder}/src",
+  },
 }
