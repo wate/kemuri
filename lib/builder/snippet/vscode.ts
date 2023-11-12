@@ -26,7 +26,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
-  protected srcDir: string = 'docs/snippet';
+  protected srcDir: string = 'docs/cheatsheet';
 
   /**
    * 出力先ディレクトリ

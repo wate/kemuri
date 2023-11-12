@@ -6,19 +6,19 @@ class ConsoleOverride extends Console {
     super(process.stdout, process.stderr);
   }
   public debug(message?: any, ...optionalParams: any[]) {
-    return super.debug(chalk.gray(message), ...optionalParams);
+    super.debug(chalk.gray(message), ...optionalParams);
   }
   public info(message?: any, ...optionalParams: any[]) {
-    return super.info(chalk.blue(message), ...optionalParams);
+    super.info(chalk.cyan(message), ...optionalParams);
   }
   public warn(message?: any, ...optionalParams: any[]) {
-    return super.warn(chalk.yellow(message), ...optionalParams);
+    super.warn(chalk.yellow(message), ...optionalParams);
   }
   public error(message?: any, ...optionalParams: any[]) {
-    return super.error(chalk.red(message), ...optionalParams);
+    super.error(chalk.red(message), ...optionalParams);
   }
   public group(message?: any, ...optionalParams: any[]) {
-    return super.group(chalk.cyan(message), ...optionalParams);
+    super.group(chalk.blue(message), ...optionalParams);
   }
 }
 

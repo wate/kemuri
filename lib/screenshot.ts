@@ -100,6 +100,7 @@ if (/^https?:\/\//.test(sitemapLocation)) {
   }
 }
 
+
 if (pages.length === 0) {
   console.error('page not found.');
   process.exit(1);
@@ -110,6 +111,8 @@ if (pages.length === 0) {
   let fullPage: boolean = true;
   let retryLimit: number = 3;
   let screenshotBaseSaveDir: string = 'screenshots';
+  let saveFlatPath: boolean = false;
+
   let defaultBrowser: Browser = {
     type: 'chromium',
     width: 1920,
@@ -134,6 +137,10 @@ if (pages.length === 0) {
   if (_.has(screenshotOption, 'retryLimit') && _.get(screenshotOption, 'retryLimit')) {
     //@ts-ignore
     retryLimit = _.get(screenshotOption, 'retryLimit');
+  }
+  if (_.has(screenshotOption, 'saveFlatPath')) {
+    //@ts-ignore
+    saveFlatPath = _.get(screenshotOption, 'saveFlatPath');
   }
   if (_.has(screenshotOption, 'targets') && _.get(screenshotOption, 'targets')) {
     //@ts-ignore
@@ -205,10 +212,15 @@ if (pages.length === 0) {
       const testUrl = new URL(screenshotPage.url);
       const page = await context.newPage();
       let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-      let screenshotSaveDirName = path.dirname(testUrl.pathname);
+      let screenshotSaveDirName = path.dirname(testUrl.pathname).replace(/^\//, '');
       if (/\/$/.test(testUrl.pathname)) {
         screenshotSaveFileName = 'index.png';
         screenshotSaveDirName = testUrl.pathname.replace(/\/$/, '');
+      }
+      if (saveFlatPath) {
+        // フラットなパスで保存する場合
+        screenshotSaveFileName = path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_');
+        screenshotSaveDirName = '';
       }
       const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);
       await page.goto(testUrl.toString());
