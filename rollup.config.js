@@ -6,7 +6,6 @@ export default {
     'css-builder': 'lib/css-builder.ts',
     'js-builder': 'lib/js-builder.ts',
     builder: 'lib/builder.ts',
-    server: 'lib/server.ts',
     screenshot: 'lib/screenshot.ts',
     'snippet-builder': 'lib/snippet-builder.ts',
   },
