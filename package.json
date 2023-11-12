@@ -1,7 +1,7 @@
 {
   "name": "kemuri",
   "version": "0.1.0",
-  "description": "Mock builder",
+  "description": "Mockup builder",
   "private": true,
   "type": "module",
   "bin": {
@@ -24,6 +24,7 @@
     "dotenv": "^16.3.1",
     "editorconfig": "^2.0.0",
     "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
     "js-beautify": "^1.14.11",
     "js-yaml": "^4.1.0",
     "jsdom": "^22.1.0",
@@ -34,7 +35,7 @@
     "nunjucks": "^3.2.4",
     "playwright": "^1.39.0",
     "rimraf": "^5.0.5",
-    "rollup": "^4.3.1",
+    "rollup": "^4.4.0",
     "sass": "^1.69.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",

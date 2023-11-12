@@ -5,6 +5,8 @@ import { baseBuilder, builderOption } from '../base';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
+import matter from 'gray-matter';
+import _, { has } from 'lodash';
 import js_beautify from 'js-beautify';
 import console from '../../console';
 
@@ -19,6 +21,20 @@ export interface nunjucksBuilderOption extends builderOption {
   siteUrl?: string;
   sitemapTemplate?: string;
   generatePageList?: boolean;
+}
+
+/**
+ * ファイルシステムローダーの拡張クラス
+ */
+class ExpandLoader extends nunjucks.FileSystemLoader {
+  getSource(name: string): nunjucks.LoaderSource {
+    const result = super.getSource(name);
+    if (matter.test(result.src)) {
+      const matterResult = matter(result.src);
+      result.src = matterResult.content;
+    }
+    return result;
+  }
 }
 
 /**
@@ -39,7 +55,7 @@ export class nunjucksBuilder extends baseBuilder {
    * コンパイルオプション
    */
   protected compileOption: nunjucks.ConfigureOptions = {
-    noCache: true,
+    autoescape: false,
   };
 
   /**
@@ -92,7 +108,6 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected templateVars: any = {};
 
-
   /**
    * 変数ファイル名を設定する
    *
@@ -134,7 +149,16 @@ export class nunjucksBuilder extends baseBuilder {
       // @ts-ignore
       this.templateVars[key] = yaml.load(fs.readFileSync(varFilePath));
     });
+    /**
+     * エントリポイントファイル内の変数を取得する
+     */
+    const entryPointFiles = this.findEntryPointFiles();
+    entryPointFiles.forEach((srcFile) => {
+      const matterResult = matter.read(srcFile);
+      this.templateVars[srcFile] = matterResult.data ? matterResult.data : {};
+    });
   }
+
   /**
    * テンプレートに対応する変数を取得する
    * @param srcFile
@@ -149,15 +173,32 @@ export class nunjucksBuilder extends baseBuilder {
     srcFilePaths.forEach((dirName) => {
       key = path.join(key, dirName);
       if (this.templateVars[key]) {
-        templateVars = Object.assign(templateVars, this.templateVars[key]);
+        templateVars = _.merge(templateVars, this.templateVars[key]);
       }
     });
+    if (this.templateVars[srcFile] !== undefined) {
+      templateVars = _.merge(templateVars, this.templateVars[srcFile]);
+    }
+    //テンプレート変数を展開
+    templateVars = this.expandTemplateVars(templateVars);
+    //ページスコープ用の変数を設定
     let pageScope = path.dirname(path.relative(this.srcDir, srcFile));
     if (pageScope === '.') {
       pageScope = '';
     }
     templateVars['_scope'] = pageScope;
     return templateVars;
+  }
+
+  /**
+   * テンプレート変数内のテンプレート文字列を展開する
+   * @todo テンプレート変数内のテンプレート文字列を展開する
+   * @param templateVars
+   * @returns
+   */
+  protected expandTemplateVars(expandTemplateVars: object, templateVars: object = {}): object {
+    const expandedTemplateVars = expandTemplateVars;
+    return expandedTemplateVars;
   }
 
   /**
@@ -219,7 +260,7 @@ export class nunjucksBuilder extends baseBuilder {
   protected generatePageListFile(pageList: any[]) {
     const pageListFilePath = 'pages.json';
     fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
-    fs.writeFileSync(pageListFilePath, JSON.stringify({pages: pageList}, null, 2), 'utf-8');
+    fs.writeFileSync(pageListFilePath, JSON.stringify({ pages: pageList }, null, 2), 'utf-8');
     console.log('Generate page list file: ' + pageListFilePath);
   }
 
@@ -355,6 +396,7 @@ export class nunjucksBuilder extends baseBuilder {
    */
   public async buildFile(srcPath: string, outputPath: string) {
     nunjucks.configure(this.srcDir, this.compileOption);
+    nunjucks.Loader.extend(new ExpandLoader());
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     this.loadTemplateVars();
     const templatePath: string = path.relative(this.srcDir, srcPath);
@@ -377,6 +419,7 @@ export class nunjucksBuilder extends baseBuilder {
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     this.loadTemplateVars();
     nunjucks.configure(this.srcDir, this.compileOption);
+    nunjucks.Loader.extend(new ExpandLoader());
     entries.forEach((srcFile, entryPoint) => {
       const templatePath: string = path.relative(this.srcDir, srcFile);
       const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
