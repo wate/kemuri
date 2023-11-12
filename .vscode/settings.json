@@ -1,5 +1,6 @@
 {
   "editor.snippetSuggestions": "inline",
+  "editor.tabCompletion": "onlySnippets",
   "files.associations": {
     "*.{njk,twig}": "html"
   }
