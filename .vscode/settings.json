@@ -1,3 +1,6 @@
 {
-  "editor.snippetSuggestions": "top"
+  "editor.snippetSuggestions": "inline",
+  "files.associations": {
+    "*.{njk,twig}": "html"
+  }
 }
