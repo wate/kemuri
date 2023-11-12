@@ -5,10 +5,25 @@ import { b as baseBuilder } from './base.mjs';
 import { glob } from 'glob';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
+import matter from 'gray-matter';
+import _ from 'lodash';
 import js_beautify from 'js-beautify';
 import { a as console } from './config.mjs';
 
 const beautify = js_beautify.html;
+/**
+ * ファイルシステムローダーの拡張クラス
+ */
+class ExpandLoader extends nunjucks.FileSystemLoader {
+    getSource(name) {
+        const result = super.getSource(name);
+        if (matter.test(result.src)) {
+            const matterResult = matter(result.src);
+            result.src = matterResult.content;
+        }
+        return result;
+    }
+}
 /**
  * ビルド処理の抽象クラス
  */
@@ -27,7 +42,7 @@ class nunjucksBuilder extends baseBuilder {
          * コンパイルオプション
          */
         this.compileOption = {
-            noCache: true,
+            autoescape: false,
         };
         /**
          * -------------------------
@@ -113,6 +128,14 @@ class nunjucksBuilder extends baseBuilder {
             // @ts-ignore
             this.templateVars[key] = yaml.load(fs.readFileSync(varFilePath));
         });
+        /**
+         * エントリポイントファイル内の変数を取得する
+         */
+        const entryPointFiles = this.findEntryPointFiles();
+        entryPointFiles.forEach((srcFile) => {
+            const matterResult = matter.read(srcFile);
+            this.templateVars[srcFile] = matterResult.data ? matterResult.data : {};
+        });
     }
     /**
      * テンプレートに対応する変数を取得する
@@ -128,15 +151,31 @@ class nunjucksBuilder extends baseBuilder {
         srcFilePaths.forEach((dirName) => {
             key = path.join(key, dirName);
             if (this.templateVars[key]) {
-                templateVars = Object.assign(templateVars, this.templateVars[key]);
+                templateVars = _.merge(templateVars, this.templateVars[key]);
             }
         });
+        if (this.templateVars[srcFile] !== undefined) {
+            templateVars = _.merge(templateVars, this.templateVars[srcFile]);
+        }
+        //テンプレート変数を展開
+        templateVars = this.expandTemplateVars(templateVars);
+        //ページスコープ用の変数を設定
         let pageScope = path.dirname(path.relative(this.srcDir, srcFile));
         if (pageScope === '.') {
             pageScope = '';
         }
         templateVars['_scope'] = pageScope;
         return templateVars;
+    }
+    /**
+     * テンプレート変数内のテンプレート文字列を展開する
+     * @todo テンプレート変数内のテンプレート文字列を展開する
+     * @param templateVars
+     * @returns
+     */
+    expandTemplateVars(expandTemplateVars, templateVars = {}) {
+        const expandedTemplateVars = expandTemplateVars;
+        return expandedTemplateVars;
     }
     /**
      * ルートディレクトリの変数ファイルかどうかを判定する
@@ -336,6 +375,7 @@ class nunjucksBuilder extends baseBuilder {
      */
     async buildFile(srcPath, outputPath) {
         nunjucks.configure(this.srcDir, this.compileOption);
+        nunjucks.Loader.extend(new ExpandLoader());
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         this.loadTemplateVars();
         const templatePath = path.relative(this.srcDir, srcPath);
@@ -357,6 +397,7 @@ class nunjucksBuilder extends baseBuilder {
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         this.loadTemplateVars();
         nunjucks.configure(this.srcDir, this.compileOption);
+        nunjucks.Loader.extend(new ExpandLoader());
         entries.forEach((srcFile, entryPoint) => {
             const templatePath = path.relative(this.srcDir, srcFile);
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);

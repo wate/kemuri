@@ -25,6 +25,7 @@ import 'sass';
 import 'node:url';
 import 'js-yaml';
 import 'nunjucks';
+import 'gray-matter';
 import 'cosmiconfig';
 import 'node:console';
 
