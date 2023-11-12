@@ -35,7 +35,7 @@ class vscodeSnippetBuilder extends baseBuilder {
         /**
          * ソースコードのディレクトリ
          */
-        this.srcDir = 'docs/snippet';
+        this.srcDir = 'docs/cheatsheet';
         /**
          * 出力先ディレクトリ
          */

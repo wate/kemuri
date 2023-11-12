@@ -176,7 +176,7 @@ if (argv.init) {
     createDirectories.push(cssBuilderOption.outputDir !== undefined ? cssBuilderOption.outputDir : 'public/assets/css');
     const snippetBuilderOption = configLoader.getSnippetOption();
     //@ts-ignore
-    createDirectories.push(snippetBuilderOption.srcDir !== undefined ? snippetBuilderOption.srcDir : 'docs/snippets');
+    createDirectories.push(snippetBuilderOption.srcDir !== undefined ? snippetBuilderOption.srcDir : 'docs/cheatsheet');
     //@ts-ignore
     createDirectories.push(snippetBuilderOption.outputDir !== undefined ? snippetBuilderOption.outputDir : '.vscode');
     const screenshotOption = configLoader.getScreenshotOption();

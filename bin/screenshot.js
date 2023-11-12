@@ -7,7 +7,6 @@ import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
-import sanitize from 'sanitize-filename';
 import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
@@ -199,7 +198,7 @@ else {
         }
         if (saveFlatPath) {
             // フラットなパスで保存する場合
-            screenshotSaveFileName = sanitize(path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_'));
+            screenshotSaveFileName = path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_');
             screenshotSaveDirName = '';
         }
         const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);

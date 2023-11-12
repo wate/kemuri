@@ -128,7 +128,7 @@
 ## スニペットのビルド設定
 ## ---------------
 # snippet:
-#   srcDir: docs/snippet
+#   srcDir: docs/cheatsheet
 #   outputDir: .vscode
 #   exts:
 #     - md

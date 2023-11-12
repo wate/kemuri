@@ -18,7 +18,7 @@ pnpm add -D wate/kemuri
 利用方法
 ------------------
 
-### 全ファイルのビルド
+### ファイルのビルド
 
 ```bash
 # npm
@@ -73,6 +73,17 @@ yarn dlx screenshot
 pnpm dlx screenshot
 ```
 
+### スニペットファイルのビルド
+
+```bash
+# npm
+npx snippet-builder
+# yarn
+yarn dlx snippet-builder
+# pnpm
+pnpm dlx snippet-builder
+```
+
 ディレクトリ構造
 ------------------
 
@@ -83,7 +94,7 @@ pnpm dlx screenshot
 ├ .vscode/ <= VSCode用プロジェクトスニペット出力先ディレクトリ
 ├ .builderrc.yml <= 設定ファイル
 ├ docs/
-│   └ snippet/ <= スニペットデータ格納ディレクトリ
+│   └ cheatsheet/ <= スニペットデータ格納ディレクトリ
 ├ public/  <= HTML出力先ディレクトリ
 │   └ assets/
 │        ├ css/ <= CSS出力先ディレクトリ
