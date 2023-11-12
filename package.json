@@ -1,7 +1,7 @@
 {
   "name": "kemuri",
   "version": "0.1.0",
-  "description": "Mock Tool",
+  "description": "Mock builder",
   "private": true,
   "type": "module",
   "bin": {

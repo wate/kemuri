@@ -1,7 +1,7 @@
 Kemuri
 ==================
 
-Mock builder
+Mockup builder
 
 インストール方法
 ------------------
