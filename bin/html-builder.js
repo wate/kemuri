@@ -13,9 +13,10 @@ import 'rimraf';
 import 'editorconfig';
 import 'js-yaml';
 import 'nunjucks';
+import 'gray-matter';
+import 'lodash';
 import 'js-beautify';
 import 'cosmiconfig';
-import 'lodash';
 import 'chalk';
 import 'node:console';
 
