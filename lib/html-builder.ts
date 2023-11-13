@@ -3,8 +3,6 @@
 import htmlBuilder from './builder/html';
 import configLoader from './config';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
