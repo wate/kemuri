@@ -72,10 +72,9 @@ html:
 ## JavaScriptのビルド設定
 ## ---------------
 js:
-  outputDir: public/assets/js
+  # outputDir: public/assets/js
   ignore:
-    filePrefix: _
-    dirPrefix: _
+    prefix: _
     dirNames:
       - node_modules
       - vendor
