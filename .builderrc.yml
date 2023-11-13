@@ -100,7 +100,7 @@ screenshot:
   ## スクリーンショットの保存先ディレクトリ
   # outputDir: screenshots
   ## ディレクトリを作成せずにフラットにスクリーンショットを保存する
-  # saveFlatPath: false
+  # saveFlatPath: true
   ## デフォルトのブラウザ設定
   # default:
   #   type: chromium
@@ -113,5 +113,5 @@ screenshot:
       height: 1080
     mobile:
       type: iPhone 14 Pro
-    mobile_landscape:
-      type: iPhone 14 Pro landscape
+    # mobile_landscape:
+    #   type: iPhone 14 Pro landscape
