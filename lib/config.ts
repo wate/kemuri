@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
 import _ from 'lodash';
 import console from './console';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,13 +28,69 @@ class configLoader {
   }
 
   /**
+   * 環境変数のパースと設定
+   */
+  public static parseEnv(): object {
+    const enableConfig = {
+      enable: configLoader.parseEnableEnv(),
+    };
+    const htmlConfig = {
+      html: configLoader.parseHtmlEnv(),
+    };
+    const cssConfig = {
+      css: configLoader.parseCssEnv(),
+    };
+    const jsConfig = {
+      js: configLoader.parseJsEnv(),
+    };
+    const snippetConfig = {
+      snippet: configLoader.parseSnippetEnv(),
+    };
+    const screenshotConfig = {
+      screenshot: configLoader.parseScreenshotEnv(),
+    };
+    return _.merge(
+      _.cloneDeep(enableConfig),
+      _.cloneDeep(htmlConfig),
+      _.cloneDeep(cssConfig),
+      _.cloneDeep(jsConfig),
+      _.cloneDeep(snippetConfig),
+      _.cloneDeep(screenshotConfig),
+    );
+  }
+  public static parseEnableEnv(): object {
+    return {};
+  }
+  public static parseServerEnv(): object {
+    return {};
+  }
+  public static parseHtmlEnv(): object {
+    return {};
+  }
+  public static parseJsEnv(): object {
+    return {};
+  }
+  public static parseCssEnv(): object {
+    return {};
+  }
+  public static parseSnippetEnv(): object {
+    return {};
+  }
+  public static parseScreenshotEnv(): object {
+    return {};
+  }
+  /**
    * 設定ファイルをロードする
    * @returns
    */
   public static load(): any {
+    let config = configLoader.parseEnv();
     const explorerSync = cosmiconfigSync('builder');
     const result: CosmiconfigResult = explorerSync.search();
-    return result && result.config ? result.config : {};
+    if (result) {
+      return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
+    }
+    return config;
   }
   /**
    * 指定のビルダーが有効化されているか確認する

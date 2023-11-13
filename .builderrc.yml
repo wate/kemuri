@@ -112,5 +112,3 @@ screenshot:
       height: 1080
     mobile:
       type: iPhone 14 Pro
-    # mobile_landscape:
-    #   type: iPhone 14 Pro landscape
