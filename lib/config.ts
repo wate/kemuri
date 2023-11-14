@@ -160,53 +160,63 @@ class configLoader {
     return settings;
   }
   /**
-   * 環境変数に設定されたHTMLビルダーの設定を取得する
+   * 環境変数に設定された共通の設定を取得する
+   * @param settingKeys
    * @returns
    */
-  public static parseHtmlEnv(): object {
+  protected static parseEnvComon(envKeyPrefix: string, settingKeys: string[]): object {
     const settings: any = {};
-    const settingKeys = configLoader.getEnvkeys('KEMURI_HTML_');
     if (settingKeys.includes('SOURCE_DIR')) {
-      //@ts-ignore
-      settings.srcDir = process.env.KEMURI_HTML_SOURCE_DIR;
+      settings.srcDir = _.get(process.env, envKeyPrefix + 'SOURCE_DIR');
     }
     if (settingKeys.includes('OUTPUT_DIR')) {
-      //@ts-ignore
-      settings.outputDir = process.env.KEMURI_HTML_OUTPUT_DIR;
+      settings.outputDir = _.get(process.env, envKeyPrefix + 'OUTPUT_DIR');
     }
     if (settingKeys.includes('TARGET_FILE_EXT')) {
+      const envValue = _.get(process.env, envKeyPrefix + 'TARGET_FILE_EXT');
       //@ts-ignore
-      settings.exts = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_TARGET_FILE_EXT, true);
+      settings.exts = configLoader.convertEnvValueToArray(envValue, true);
     }
     if (settingKeys.includes('MODULE_FILE_EXT')) {
+      const envValue = _.get(process.env, envKeyPrefix + 'MODULE_FILE_EXT');
       //@ts-ignore
-      settings.moduleExts = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_MODULE_FILE_EXT, true);
+      settings.moduleExts = configLoader.convertEnvValueToArray(envValue, true);
     }
     if (_.filter(settingKeys, (key) => key.startsWith('IGNORE_')).length > 0) {
       settings.ignore = {};
     }
     if (settingKeys.includes('IGNORE_PREFIX')) {
-      settings.ignore.prefix = process.env.KEMURI_HTML_IGNORE_PREFIX;
+      settings.ignore.prefix = _.get(process.env, envKeyPrefix + 'IGNORE_PREFIX');
     }
     if (settingKeys.includes('IGNORE_SUFFIX')) {
-      settings.ignore.suffix = process.env.KEMURI_HTML_IGNORE_SUFFIX;
+      settings.ignore.suffix = _.get(process.env, envKeyPrefix + 'IGNORE_SUFFIX');
     }
     if (settingKeys.includes('IGNORE_FILE_PREFIX')) {
-      settings.ignore.filePrefix = process.env.KEMURI_HTML_IGNORE_FILE_PREFIX;
+      settings.ignore.filePrefix = _.get(process.env, envKeyPrefix + 'IGNORE_FILE_PREFIX');
     }
     if (settingKeys.includes('IGNORE_DIR_PREFIX')) {
-      settings.ignore.dirPrefix = process.env.KEMURI_HTML_IGNORE_DIR_PREFIX;
+      settings.ignore.dirPrefix = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_PREFIX');
     }
     if (settingKeys.includes('IGNORE_FILE_SUFFIX')) {
-      settings.ignore.fileSuffix = process.env.KEMURI_HTML_IGNORE_FILE_SUFFIX;
+      settings.ignore.fileSuffix = _.get(process.env, envKeyPrefix + 'IGNORE_FILE_SUFFIX');
     }
     if (settingKeys.includes('IGNORE_DIR_SUFFIX')) {
-      settings.ignore.dirSuffix = process.env.KEMURI_HTML_IGNORE_DIR_SUFFIX;
+      settings.ignore.dirSuffix = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_SUFFIX');
     }
     if (settingKeys.includes('IGNORE_DIR_NAMES')) {
+      const envValue = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_NAMES');
       //@ts-ignore
-      settings.ignore.dirNames = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_IGNORE_DIR_NAMES);
+      settings.ignore.dirNames = configLoader.convertEnvValueToArray(envValue);
     }
+    return settings;
+  }
+  /**
+   * 環境変数に設定されたHTMLビルダーの設定を取得する
+   * @returns
+   */
+  public static parseHtmlEnv(): object {
+    const settingKeys = configLoader.getEnvkeys('KEMURI_HTML_');
+    const settings: any = configLoader.parseEnvComon('KEMURI_HTML_', settingKeys);
     if (settingKeys.includes('VAR_FILE_NAME')) {
       //@ts-ignore
       settings.varFileName = process.env.KEMURI_HTML_VAR_FILE_NAME;
@@ -226,36 +236,99 @@ class configLoader {
     return settings;
   }
   /**
-   * 環境変数に設定されたJSビルダーの設定を取得する
-   * @returns
-   */
-  public static parseJsEnv(): object {
-    const settingKeys = configLoader.getEnvkeys('KEMURI_JS_');
-    return {};
-  }
-  /**
    * 環境変数に設定されたCSSビルダーの設定を取得する
    * @returns
    */
   public static parseCssEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_CSS_');
-    return {};
+    const settings: any = configLoader.parseEnvComon('KEMURI_CSS_', settingKeys);
+    if (settingKeys.includes('SASS_OUTPUT_STYLE')) {
+      settings.style = process.env.KEMURI_CSS_SASS_OUTPUT_STYLE;
+    }
+    if (settingKeys.includes('SASS_GENERATE_INDEX')) {
+      //@ts-ignore
+      settings.generateIndex = configLoader.convertEnvValueToBool(process.env.KEMURI_CSS_SASS_GENERATE_INDEX);
+    }
+    if (settingKeys.includes('SASS_INDEX_FILE_NAME')) {
+      settings.indexFileName = process.env.KEMURI_CSS_SASS_INDEX_FILE_NAME;
+    }
+    if (settingKeys.includes('SASS_INDEX_IMPORT_TYPE')) {
+      settings.indexImportType = process.env.KEMURI_CSS_SASS_INDEX_IMPORT_TYPE;
+    }
+    if (settingKeys.includes('SASS_SOURCE_MAP')) {
+      //@ts-ignore
+      settings.sourceMap = configLoader.convertEnvValueToBool(process.env.KEMURI_CSS_SASS_SOURCE_MAP);
+    }
+    if (settingKeys.includes('SASS_LOAD_PATHS')) {
+      const envValue = _.get(process.env, 'KEMURI_CSS_SASS_LOAD_PATHS');
+      //@ts-ignore
+      settings.loadPaths = configLoader.convertEnvValueToArray(envValue);
+    }
+    return settings;
   }
+  /**
+   * 環境変数に設定されたJSビルダーの設定を取得する
+   * @returns
+   */
+  public static parseJsEnv(): object {
+    const settingKeys = configLoader.getEnvkeys('KEMURI_JS_');
+    const settings: any = configLoader.parseEnvComon('KEMURI_JS_', settingKeys);
+    if (settingKeys.includes('OUTPUT_FORMAT')) {
+      settings.format = process.env.KEMURI_JS_OUTPUT_FORMAT;
+    }
+    if (settingKeys.includes('GLOBALS')) {
+      //@ts-ignore
+      const envValues = configLoader.convertEnvValueToArray(_.get(process.env, 'KEMURI_JS_GLOBALS'));
+      envValues.forEach((envValue) => {
+        const [key, value] = envValue.split(':');
+        if (key && value) {
+          settings.globals[key] = value;
+        }
+      });
+    }
+    if (settingKeys.includes('SOURCE_MAP')) {
+      //@ts-ignore
+      settings.generateIndex = configLoader.convertEnvValueToBool(process.env.KEMURI_JS_SOURCE_MAP);
+    }
+    if (settingKeys.includes('MINIFY')) {
+      //@ts-ignore
+      settings.generateIndex = configLoader.convertEnvValueToBool(process.env.KEMURI_JS_MINIFY);
+    }
+    return settings;
+  }
+
   /**
    * 環境変数に設定されたスニペットビルダーの設定を取得する
    * @returns
    */
   public static parseSnippetEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_SNIPPET_');
-    return {};
+    const settings: any = configLoader.parseEnvComon('KEMURI_SNIPPET_', settingKeys);
+    if (settingKeys.includes('SNIPPET_HAEDER_LEVEL')) {
+      const envValue = _.get(process.env, 'KEMURI_SNIPPET_SNIPPET_HAEDER_LEVEL');
+      //@ts-ignore
+      settings.snippetHeaderLevel = configLoader.convertEnvValueToInt(envValue);
+    }
+    if (settingKeys.includes('EXTRA_SETTING_HAEDER_LEVEL')) {
+      const envValue = _.get(process.env, 'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_LEVEL');
+      //@ts-ignore
+      settings.extraSettingHeaderLevel = configLoader.convertEnvValueToInt(envValue);
+    }
+    if (settingKeys.includes('EXTRA_SETTING_HAEDER_TEXT')) {
+      const envValue = _.get(process.env, 'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_TEXT');
+      //@ts-ignore
+      settings.extraSettingHeaderTexts = configLoader.convertEnvValueToArray(envValue);
+    }
+    return settings;
   }
   /**
    * 環境変数に設定されたスクリーンショットの設定を取得する
    * @returns
    */
   public static parseScreenshotEnv(): object {
+    const settings: any = {};
     const settingKeys = configLoader.getEnvkeys('KEMURI_SCREENSHOT_');
-    return {};
+    return settings;
   }
   /**
    * 設定ファイルをロードする
