@@ -22,66 +22,66 @@ pnpm add -D wate/kemuri
 
 ```bash
 # npm
-npx builder
+npx kemuri
 # yarn
-yarn dlx builder
+yarn dlx kemuri
 # pnpm
-pnpm dlx builder
+pnpm dlx kemuri
 ```
 
 #### サーバーも同時に起動する
 
 ```bash
 # npm
-npx builder --server
+npx kemuri --server
 # yarn
-yarn dlx builder --server
+yarn dlx kemuri --server
 # pnpm
-pnpm dlx builder --server
+pnpm dlx kemuri --server
 ```
 
 ### ファイルの監視と変更されたファイルのビルド
 
 ```bash
 # npm
-npx builder --watch
+npx kemuri --watch
 # yarn
-yarn dlx builder --watch
+yarn dlx kemuri --watch
 # pnpm
-pnpm dlx builder --watch
+pnpm dlx kemuri --watch
 ```
 
 #### サーバーも同時に起動する
 
 ```bash
 # npm
-npx builder --watch --server
+npx kemuri --watch --server
 # yarn
-yarn dlx builder --watch --server
+yarn dlx kemuri --watch --server
 # pnpm
-pnpm dlx builder --watch --server
+pnpm dlx kemuri --watch --server
 ```
 
 ### スクリーンショットの取得
 
 ```bash
 # npm
-npx screenshot
+npx kemuri-screenshot
 # yarn
-yarn dlx screenshot
+yarn dlx kemuri-screenshot
 # pnpm
-pnpm dlx screenshot
+pnpm dlx kemuri-screenshot
 ```
 
 ### スニペットファイルのビルド
 
 ```bash
 # npm
-npx snippet-builder
+npx kemuri-snippet
 # yarn
-yarn dlx snippet-builder
+yarn dlx kemuri-snippet
 # pnpm
-pnpm dlx snippet-builder
+pnpm dlx kemuri-snippet
 ```
 
 ディレクトリ構造
@@ -92,7 +92,7 @@ pnpm dlx snippet-builder
 ```
 {PROJECT_ROOT}/
 ├ .vscode/ <= VSCode用プロジェクトスニペット出力先ディレクトリ
-├ .builderrc.yml <= 設定ファイル
+├ .kemurirc.yml <= 設定ファイル
 ├ docs/
 │   └ cheatsheet/ <= スニペットデータ格納ディレクトリ
 ├ public/  <= HTML出力先ディレクトリ
@@ -113,11 +113,11 @@ pnpm dlx snippet-builder
 
 ```bash
 # npm
-npx builder --init
+npx kemuri --init
 # yarn
-yarn dlx builder --init
+yarn dlx kemuri --init
 # pnpm
-pnpm dlx builder --init
+pnpm dlx kemuri --init
 ```
 
 Tips

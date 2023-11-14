@@ -37,8 +37,8 @@ class configLoader {
      * @param force
      */
     static init(force) {
-        const srcConfigFilePath = path.resolve(__dirname, '../../.builderrc.default.yml');
-        const destConfigFilePath = path.resolve(process.cwd(), '.builderrc.yml');
+        const srcConfigFilePath = path.resolve(__dirname, '../../.kemurirc.default.yml');
+        const destConfigFilePath = path.resolve(process.cwd(), '.kemurirc.yml');
         if (!fs.existsSync(destConfigFilePath) || force) {
             fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
         }
@@ -51,7 +51,7 @@ class configLoader {
      * @returns
      */
     static load() {
-        const explorerSync = cosmiconfigSync('builder');
+        const explorerSync = cosmiconfigSync('kemuri');
         const result = explorerSync.search();
         return result && result.config ? result.config : {};
     }

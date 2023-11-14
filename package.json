@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -70,7 +70,7 @@
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:cleanup": "rimraf screenshots/*",
-    "screenshot:screenshot": "node bin/screenshot.js",
+    "screenshot:screenshot": "node bin/kemuri-screenshot.js",
     "cleanup:all": "rimraf public/*",
     "cleanup:assets": "run-p cleanup:assets:*",
     "cleanup:assets:js": "rimraf public/assets/js/*",
