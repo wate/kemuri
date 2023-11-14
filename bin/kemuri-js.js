@@ -2,7 +2,6 @@
 import { j as jsBuilder } from './lib/js.mjs';
 import { c as configLoader } from './lib/config.mjs';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv';
 import 'node:fs';
 import 'node:path';
 import './lib/base.mjs';
@@ -21,8 +20,8 @@ import 'cosmiconfig';
 import 'lodash';
 import 'chalk';
 import 'node:console';
+import 'dotenv';
 
-dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
