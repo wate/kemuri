@@ -70,7 +70,7 @@
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:cleanup": "rimraf screenshots/*",
-    "screenshot:screenshot": "node bin/screenshot.js",
+    "screenshot:screenshot": "node bin/kemuri-screenshot.js",
     "cleanup:all": "rimraf public/*",
     "cleanup:assets": "run-p cleanup:assets:*",
     "cleanup:assets:js": "rimraf public/assets/js/*",
