@@ -164,8 +164,66 @@ class configLoader {
    * @returns
    */
   public static parseHtmlEnv(): object {
+    const settings: any = {};
     const settingKeys = configLoader.getEnvkeys('KEMURI_HTML_');
-    return {};
+    if (settingKeys.includes('SOURCE_DIR')) {
+      //@ts-ignore
+      settings.srcDir = process.env.KEMURI_HTML_SOURCE_DIR;
+    }
+    if (settingKeys.includes('OUTPUT_DIR')) {
+      //@ts-ignore
+      settings.outputDir = process.env.KEMURI_HTML_OUTPUT_DIR;
+    }
+    if (settingKeys.includes('TARGET_FILE_EXT')) {
+      //@ts-ignore
+      settings.exts = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_TARGET_FILE_EXT, true);
+    }
+    if (settingKeys.includes('MODULE_FILE_EXT')) {
+      //@ts-ignore
+      settings.moduleExts = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_MODULE_FILE_EXT, true);
+    }
+    if (_.filter(settingKeys, (key) => key.startsWith('IGNORE_')).length > 0) {
+      settings.ignore = {};
+    }
+    if (settingKeys.includes('IGNORE_PREFIX')) {
+      settings.ignore.prefix = process.env.KEMURI_HTML_IGNORE_PREFIX;
+    }
+    if (settingKeys.includes('IGNORE_SUFFIX')) {
+      settings.ignore.suffix = process.env.KEMURI_HTML_IGNORE_SUFFIX;
+    }
+    if (settingKeys.includes('IGNORE_FILE_PREFIX')) {
+      settings.ignore.filePrefix = process.env.KEMURI_HTML_IGNORE_FILE_PREFIX;
+    }
+    if (settingKeys.includes('IGNORE_DIR_PREFIX')) {
+      settings.ignore.dirPrefix = process.env.KEMURI_HTML_IGNORE_DIR_PREFIX;
+    }
+    if (settingKeys.includes('IGNORE_FILE_SUFFIX')) {
+      settings.ignore.fileSuffix = process.env.KEMURI_HTML_IGNORE_FILE_SUFFIX;
+    }
+    if (settingKeys.includes('IGNORE_DIR_SUFFIX')) {
+      settings.ignore.dirSuffix = process.env.KEMURI_HTML_IGNORE_DIR_SUFFIX;
+    }
+    if (settingKeys.includes('IGNORE_DIR_NAMES')) {
+      //@ts-ignore
+      settings.ignore.dirNames = configLoader.convertEnvValueToArray(process.env.KEMURI_HTML_IGNORE_DIR_NAMES);
+    }
+    if (settingKeys.includes('VAR_FILE_NAME')) {
+      //@ts-ignore
+      settings.varFileName = process.env.KEMURI_HTML_VAR_FILE_NAME;
+    }
+    if (settingKeys.includes('SITE_URL')) {
+      //@ts-ignore
+      settings.siteUrl = process.env.KEMURI_HTML_SITE_URL;
+    }
+    if (settingKeys.includes('GENERATE_SITEMAP')) {
+      //@ts-ignore
+      settings.generateSiteMap = configLoader.convertEnvValueToBool(process.env.KEMURI_HTML_GENERATE_SITEMAP);
+    }
+    if (settingKeys.includes('GENERATE_PAGE_LIST')) {
+      //@ts-ignore
+      settings.generatePageList = configLoader.convertEnvValueToBool(process.env.KEMURI_HTML_GENERATE_PAGE_LIST);
+    }
+    return settings;
   }
   /**
    * 環境変数に設定されたJSビルダーの設定を取得する
