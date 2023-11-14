@@ -2,18 +2,18 @@ import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: {
-    builder: 'lib/builder.ts',
-    'html-builder': 'lib/html-builder.ts',
-    'css-builder': 'lib/css-builder.ts',
-    'js-builder': 'lib/js-builder.ts',
-    screenshot: 'lib/screenshot.ts',
-    'snippet-builder': 'lib/snippet-builder.ts',
+    "kemuri": 'lib/builder.ts',
+    'kemuri-html': 'lib/html-builder.ts',
+    'kemuri-css': 'lib/css-builder.ts',
+    'kemuri-js': 'lib/js-builder.ts',
+    "kemuri-screenshot": 'lib/screenshot.ts',
+    'kemuri-snippet': 'lib/snippet-builder.ts',
   },
   plugins: [typescript()],
   output: {
       dir: 'bin',
       format: 'esm',
-      chunkFileNames: 'common/[name].mjs',
+      chunkFileNames: 'lib/[name].mjs',
       entryFileNames: '[name].js',
   }
 };

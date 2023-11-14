@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { b as baseBuilder } from './common/base.mjs';
+import { b as baseBuilder } from './lib/base.mjs';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fromMarkdown } from 'mdast-util-from-markdown';
@@ -12,7 +12,7 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
-import { a as console, c as configLoader } from './common/config.mjs';
+import { a as console, c as configLoader } from './lib/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import 'glob';

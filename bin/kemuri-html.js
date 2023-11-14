@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { h as htmlBuilder } from './common/html.mjs';
-import { c as configLoader } from './common/config.mjs';
+import { h as htmlBuilder } from './lib/html.mjs';
+import { c as configLoader } from './lib/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import 'node:fs';
 import 'node:path';
 import 'node:url';
-import './common/base.mjs';
+import './lib/base.mjs';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
