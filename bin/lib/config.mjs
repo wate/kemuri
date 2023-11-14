@@ -5,7 +5,6 @@ import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
 import chalk from 'chalk';
 import { Console } from 'node:console';
-import * as dotenv from 'dotenv';
 
 class ConsoleOverride extends Console {
     constructor() {
@@ -27,9 +26,9 @@ class ConsoleOverride extends Console {
         super.group(chalk.blue(message), ...optionalParams);
     }
 }
-const console = new ConsoleOverride();
+console = new ConsoleOverride();
+var console$1 = console;
 
-dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 class configLoader {
@@ -44,66 +43,17 @@ class configLoader {
             fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
         }
         else {
-            console.error('Configuration file(.builderrc.yml) already exists');
+            console$1.error('Configuration file(.builderrc.yml) already exists');
         }
-    }
-    /**
-     * 環境変数のパースと設定
-     */
-    static parseEnv() {
-        const enableConfig = {
-            enable: configLoader.parseEnableEnv(),
-        };
-        const htmlConfig = {
-            html: configLoader.parseHtmlEnv(),
-        };
-        const cssConfig = {
-            css: configLoader.parseCssEnv(),
-        };
-        const jsConfig = {
-            js: configLoader.parseJsEnv(),
-        };
-        const snippetConfig = {
-            snippet: configLoader.parseSnippetEnv(),
-        };
-        const screenshotConfig = {
-            screenshot: configLoader.parseScreenshotEnv(),
-        };
-        return _.merge(_.cloneDeep(enableConfig), _.cloneDeep(htmlConfig), _.cloneDeep(cssConfig), _.cloneDeep(jsConfig), _.cloneDeep(snippetConfig), _.cloneDeep(screenshotConfig));
-    }
-    static parseEnableEnv() {
-        return {};
-    }
-    static parseServerEnv() {
-        return {};
-    }
-    static parseHtmlEnv() {
-        return {};
-    }
-    static parseJsEnv() {
-        return {};
-    }
-    static parseCssEnv() {
-        return {};
-    }
-    static parseSnippetEnv() {
-        return {};
-    }
-    static parseScreenshotEnv() {
-        return {};
     }
     /**
      * 設定ファイルをロードする
      * @returns
      */
     static load() {
-        let config = configLoader.parseEnv();
         const explorerSync = cosmiconfigSync('kemuri');
         const result = explorerSync.search();
-        if (result) {
-            return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
-        }
-        return config;
+        return result && result.config ? result.config : {};
     }
     /**
      * 指定のビルダーが有効化されているか確認する
@@ -220,4 +170,4 @@ class configLoader {
     }
 }
 
-export { console as a, configLoader as c };
+export { console$1 as a, configLoader as c };

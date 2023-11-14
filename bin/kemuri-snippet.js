@@ -14,6 +14,7 @@ import _ from 'lodash';
 import yaml from 'js-yaml';
 import { a as console, c as configLoader } from './lib/config.mjs';
 import yargs from 'yargs';
+import * as dotenv from 'dotenv';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
@@ -22,7 +23,6 @@ import 'node:url';
 import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
-import 'dotenv';
 
 class vscodeSnippetBuilder extends baseBuilder {
     /**
@@ -420,6 +420,7 @@ class vscodeSnippetBuilder extends baseBuilder {
 
 const snippetBuilder = new vscodeSnippetBuilder();
 
+dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
