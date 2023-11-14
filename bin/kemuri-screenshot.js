@@ -2,7 +2,7 @@ import { devices, chromium, webkit, firefox } from 'playwright';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { URL } from 'node:url';
-import { c as configLoader, a as console } from './common/config.mjs';
+import { c as configLoader, a as console } from './lib/config.mjs';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';

@@ -13,7 +13,7 @@ export default {
   output: {
       dir: 'bin',
       format: 'esm',
-      chunkFileNames: 'common/[name].mjs',
+      chunkFileNames: 'lib/[name].mjs',
       entryFileNames: '[name].js',
   }
 };

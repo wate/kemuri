@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs';
-import { j as jsBuilder } from './common/js.mjs';
-import { c as cssBuilder } from './common/css.mjs';
-import { h as htmlBuilder } from './common/html.mjs';
+import { j as jsBuilder } from './lib/js.mjs';
+import { c as cssBuilder } from './lib/css.mjs';
+import { h as htmlBuilder } from './lib/html.mjs';
 import browserSync from 'browser-sync';
-import { c as configLoader, a as console } from './common/config.mjs';
+import { c as configLoader, a as console } from './lib/config.mjs';
 import _ from 'lodash';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import chalk from 'chalk';
 import 'node:path';
-import './common/base.mjs';
+import './lib/base.mjs';
 import 'glob';
 import 'chokidar';
 import 'rimraf';

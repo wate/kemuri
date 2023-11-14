@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import { j as jsBuilder } from './common/js.mjs';
-import { c as configLoader } from './common/config.mjs';
+import { j as jsBuilder } from './lib/js.mjs';
+import { c as configLoader } from './lib/config.mjs';
 import yargs from 'yargs';
 import * as dotenv from 'dotenv';
 import 'node:fs';
 import 'node:path';
-import './common/base.mjs';
+import './lib/base.mjs';
 import 'glob';
 import 'chokidar';
 import 'rimraf';
