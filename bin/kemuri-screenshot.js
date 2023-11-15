@@ -6,12 +6,11 @@ import { c as configLoader, a as console } from './lib/config.mjs';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv';
 import 'cosmiconfig';
 import 'chalk';
 import 'node:console';
+import 'dotenv';
 
-dotenv.config();
 const argv = yargs(process.argv.slice(2))
     .options({
     l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },

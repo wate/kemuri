@@ -22,6 +22,4 @@ class ConsoleOverride extends Console {
   }
 }
 
-console = new ConsoleOverride();
-
-export default console;
+export default console as ConsoleOverride;

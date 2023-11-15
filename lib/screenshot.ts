@@ -7,8 +7,6 @@ import console from './console';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
