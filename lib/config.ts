@@ -34,6 +34,9 @@ class configLoader {
     const enableConfig = {
       enable: configLoader.parseEnableEnv(),
     };
+    const serverConfig = {
+      server: configLoader.parseServerEnv(),
+    };
     const htmlConfig = {
       html: configLoader.parseHtmlEnv(),
     };
@@ -49,14 +52,16 @@ class configLoader {
     const screenshotConfig = {
       screenshot: configLoader.parseScreenshotEnv(),
     };
-    return _.merge(
+    const envSettings = _.merge(
       _.cloneDeep(enableConfig),
+      _.cloneDeep(serverConfig),
       _.cloneDeep(htmlConfig),
       _.cloneDeep(cssConfig),
       _.cloneDeep(jsConfig),
       _.cloneDeep(snippetConfig),
       _.cloneDeep(screenshotConfig),
     );
+    return envSettings;
   }
   /**
    * 定義済みの環境変数のキーを取得する
@@ -371,10 +376,47 @@ class configLoader {
       settings.sitemapLocation = _.get(process.env, 'KEMURI_SCREENSHOT_SITEMAP_LOCATION');
     }
     if (_.filter(settingKeys, (key) => key.startsWith('TARGET_')).length > 0) {
-      settings.targets = {};
+      settings.targets = configLoader.parseScreenshotTargetEnv(settingKeys);
     }
-
     return settings;
+  }
+  /**
+   * スクリーンショットのターゲットの設定を取得する
+   * @param settingKeys
+   * @returns
+   */
+  protected static parseScreenshotTargetEnv(settingKeys: string[]): object {
+    const targets = {};
+    const targetKeys = settingKeys.filter((key) => {
+      return key.startsWith('TARGET_') && key.endsWith('_TYPE');
+    });
+    targetKeys.forEach((targetKey) => {
+      const keyPrefix = targetKey.replace(/_TYPE$/, '');
+      const envNamePrefix = 'KEMURI_SCREENSHOT_' + keyPrefix;
+      let targetName = targetKey
+        .replace(/^TARGET_/, '')
+        .replace(/_TYPE$/, '')
+        .toLocaleLowerCase();
+      if (settingKeys.includes(keyPrefix + '_NAME')) {
+        //@ts-ignore
+        targetName = _.get(process.env, envNamePrefix + '_NAME');
+      }
+      //@ts-ignore
+      targets[targetName] = {
+        type: _.get(process.env, envNamePrefix + '_TYPE'),
+      };
+      if (settingKeys.includes(keyPrefix + '_WIDTH')) {
+        const envValue = _.get(process.env, envNamePrefix + '_WIDTH');
+        //@ts-ignore
+        targets[targetName].width = configLoader.convertEnvValueToInt(envValue);
+      }
+      if (settingKeys.includes(keyPrefix + '_HEIGHT')) {
+        const envValue = _.get(process.env, envNamePrefix + '_HEIGHT');
+        //@ts-ignore
+        targets[targetName].height = configLoader.convertEnvValueToInt(envValue);
+      }
+    });
+    return targets;
   }
   /**
    * 設定ファイルをロードする
