@@ -328,6 +328,52 @@ class configLoader {
   public static parseScreenshotEnv(): object {
     const settings: any = {};
     const settingKeys = configLoader.getEnvkeys('KEMURI_SCREENSHOT_');
+    if (settingKeys.includes('OUTPUT_DIR')) {
+      settings.outputDir = _.get(process.env, 'KEMURI_SCREENSHOT_OUTPUT_DIR');
+    }
+    if (settingKeys.includes('OUTPUT_DIR')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_SAVE_FLAT_PATH');
+      //@ts-ignore
+      settings.saveFlatPath = configLoader.convertEnvValueToBool(envValue);
+    }
+    if (_.filter(settingKeys, (key) => key.startsWith('DEFAULT_')).length > 0) {
+      settings.default = {};
+    }
+    if (settingKeys.includes('DEFAULT_TYPE')) {
+      settings.default.type = _.get(process.env, 'KEMURI_SCREENSHOT_DEFAULT_TYPE');
+    }
+    if (settingKeys.includes('DEFAULT_WIDTH')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_DEFAULT_WIDTH');
+      //@ts-ignore
+      settings.default.width = configLoader.convertEnvValueToInt(envValue);
+    }
+    if (settingKeys.includes('DEFAULT_HEIGHT')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_DEFAULT_HEIGHT');
+      //@ts-ignore
+      settings.default.height = configLoader.convertEnvValueToInt(envValue);
+    }
+    if (settingKeys.includes('HEADLESS')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_HEADLESS');
+      //@ts-ignore
+      settings.headless = configLoader.convertEnvValueToBool(envValue);
+    }
+    if (settingKeys.includes('FULL_PAGE')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_FULL_PAGE');
+      //@ts-ignore
+      settings.fullPage = configLoader.convertEnvValueToBool(envValue);
+    }
+    if (settingKeys.includes('RETRY_LIMIT')) {
+      const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_RETRY_LIMIT');
+      //@ts-ignore
+      settings.retryLimit = configLoader.convertEnvValueToInt(envValue);
+    }
+    if (settingKeys.includes('SITEMAP_LOCATION')) {
+      settings.sitemapLocation = _.get(process.env, 'KEMURI_SCREENSHOT_SITEMAP_LOCATION');
+    }
+    if (_.filter(settingKeys, (key) => key.startsWith('TARGET_')).length > 0) {
+      settings.targets = {};
+    }
+
     return settings;
   }
   /**
