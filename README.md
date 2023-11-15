@@ -123,5 +123,28 @@ pnpm dlx kemuri --init
 Tips
 ------------------
 
+### 環境変数を使った設定
+
+設定ファイルを作成せずに環境変数を利用して設定を行うことも可能です。  
+※環境変数の設定方法は各OSによって異なります。
+
+環境変数名の詳細は[.env.example](.env.example)を参照してください。
+
+```bash
+# npm
+KEMURI_SERVER_PORT=8080 npx kemuri --server
+# yarn
+KEMURI_SERVER_PORT=8080 yarn dlx kemuri --server
+# pnpm
+KEMURI_SERVER_PORT=8080 pnpm dlx kemuri --server
+```
+
+### パッケージマネージャー(npm/yarn/pnpm)ごとの実行方法の違い
+
+パッケージマネージャーによりコマンドの実行方法が異なります。
+  
+パッケージマネージャーのコマンド実行方法を統一したいといった場合は、  
+`ni`の導入の検討することをおすすめします。
+
 * [antfu/ni: 💡 Use the right package manager](https://github.com/antfu/ni)
-    * [npm、yarn、pnpm それぞれのコマンドを覚えるのに疲れた方へ #npm - Qiita](https://qiita.com/oekazuma/items/12abf4c1bc1dbc63be85)
+    * [npm、yarn、pnpm それぞれのコマンドを覚えるのに疲れた方へ](https://qiita.com/oekazuma/items/12abf4c1bc1dbc63be85)
