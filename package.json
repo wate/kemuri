@@ -9,6 +9,7 @@
     "kemuri-css": "bin/kemuri-css.js",
     "kemuri-html": "bin/kemuri-html.js",
     "kemuri-js": "bin/kemuri-js.js",
+    "kemuri-server": "bin/kemuri-server.js",
     "kemuri-screenshot": "bin/kemuri-screenshot.js",
     "kemuri-snippet": "bin/kemuri-snippet.js"
   },

@@ -17,7 +17,7 @@ class configLoader {
      * 設定ファイルを生成する
      * @param force
      */
-    static init(force) {
+    static copyDefaultConfig(force) {
         const srcConfigFilePath = path.resolve(__dirname, '../../.kemurirc.default.yml');
         const destConfigFilePath = path.resolve(process.cwd(), '.kemurirc.yml');
         if (!fs.existsSync(destConfigFilePath) || force) {
@@ -132,6 +132,10 @@ class configLoader {
         if (settingKeys.includes('WATCH_FILES')) {
             //@ts-ignore
             settings.watchFiles = configLoader.convertEnvValueToArray(process.env.KEMURI_SERVER_WATCH_FILES);
+        }
+        if (settingKeys.includes('PROXY')) {
+            //@ts-ignore
+            settings.proxy = _.get(process.env, 'KEMURI_SERVER_PROXY');
         }
         if (settingKeys.includes('OPEN')) {
             //@ts-ignore
@@ -415,7 +419,9 @@ class configLoader {
     static load() {
         let config = configLoader.parseEnv();
         const explorerSync = cosmiconfigSync('kemuri');
-        const result = explorerSync.search();
+        const result = configLoader.configFile
+            ? explorerSync.load(configLoader.configFile)
+            : explorerSync.search();
         if (result) {
             return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
         }
