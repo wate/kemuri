@@ -24,7 +24,6 @@ export function getBrowserSyncOption(): browserSync.Options {
     port: 3000,
     open: true,
     notify: false,
-    proxy: undefined,
     ui: false,
     watch: true,
     browser: 'default',
@@ -36,7 +35,7 @@ export function getBrowserSyncOption(): browserSync.Options {
    * ベースディレクトリオプション
    */
   const serverOption = configLoader.getServerOption();
-  if (!configLoader.isEnable('html')) {
+  if (configLoader.isEnable('html')) {
     const htmlOption = configLoader.getHtmlOption();
     if (_.has(htmlOption, 'outputDir')) {
       //@ts-ignore
@@ -72,6 +71,7 @@ export function getBrowserSyncOption(): browserSync.Options {
   if (_.has(serverOption, 'proxy')) {
     browserSyncOption.proxy = _.get(serverOption, 'proxy');
   }
+
   /**
    * ブラウザ起動のオプション
    */
@@ -79,6 +79,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     //@ts-ignore
     browserSyncOption.open = _.get(serverOption, 'open');
   }
+
   /**
    * ブラウザオプション
    */
@@ -86,6 +87,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     //@ts-ignore
     browserSyncOption.browser = _.get(serverOption, 'browser');
   }
+
   /**
    * UIオプション
    */
