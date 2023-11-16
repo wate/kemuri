@@ -13,8 +13,9 @@
 #   baseDir: public
 #   port: 3000
 #   watch: true
-#   watchFiles: []
 #   proxy: null
+#   ## proxyが設定されている場合はbaseDirの設定が適用されます
+#   watchFiles: []
 #   open: true
 #   browser: default
 #   notify: false

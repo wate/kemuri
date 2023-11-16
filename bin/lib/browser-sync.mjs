@@ -15,22 +15,34 @@ function getBrowserSyncOption(orverrideOption) {
         ui: false,
         watch: true,
         browser: 'default',
-        server: {
-            baseDir: 'public',
-        },
     };
     /**
      * HTMLビルダーが有効になっている場合は
      * ベースディレクトリオプションを自動設定する
      */
+    const serverOption = configLoader.getServerOption(orverrideOption);
+    const staticServer = {
+        baseDir: 'public',
+    };
     if (configLoader.isEnable('html')) {
         const htmlOption = configLoader.getHtmlOption();
         if (_.has(htmlOption, 'outputDir')) {
             //@ts-ignore
-            browserSyncOption.server.baseDir = _.get(htmlOption, 'outputDir');
+            staticServer.baseDir = _.get(htmlOption, 'outputDir');
         }
     }
-    const serverOption = configLoader.getServerOption(orverrideOption);
+    /**
+     * プロキシのオプション
+     */
+    if (_.has(serverOption, 'proxy')) {
+        browserSyncOption.proxy = _.get(serverOption, 'proxy');
+        browserSyncOption.files = [
+            staticServer.baseDir
+        ];
+    }
+    else {
+        browserSyncOption.server = staticServer;
+    }
     /**
      * portオプション
      */
@@ -51,12 +63,6 @@ function getBrowserSyncOption(orverrideOption) {
     if (_.has(serverOption, 'watchFiles')) {
         //@ts-ignore
         browserSyncOption.files = _.get(serverOption, 'watchFiles');
-    }
-    /**
-     * プロキシのオプション
-     */
-    if (_.has(serverOption, 'proxy')) {
-        browserSyncOption.proxy = _.get(serverOption, 'proxy');
     }
     /**
      * ブラウザ起動のオプション
