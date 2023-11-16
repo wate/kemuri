@@ -66,7 +66,7 @@
     "builder:watch": "tsx lib/builder.ts --html --css --js --watch --server",
     "builder:build": "tsx lib/builder.ts --html --css --js",
     "builder:init": "tsx lib/builder.ts --init",
-    "builder:server": "tsx lib/builder.ts --server",
+    "server": "tsx lib/server.ts",
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:cleanup": "rimraf screenshots/*",

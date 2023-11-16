@@ -16,10 +16,11 @@ export interface browserSyncServerOption {
 }
 
 /**
- * BrowserSyncのオプションを取得する
+ * browserSyncのオプションを取得する
+ * @param orverrideOption
  * @returns
  */
-export function getBrowserSyncOption(): browserSync.Options {
+export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption): browserSync.Options {
   const browserSyncOption: browserSync.Options = {
     port: 3000,
     open: true,
@@ -32,9 +33,9 @@ export function getBrowserSyncOption(): browserSync.Options {
     },
   };
   /**
-   * ベースディレクトリオプション
+   * HTMLビルダーが有効になっている場合は
+   * ベースディレクトリオプションを自動設定する
    */
-  const serverOption = configLoader.getServerOption();
   if (configLoader.isEnable('html')) {
     const htmlOption = configLoader.getHtmlOption();
     if (_.has(htmlOption, 'outputDir')) {
@@ -43,6 +44,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     }
   }
 
+  const serverOption = configLoader.getServerOption(orverrideOption);
   /**
    * portオプション
    */
@@ -89,6 +91,14 @@ export function getBrowserSyncOption(): browserSync.Options {
   }
 
   /**
+   * 通知オプション
+   */
+  if (_.has(serverOption, 'notify')) {
+    //@ts-ignore
+    browserSyncOption.notify = _.get(serverOption, 'notify');
+  }
+
+  /**
    * UIオプション
    */
   if (_.has(serverOption, 'ui') && _.get(serverOption, 'ui')) {
@@ -101,23 +111,13 @@ export function getBrowserSyncOption(): browserSync.Options {
     }
   }
 
-  /**
-   * 通知オプション
-   */
-  if (_.has(serverOption, 'notify')) {
-    //@ts-ignore
-    browserSyncOption.notify = _.get(serverOption, 'notify');
-  }
   return browserSyncOption;
 }
 /**
  * BrowserSyncを起動する
  * @param orverrideOption
  */
-export function run(orverrideOption?: browserSync.Options) {
-  let serverOption = getBrowserSyncOption();
-  if (orverrideOption !== undefined) {
-    serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(orverrideOption));
-  }
+export function run(orverrideOption?: browserSyncServerOption) {
+  let serverOption = getBrowserSyncOption(orverrideOption);
   browserSync(serverOption);
 }
