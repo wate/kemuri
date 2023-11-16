@@ -7,10 +7,8 @@ import htmlBuilder from './builder/html';
 import * as server from './server/browser-sync';
 import configLoader from './config';
 import yargs from 'yargs';
-import * as dotenv from 'dotenv';
 import chalk from 'chalk';
 import console from './console';
-dotenv.config();
 
 const argv = yargs(process.argv.slice(2))
   .options({
