@@ -28,6 +28,7 @@ const argv = yargs(process.argv.slice(2))
     css: { type: 'boolean', description: 'cssビルダーを利用する' },
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
     init: { type: 'boolean', description: '設定ファイルを生成する' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
   })
@@ -36,13 +37,13 @@ const argv = yargs(process.argv.slice(2))
 if (argv.init) {
   if (fs.existsSync('.builderrc.yml')) {
     if (argv.force) {
-      configLoader.init(argv.force);
+      configLoader.copyDefaultConfig(argv.force);
       console.log(chalk.green('Configuration file(.builderrc.yml) has been overwritten.'));
     } else {
       console.warn('Configuration file(.builderrc.yml) already exists.');
     }
   } else {
-    configLoader.init(argv.force);
+    configLoader.copyDefaultConfig(argv.force);
     console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
   }
   const createDirectories: string[] = [];
@@ -90,6 +91,11 @@ if (argv.mode !== undefined) {
   mode = 'develop';
 } else if (argv.production !== undefined) {
   mode = 'production';
+}
+
+if (argv.config !== undefined) {
+  //@ts-ignore
+  configLoader.configFile = argv.config;
 }
 
 const builders = [];

@@ -7,8 +7,9 @@ export interface browserSyncServerOption {
   port?: number;
   watch?: boolean;
   watchFiles?: string | string[] | boolean;
-  notify?: boolean;
+  proxy?: string;
   open?: boolean;
+  notify?: boolean;
   browser?: string | string[];
   ui?: boolean;
   uiPort?: number;
@@ -23,6 +24,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     port: 3000,
     open: true,
     notify: false,
+    proxy: undefined,
     ui: false,
     watch: true,
     browser: 'default',
@@ -64,7 +66,12 @@ export function getBrowserSyncOption(): browserSync.Options {
     //@ts-ignore
     browserSyncOption.files = _.get(serverOption, 'watchFiles');
   }
-
+  /**
+   * プロキシのオプション
+   */
+  if (_.has(serverOption, 'proxy')) {
+    browserSyncOption.proxy = _.get(serverOption, 'proxy');
+  }
   /**
    * ブラウザ起動のオプション
    */

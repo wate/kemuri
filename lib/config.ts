@@ -14,10 +14,15 @@ type settingType = 'js' | 'css' | 'html';
 
 class configLoader {
   /**
+   * 設定ファイルのパス
+   */
+  static configFile?: string;
+
+  /**
    * 設定ファイルを生成する
    * @param force
    */
-  public static init(force?: boolean): void {
+  public static copyDefaultConfig(force?: boolean): void {
     const srcConfigFilePath = path.resolve(__dirname, '../../.kemurirc.default.yml');
     const destConfigFilePath = path.resolve(process.cwd(), '.kemurirc.yml');
     if (!fs.existsSync(destConfigFilePath) || force) {
@@ -141,6 +146,10 @@ class configLoader {
     if (settingKeys.includes('WATCH_FILES')) {
       //@ts-ignore
       settings.watchFiles = configLoader.convertEnvValueToArray(process.env.KEMURI_SERVER_WATCH_FILES);
+    }
+    if (settingKeys.includes('PROXY')) {
+      //@ts-ignore
+      settings.proxy = _.get(process.env, 'KEMURI_SERVER_PROXY');
     }
     if (settingKeys.includes('OPEN')) {
       //@ts-ignore
@@ -425,7 +434,9 @@ class configLoader {
   public static load(): any {
     let config = configLoader.parseEnv();
     const explorerSync = cosmiconfigSync('kemuri');
-    const result: CosmiconfigResult = explorerSync.search();
+    const result: CosmiconfigResult = configLoader.configFile
+      ? explorerSync.load(configLoader.configFile)
+      : explorerSync.search();
     if (result) {
       return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
     }
