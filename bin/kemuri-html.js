@@ -23,8 +23,13 @@ import 'dotenv';
 const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
 })
     .parseSync();
+if (argv.config !== undefined) {
+    //@ts-ignore
+    configLoader.configFile = argv.config;
+}
 const builderOption = configLoader.getHtmlOption();
 htmlBuilder.setOption(builderOption);
 if (argv.watch) {

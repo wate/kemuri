@@ -14,7 +14,6 @@ import 'dotenv';
 
 const argv = yargs(process.argv.slice(2))
     .options({
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
     baseDir: { type: 'string', description: 'ベースディレクトリを設定する' },
     p: { type: 'number', alias: 'port', description: 'プロキシを設定する' },
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
@@ -24,6 +23,7 @@ const argv = yargs(process.argv.slice(2))
     notify: { type: 'boolean', description: '更新通知オプションを設定する' },
     ui: { type: 'boolean', description: 'UIオプションを設定する' },
     uiPort: { type: 'number', description: 'UIオプションのポート番号を設定する' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
 })
     .parseSync();
 if (argv.config !== undefined) {

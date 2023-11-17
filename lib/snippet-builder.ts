@@ -10,10 +10,10 @@ const argv = yargs(process.argv.slice(2))
   })
   .parseSync();
 
-  if (argv.config !== undefined) {
-    //@ts-ignore
-    configLoader.configFile = argv.config;
-  }
+if (argv.config !== undefined) {
+  //@ts-ignore
+  configLoader.configFile = argv.config;
+}
 
 const builderOption = configLoader.getSnippetOption();
 snippetBuilder.setOption(builderOption);
