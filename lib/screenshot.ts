@@ -11,6 +11,7 @@ import yargs from 'yargs';
 const argv = yargs(process.argv.slice(2))
   .options({
     l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
   })
   .parseSync();
 
@@ -36,6 +37,11 @@ interface Browser {
 interface ScreenshotPage extends Browser {
   group?: string | null;
   url: string;
+}
+
+if (argv.config !== undefined) {
+  //@ts-ignore
+  configLoader.configFile = argv.config;
 }
 
 let pages: Page[] = [];

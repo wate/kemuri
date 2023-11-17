@@ -36,8 +36,13 @@ const argv = yargs(process.argv.slice(2))
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
     sourcemap: { type: 'boolean', description: 'sourcemapファイルを出力する' },
     minify: { type: 'boolean', description: 'minify化するか否か' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
 })
     .parseSync();
+if (argv.config !== undefined) {
+    //@ts-ignore
+    configLoader.configFile = argv.config;
+}
 let mode = 'develop';
 if (argv.mode !== undefined) {
     mode = String(argv.mode);

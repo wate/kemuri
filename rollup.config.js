@@ -6,6 +6,7 @@ export default {
     'kemuri-html': 'lib/html-builder.ts',
     'kemuri-css': 'lib/css-builder.ts',
     'kemuri-js': 'lib/js-builder.ts',
+    "kemuri-server": 'lib/server.ts',
     "kemuri-screenshot": 'lib/screenshot.ts',
     'kemuri-snippet': 'lib/snippet-builder.ts',
   },

@@ -9,6 +9,7 @@
     "kemuri-css": "bin/kemuri-css.js",
     "kemuri-html": "bin/kemuri-html.js",
     "kemuri-js": "bin/kemuri-js.js",
+    "kemuri-server": "bin/kemuri-server.js",
     "kemuri-screenshot": "bin/kemuri-screenshot.js",
     "kemuri-snippet": "bin/kemuri-snippet.js"
   },
@@ -35,7 +36,7 @@
     "nunjucks": "^3.2.4",
     "playwright": "^1.39.0",
     "rimraf": "^5.0.5",
-    "rollup": "^4.4.0",
+    "rollup": "^4.4.1",
     "sass": "^1.69.5",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
@@ -58,7 +59,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/yargs": "^17.0.31",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.0",
     "tsx": "^3.14.0"
   },
   "scripts": {
@@ -66,7 +67,7 @@
     "builder:watch": "tsx lib/builder.ts --html --css --js --watch --server",
     "builder:build": "tsx lib/builder.ts --html --css --js",
     "builder:init": "tsx lib/builder.ts --init",
-    "builder:server": "tsx lib/builder.ts --server",
+    "server": "tsx lib/server.ts",
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:cleanup": "rimraf screenshots/*",

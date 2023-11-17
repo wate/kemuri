@@ -7,18 +7,20 @@ export interface browserSyncServerOption {
   port?: number;
   watch?: boolean;
   watchFiles?: string | string[] | boolean;
-  notify?: boolean;
+  proxy?: string;
   open?: boolean;
+  notify?: boolean;
   browser?: string | string[];
   ui?: boolean;
   uiPort?: number;
 }
 
 /**
- * BrowserSyncのオプションを取得する
+ * browserSyncのオプションを取得する
+ * @param orverrideOption
  * @returns
  */
-export function getBrowserSyncOption(): browserSync.Options {
+export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption): browserSync.Options {
   const browserSyncOption: browserSync.Options = {
     port: 3000,
     open: true,
@@ -26,22 +28,34 @@ export function getBrowserSyncOption(): browserSync.Options {
     ui: false,
     watch: true,
     browser: 'default',
-    server: {
-      baseDir: 'public',
-    },
   };
   /**
-   * ベースディレクトリオプション
+   * HTMLビルダーが有効になっている場合は
+   * ベースディレクトリオプションを自動設定する
    */
-  const serverOption = configLoader.getServerOption();
-  if (!configLoader.isEnable('html')) {
+
+  const serverOption = configLoader.getServerOption(orverrideOption);
+  const staticServer = {
+    baseDir: 'public',
+  };
+  if (configLoader.isEnable('html')) {
     const htmlOption = configLoader.getHtmlOption();
     if (_.has(htmlOption, 'outputDir')) {
       //@ts-ignore
-      browserSyncOption.server.baseDir = _.get(htmlOption, 'outputDir');
+      staticServer.baseDir = _.get(htmlOption, 'outputDir');
     }
   }
-
+  /**
+   * プロキシのオプション
+   */
+  if (_.has(serverOption, 'proxy')) {
+    browserSyncOption.proxy = _.get(serverOption, 'proxy');
+    browserSyncOption.files = [
+      staticServer.baseDir
+    ];
+  } else {
+    browserSyncOption.server = staticServer;
+  }
   /**
    * portオプション
    */
@@ -72,6 +86,7 @@ export function getBrowserSyncOption(): browserSync.Options {
     //@ts-ignore
     browserSyncOption.open = _.get(serverOption, 'open');
   }
+
   /**
    * ブラウザオプション
    */
@@ -79,6 +94,15 @@ export function getBrowserSyncOption(): browserSync.Options {
     //@ts-ignore
     browserSyncOption.browser = _.get(serverOption, 'browser');
   }
+
+  /**
+   * 通知オプション
+   */
+  if (_.has(serverOption, 'notify')) {
+    //@ts-ignore
+    browserSyncOption.notify = _.get(serverOption, 'notify');
+  }
+
   /**
    * UIオプション
    */
@@ -92,23 +116,13 @@ export function getBrowserSyncOption(): browserSync.Options {
     }
   }
 
-  /**
-   * 通知オプション
-   */
-  if (_.has(serverOption, 'notify')) {
-    //@ts-ignore
-    browserSyncOption.notify = _.get(serverOption, 'notify');
-  }
   return browserSyncOption;
 }
 /**
  * BrowserSyncを起動する
  * @param orverrideOption
  */
-export function run(orverrideOption?: browserSync.Options) {
-  let serverOption = getBrowserSyncOption();
-  if (orverrideOption !== undefined) {
-    serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(orverrideOption));
-  }
+export function run(orverrideOption?: browserSyncServerOption) {
+  let serverOption = getBrowserSyncOption(orverrideOption);
   browserSync(serverOption);
 }
