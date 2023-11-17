@@ -19,8 +19,14 @@ const argv = yargs(process.argv.slice(2))
     style: { type: 'string', choices: ['expanded', 'compressed'], description: '出力形式を指定する' },
     sourcemap: { type: 'boolean', description: 'sourcemapファイルを出力する' },
     minify: { type: 'boolean', description: 'minify化するか否か' },
+    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
   })
   .parseSync();
+
+if (argv.config !== undefined) {
+  //@ts-ignore
+  configLoader.configFile = argv.config;
+}
 
 let mode: string = 'develop';
 if (argv.mode !== undefined) {
