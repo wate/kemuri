@@ -1,5 +1,11 @@
 {
   "recommendations": [
-    "ionutvmi.path-autocomplete"
+    "ionutvmi.path-autocomplete",
+    "mikestead.dotenv",
+    "editorconfig.editorconfig",
+    "oderwat.indent-rainbow",
+    "ronnidc.nunjucks",
+    "redhat.vscode-yaml",
+    "mblode.twig-language"
   ]
 }
