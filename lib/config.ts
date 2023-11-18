@@ -345,7 +345,7 @@ class configLoader {
     if (settingKeys.includes('OUTPUT_DIR')) {
       settings.outputDir = _.get(process.env, 'KEMURI_SCREENSHOT_OUTPUT_DIR');
     }
-    if (settingKeys.includes('OUTPUT_DIR')) {
+    if (settingKeys.includes('SAVE_FLAT_PATH')) {
       const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_SAVE_FLAT_PATH');
       //@ts-ignore
       settings.saveFlatPath = configLoader.convertEnvValueToBool(envValue);

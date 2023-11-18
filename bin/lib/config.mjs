@@ -3,11 +3,31 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
 import _ from 'lodash';
-import 'chalk';
-import 'node:console';
+import chalk from 'chalk';
+import { Console } from 'node:console';
 import * as dotenv from 'dotenv';
 
-var console$1 = console;
+class ConsoleOverride extends Console {
+    constructor() {
+        super(process.stdout, process.stderr);
+    }
+    debug(message, ...optionalParams) {
+        super.debug(chalk.gray(message), ...optionalParams);
+    }
+    info(message, ...optionalParams) {
+        super.info(chalk.cyan(message), ...optionalParams);
+    }
+    warn(message, ...optionalParams) {
+        super.warn(chalk.yellow(message), ...optionalParams);
+    }
+    error(message, ...optionalParams) {
+        super.error(chalk.red(message), ...optionalParams);
+    }
+    group(message, ...optionalParams) {
+        super.group(chalk.blue(message), ...optionalParams);
+    }
+}
+const console = new ConsoleOverride();
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +44,7 @@ class configLoader {
             fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
         }
         else {
-            console$1.error('Configuration file(.builderrc.yml) already exists');
+            console.error('Configuration file(.builderrc.yml) already exists');
         }
     }
     /**
@@ -330,7 +350,7 @@ class configLoader {
         if (settingKeys.includes('OUTPUT_DIR')) {
             settings.outputDir = _.get(process.env, 'KEMURI_SCREENSHOT_OUTPUT_DIR');
         }
-        if (settingKeys.includes('OUTPUT_DIR')) {
+        if (settingKeys.includes('SAVE_FLAT_PATH')) {
             const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_SAVE_FLAT_PATH');
             //@ts-ignore
             settings.saveFlatPath = configLoader.convertEnvValueToBool(envValue);
@@ -542,4 +562,4 @@ class configLoader {
     }
 }
 
-export { console$1 as a, configLoader as c };
+export { console as a, configLoader as c };
