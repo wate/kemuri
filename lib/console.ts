@@ -22,4 +22,6 @@ class ConsoleOverride extends Console {
   }
 }
 
-export default console as ConsoleOverride;
+const console = new ConsoleOverride();
+
+export default console;
