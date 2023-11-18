@@ -171,7 +171,7 @@
 #   ##
 #   ## 「type」に指定可能な値は、chromium / firefox / webkitのいずれか
 #   ## または、以下に定義されているデバイス名
-#   ## https://github.com/microsoft/playwright/blob/main/packages/playwright-core/types/types.d.ts#L20235-L20362
+#   ## https://github.com/microsoft/playwright/blob/main/packages/playwright-core/types/types.d.ts
 #   ##
 #   ## ※デバイス名が指定ている場合は指定されたデバイス名に合わせてエンジンと画面(viewport)サイズが自動設定されます。
 #   ## サイズ(width / height)が指定されている場合は画面(viewport)サイズを上書きして設定します。
