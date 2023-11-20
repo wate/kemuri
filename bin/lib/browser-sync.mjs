@@ -37,7 +37,7 @@ function getBrowserSyncOption(orverrideOption) {
     if (_.has(serverOption, 'proxy')) {
         browserSyncOption.proxy = _.get(serverOption, 'proxy');
         browserSyncOption.files = [
-            staticServer.baseDir
+            staticServer.baseDir + '/**',
         ];
     }
     else {
