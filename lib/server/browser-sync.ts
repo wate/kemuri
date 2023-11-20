@@ -51,7 +51,7 @@ export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption):
   if (_.has(serverOption, 'proxy')) {
     browserSyncOption.proxy = _.get(serverOption, 'proxy');
     browserSyncOption.files = [
-      staticServer.baseDir
+      staticServer.baseDir + '/**',
     ];
   } else {
     browserSyncOption.server = staticServer;
