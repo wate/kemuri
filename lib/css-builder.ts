@@ -2,6 +2,7 @@
 
 import cssBuilder from './builder/css';
 import configLoader from './config';
+import chalk from 'chalk';
 import yargs from 'yargs';
 
 const argv = yargs(process.argv.slice(2))
@@ -53,6 +54,9 @@ if (argv.style !== undefined) {
   orverrideOption.style = 'compressed';
 }
 const builderOption = configLoader.getCssOption(orverrideOption);
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 cssBuilder.setOption(builderOption);
 
 if (argv.watch) {

@@ -26,6 +26,7 @@
 ## ---------------
 # srcDir: src
 # outputDir: public
+# assetDir: assets
 # ignore:
 #   filePrefix: null
 #   fileSuffix: null
@@ -37,8 +38,8 @@
 ## HTMLのビルド設定
 ## ---------------
 # html:
-#   srcDir: src
-#   outputDir: public
+#   srcDir: "{{ srcDir | default('src') }}"
+#   outputDir: "{{ outputDir | default('public') }}"
 #   exts:
 #     - njk
 #     - twig
@@ -75,8 +76,8 @@
 ## CSSのビルド設定
 ## ---------------
 # css:
-#   srcDir: src
-#   outputDir: public/assets/css
+#   srcDir: "{{ srcDir | default('src') }}"
+#   outputDir: "{{ outputDir | default('public') }}/{{ assetDir + '/' if assetDir else '' }}css"
 #   exts:
 #     - scss
 #     - sass
@@ -102,8 +103,8 @@
 ## javaScriptのビルド設定
 ## ---------------
 # js:
-#   srcDir: src
-#   outputDir: public/assets/js
+#   srcDir: "{{ srcDir | default('src') }}"
+#   outputDir: "{{ outputDir | default('public') }}/{{ assetDir + '/' if assetDir else '' }}js"
 #   exts:
 #     - js
 #     - ts

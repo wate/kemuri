@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import yargs from 'yargs';
 import 'cosmiconfig';
+import 'nunjucks';
 import 'chalk';
 import 'node:console';
 import 'dotenv';

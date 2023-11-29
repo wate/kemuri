@@ -90,7 +90,7 @@ class configLoader {
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
         builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
       }
-      const removeKeys = ['enable', 'server', 'html', 'css', 'js', 'snippet', 'screenshot'];
+      const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'snippet', 'screenshot'];
       removeKeys.forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
@@ -98,6 +98,7 @@ class configLoader {
     if (overrideOption) {
       builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(overrideOption));
     }
+    builderConfig = JSON.parse(nunjucks.renderString(JSON.stringify(builderConfig), allConfig));
     return builderConfig;
   }
   /**
@@ -112,6 +113,7 @@ class configLoader {
     if (overrideOption) {
       serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
     }
+    serverOption = JSON.parse(nunjucks.renderString(JSON.stringify(serverOption), allConfig));
     return serverOption;
   }
 
@@ -149,6 +151,7 @@ class configLoader {
     if (overrideOption) {
       snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
     }
+    snippetOption = JSON.parse(nunjucks.renderString(JSON.stringify(snippetOption), allConfig));
     return snippetOption;
   }
   /**
@@ -163,6 +166,7 @@ class configLoader {
     if (overrideOption) {
       screenshotOption = _.merge(_.cloneDeep(screenshotOption), _.cloneDeep(screenshotOption));
     }
+    screenshotOption = JSON.parse(nunjucks.renderString(JSON.stringify(screenshotOption), allConfig));
     return screenshotOption;
   }
 }

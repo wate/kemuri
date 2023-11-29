@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import jsBuilder from './builder/js';
 import configLoader from './config';
+import chalk from 'chalk';
 import yargs from 'yargs';
 
 const argv = yargs(process.argv.slice(2))
@@ -49,7 +50,9 @@ if (argv.minify !== undefined || mode === 'production') {
   orverrideOption.minify = true;
 }
 const builderOption = configLoader.getJsOption(orverrideOption);
-
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 jsBuilder.setOption(builderOption);
 
 if (argv.watch) {

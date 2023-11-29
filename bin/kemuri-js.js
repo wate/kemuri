@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { j as jsBuilder } from './lib/js.mjs';
 import { c as configLoader } from './lib/config.mjs';
+import chalk from 'chalk';
 import yargs from 'yargs';
 import 'node:fs';
 import 'node:path';
@@ -17,8 +18,8 @@ import '@rollup/plugin-terser';
 import 'js-beautify';
 import 'node:url';
 import 'cosmiconfig';
+import 'nunjucks';
 import 'lodash';
-import 'chalk';
 import 'node:console';
 import 'dotenv';
 
@@ -67,6 +68,9 @@ if (argv.minify !== undefined || mode === 'production') {
     orverrideOption.minify = true;
 }
 const builderOption = configLoader.getJsOption(orverrideOption);
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 jsBuilder.setOption(builderOption);
 if (argv.watch) {
     jsBuilder.watch();
