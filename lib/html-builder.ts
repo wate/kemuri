@@ -23,8 +23,8 @@ console.log(builderOption);
 console.groupEnd();
 htmlBuilder.setOption(builderOption);
 
+htmlBuilder.buildAll();
+
 if (argv.watch) {
   htmlBuilder.watch();
-} else {
-  htmlBuilder.build();
 }

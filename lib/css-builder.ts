@@ -59,8 +59,8 @@ console.log(builderOption);
 console.groupEnd();
 cssBuilder.setOption(builderOption);
 
+cssBuilder.buildAll();
+
 if (argv.watch) {
   cssBuilder.watch();
-} else {
-  cssBuilder.build();
 }

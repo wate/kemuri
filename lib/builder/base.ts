@@ -684,9 +684,7 @@ export abstract class baseBuilder {
    */
   public build(cleanup?: boolean): void {
     if (cleanup) {
-      rimrafSync(this.outputDir, {
-        preserveRoot: true,
-      });
+      rimrafSync(this.outputDir);
     }
     this.buildAll();
   }
