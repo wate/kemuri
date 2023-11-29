@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
+import micromatch from 'micromatch';
 import editorconfig from 'editorconfig';
 import console from '../console';
 
@@ -297,7 +298,7 @@ export abstract class baseBuilder {
    * エントリポイントのGlobパターンを取得する
    * @returns
    */
-  protected getEntryPointGlobPatetrn(): string {
+  public getEntryPointPattern(): string {
     return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
   }
 
@@ -331,7 +332,7 @@ export abstract class baseBuilder {
    * @returns
    */
   protected findEntryPointFiles(): string[] {
-    const entryPointGlobPatetrn = this.getEntryPointGlobPatetrn();
+    const entryPointGlobPatetrn = this.getEntryPointPattern();
     const globOption = {
       ignore: {
         ignored: this.globIgnoredFunc.bind(this),
@@ -397,7 +398,7 @@ export abstract class baseBuilder {
    * 監視対象ファイルのパターンを取得する
    * @returns
    */
-  protected getWatchFilePattern(): string | string[] {
+  public getWatchFilePattern(): string | string[] {
     const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
     const watchFilePattern = this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts);
     return watchFilePattern;

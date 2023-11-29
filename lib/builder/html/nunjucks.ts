@@ -295,7 +295,7 @@ export class nunjucksBuilder extends baseBuilder {
    * 監視対象ファイルのパターンを取得する
    * @returns
    */
-  protected getWatchFilePattern(): string | string[] {
+  public getWatchFilePattern(): string | string[] {
     const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
     const watchFilePattern = [
       this.varFileName,
