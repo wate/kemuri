@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
+import nunjucks from 'nunjucks';
 import _ from 'lodash';
 import console from './console';
 import * as dotenv from 'dotenv';
@@ -178,7 +179,7 @@ class configLoader {
    * @param settingKeys
    * @returns
    */
-  protected static parseEnvComon(envKeyPrefix: string, settingKeys: string[]): object {
+  protected static parseEnvCommon(envKeyPrefix: string, settingKeys: string[]): object {
     const settings: any = {};
     if (settingKeys.includes('SOURCE_DIR')) {
       settings.srcDir = _.get(process.env, envKeyPrefix + 'SOURCE_DIR');
@@ -230,7 +231,7 @@ class configLoader {
    */
   public static parseHtmlEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_HTML_');
-    const settings: any = configLoader.parseEnvComon('KEMURI_HTML_', settingKeys);
+    const settings: any = configLoader.parseEnvCommon('KEMURI_HTML_', settingKeys);
     if (settingKeys.includes('VAR_FILE_NAME')) {
       //@ts-ignore
       settings.varFileName = process.env.KEMURI_HTML_VAR_FILE_NAME;
@@ -255,7 +256,7 @@ class configLoader {
    */
   public static parseCssEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_CSS_');
-    const settings: any = configLoader.parseEnvComon('KEMURI_CSS_', settingKeys);
+    const settings: any = configLoader.parseEnvCommon('KEMURI_CSS_', settingKeys);
     if (settingKeys.includes('SASS_OUTPUT_STYLE')) {
       settings.style = process.env.KEMURI_CSS_SASS_OUTPUT_STYLE;
     }
@@ -286,7 +287,7 @@ class configLoader {
    */
   public static parseJsEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_JS_');
-    const settings: any = configLoader.parseEnvComon('KEMURI_JS_', settingKeys);
+    const settings: any = configLoader.parseEnvCommon('KEMURI_JS_', settingKeys);
     if (settingKeys.includes('OUTPUT_FORMAT')) {
       settings.format = process.env.KEMURI_JS_OUTPUT_FORMAT;
     }
@@ -317,7 +318,7 @@ class configLoader {
    */
   public static parseSnippetEnv(): object {
     const settingKeys = configLoader.getEnvkeys('KEMURI_SNIPPET_');
-    const settings: any = configLoader.parseEnvComon('KEMURI_SNIPPET_', settingKeys);
+    const settings: any = configLoader.parseEnvCommon('KEMURI_SNIPPET_', settingKeys);
     if (settingKeys.includes('SNIPPET_HAEDER_LEVEL')) {
       const envValue = _.get(process.env, 'KEMURI_SNIPPET_SNIPPET_HAEDER_LEVEL');
       //@ts-ignore
