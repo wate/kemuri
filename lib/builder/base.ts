@@ -3,7 +3,6 @@ import * as path from 'node:path';
 import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
-import micromatch from 'micromatch';
 import editorconfig from 'editorconfig';
 import console from '../console';
 
@@ -302,6 +301,101 @@ export abstract class baseBuilder {
     return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
   }
 
+  /**
+   * ファイル名の接頭語による除外パターンを取得する
+   * @returns
+   */
+  public getIgnoreFilePrefixPattern(): string {
+    if (this.ignoreFilePrefix) {
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/**/' +
+        this.ignoreFilePrefix +
+        '*.' +
+        this.convertGlobPattern(this.fileExts)
+      );
+    }
+    return '';
+  }
+  /**
+   * ファイル名の接尾語による除外パターンを取得する
+   */
+  public getIgnoreFileSuffixPattern(): string {
+    if (this.ignoreFileSuffix) {
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/**/*' +
+        this.ignoreFileSuffix +
+        '.' +
+        this.convertGlobPattern(this.fileExts)
+      );
+    }
+    return '';
+  }
+  /**
+   * ディレクトリ名の接頭語による除外パターンを取得する
+   * @returns
+   */
+  public getIgnoreDirPrefixPattern(): string {
+    if (this.ignoreDirPrefix) {
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/' +
+        this.ignoreDirPrefix +
+        '*/*.' +
+        this.convertGlobPattern(this.fileExts)
+      );
+    }
+    return '';
+  }
+  /**
+   * ディレクトリ名の接尾語による除外パターンを取得する
+   * @returns
+   */
+  public getIgnoreDirSuffixPattern(): string {
+    if (this.ignoreDirSuffix) {
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/**/*' +
+        this.ignoreDirSuffix +
+        '.' +
+        this.convertGlobPattern(this.fileExts)
+      );
+    }
+    return '';
+  }
+  /**
+   * ディレクトリ名による除外パターンを取得する
+   * @returns
+   */
+  public getIgnoreDirNamePattern(): string {
+    if (this.ignoreDirNames.length > 0) {
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/{' +
+        this.ignoreDirNames.join(',') +
+        '}/**/*.' +
+        this.convertGlobPattern(this.fileExts)
+      );
+    }
+    return '';
+  }
+  /**
+   * エントリポイントの除外パターンを取得する
+   * @returns
+   */
+  public getIgnorePatterns(): string[] {
+    const ignorePatterns = [
+      this.getIgnoreFilePrefixPattern(),
+      this.getIgnoreFileSuffixPattern(),
+      this.getIgnoreDirPrefixPattern(),
+      this.getIgnoreDirSuffixPattern(),
+      this.getIgnoreDirNamePattern(),
+    ];
+    return ignorePatterns.filter((pattern) => {
+      return pattern !== '';
+    });
+  }
   /**
    * エントリポイントからの除外ファイル判定処理
    * @param p
