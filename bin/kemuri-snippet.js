@@ -12,7 +12,8 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
-import { a as console, c as configLoader } from './lib/config.mjs';
+import { a as console$1, c as configLoader } from './lib/config.mjs';
+import chalk from 'chalk';
 import yargs from 'yargs';
 import 'glob';
 import 'chokidar';
@@ -20,7 +21,7 @@ import 'rimraf';
 import 'editorconfig';
 import 'node:url';
 import 'cosmiconfig';
-import 'chalk';
+import 'nunjucks';
 import 'node:console';
 import 'dotenv';
 
@@ -236,7 +237,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                 extensions: [frontmatter('yaml')],
                 mdastExtensions: [frontmatterFromMarkdown('yaml')],
             });
-            console.group('Parse file:' + targetFile);
+            console$1.group('Parse file:' + targetFile);
             const matter = find(this.tree, { type: 'yaml' });
             let meta = {};
             if (matter) {
@@ -244,7 +245,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                 meta = yaml.load(matter.value);
             }
             if (meta?.draft) {
-                console.warn('Skip draft file:' + targetFile);
+                console$1.warn('Skip draft file:' + targetFile);
             }
             else {
                 const namePrefix = meta?.prefix ? meta.prefix : '';
@@ -256,7 +257,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                         snippetCount++;
                         // @ts-ignore
                         const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
-                        console.info('Snippet: ' + snippetName);
+                        console$1.info('Snippet: ' + snippetName);
                         //スニペットの開始位置を取得する
                         const startPosition = node;
                         //スニペットの説明を取得する
@@ -299,23 +300,23 @@ class vscodeSnippetBuilder extends baseBuilder {
                                     };
                                 }
                                 if (this.snipptes[snippetName]['code'][snippetLang] !== undefined) {
-                                    console.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
-                                    console.log(snippet);
+                                    console$1.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
+                                    console$1.log(snippet);
                                 }
                                 // @ts-ignore
                                 this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
                             });
                         }
                         else {
-                            console.warn('Not found snippet code: ' + snippetName);
+                            console$1.warn('Not found snippet code: ' + snippetName);
                         }
                     }
                 });
                 if (snippetCount === 0) {
-                    console.warn('Not found snippets.');
+                    console$1.warn('Not found snippets.');
                 }
             }
-            console.groupEnd();
+            console$1.groupEnd();
         });
     }
     /**
@@ -431,10 +432,11 @@ if (argv.config !== undefined) {
     configLoader.configFile = argv.config;
 }
 const builderOption = configLoader.getSnippetOption();
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 snippetBuilder.setOption(builderOption);
+snippetBuilder.buildAll();
 if (argv.watch) {
     snippetBuilder.watch();
-}
-else {
-    snippetBuilder.build();
 }

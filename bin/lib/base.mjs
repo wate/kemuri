@@ -252,8 +252,93 @@ class baseBuilder {
      * エントリポイントのGlobパターンを取得する
      * @returns
      */
-    getEntryPointGlobPatetrn() {
+    getEntryPointPattern() {
         return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
+    }
+    /**
+     * ファイル名の接頭語による除外パターンを取得する
+     * @returns
+     */
+    getIgnoreFilePrefixPattern() {
+        if (this.ignoreFilePrefix) {
+            return (this.convertGlobPattern(this.srcDir) +
+                '/**/' +
+                this.ignoreFilePrefix +
+                '*.' +
+                this.convertGlobPattern(this.fileExts));
+        }
+        return '';
+    }
+    /**
+     * ファイル名の接尾語による除外パターンを取得する
+     */
+    getIgnoreFileSuffixPattern() {
+        if (this.ignoreFileSuffix) {
+            return (this.convertGlobPattern(this.srcDir) +
+                '/**/*' +
+                this.ignoreFileSuffix +
+                '.' +
+                this.convertGlobPattern(this.fileExts));
+        }
+        return '';
+    }
+    /**
+     * ディレクトリ名の接頭語による除外パターンを取得する
+     * @returns
+     */
+    getIgnoreDirPrefixPattern() {
+        if (this.ignoreDirPrefix) {
+            return (this.convertGlobPattern(this.srcDir) +
+                '/' +
+                this.ignoreDirPrefix +
+                '*/*.' +
+                this.convertGlobPattern(this.fileExts));
+        }
+        return '';
+    }
+    /**
+     * ディレクトリ名の接尾語による除外パターンを取得する
+     * @returns
+     */
+    getIgnoreDirSuffixPattern() {
+        if (this.ignoreDirSuffix) {
+            return (this.convertGlobPattern(this.srcDir) +
+                '/**/*' +
+                this.ignoreDirSuffix +
+                '.' +
+                this.convertGlobPattern(this.fileExts));
+        }
+        return '';
+    }
+    /**
+     * ディレクトリ名による除外パターンを取得する
+     * @returns
+     */
+    getIgnoreDirNamePattern() {
+        if (this.ignoreDirNames.length > 0) {
+            return (this.convertGlobPattern(this.srcDir) +
+                '/{' +
+                this.ignoreDirNames.join(',') +
+                '}/**/*.' +
+                this.convertGlobPattern(this.fileExts));
+        }
+        return '';
+    }
+    /**
+     * エントリポイントの除外パターンを取得する
+     * @returns
+     */
+    getIgnorePatterns() {
+        const ignorePatterns = [
+            this.getIgnoreFilePrefixPattern(),
+            this.getIgnoreFileSuffixPattern(),
+            this.getIgnoreDirPrefixPattern(),
+            this.getIgnoreDirSuffixPattern(),
+            this.getIgnoreDirNamePattern(),
+        ];
+        return ignorePatterns.filter((pattern) => {
+            return pattern !== '';
+        });
     }
     /**
      * エントリポイントからの除外ファイル判定処理
@@ -283,7 +368,7 @@ class baseBuilder {
      * @returns
      */
     findEntryPointFiles() {
-        const entryPointGlobPatetrn = this.getEntryPointGlobPatetrn();
+        const entryPointGlobPatetrn = this.getEntryPointPattern();
         const globOption = {
             ignore: {
                 ignored: this.globIgnoredFunc.bind(this),
@@ -529,9 +614,7 @@ class baseBuilder {
      */
     build(cleanup) {
         if (cleanup) {
-            rimrafSync(this.outputDir, {
-                preserveRoot: true,
-            });
+            rimrafSync(this.outputDir);
         }
         this.buildAll();
     }

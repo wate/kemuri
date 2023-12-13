@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { c as cssBuilder } from './lib/css.mjs';
 import { c as configLoader } from './lib/config.mjs';
+import chalk from 'chalk';
 import yargs from 'yargs';
 import 'node:fs';
 import 'node:path';
@@ -13,8 +14,8 @@ import 'sass';
 import 'js-beautify';
 import 'node:url';
 import 'cosmiconfig';
+import 'nunjucks';
 import 'lodash';
-import 'chalk';
 import 'node:console';
 import 'dotenv';
 
@@ -67,10 +68,11 @@ else if (argv.minify !== undefined || mode === 'production') {
     orverrideOption.style = 'compressed';
 }
 const builderOption = configLoader.getCssOption(orverrideOption);
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 cssBuilder.setOption(builderOption);
+cssBuilder.buildAll();
 if (argv.watch) {
     cssBuilder.watch();
-}
-else {
-    cssBuilder.build();
 }

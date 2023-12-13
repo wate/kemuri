@@ -2,6 +2,7 @@
 
 import htmlBuilder from './builder/html';
 import configLoader from './config';
+import chalk from 'chalk';
 import yargs from 'yargs';
 
 const argv = yargs(process.argv.slice(2))
@@ -17,10 +18,13 @@ if (argv.config !== undefined) {
 }
 
 const builderOption = configLoader.getHtmlOption();
+console.group(chalk.blue('Builder Option'));
+console.log(builderOption);
+console.groupEnd();
 htmlBuilder.setOption(builderOption);
+
+htmlBuilder.buildAll();
 
 if (argv.watch) {
   htmlBuilder.watch();
-} else {
-  htmlBuilder.build();
 }

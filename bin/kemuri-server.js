@@ -9,6 +9,7 @@ import 'node:fs';
 import 'node:path';
 import 'node:url';
 import 'cosmiconfig';
+import 'nunjucks';
 import 'node:console';
 import 'dotenv';
 

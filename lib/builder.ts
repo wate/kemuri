@@ -27,8 +27,9 @@ const argv = yargs(process.argv.slice(2))
     js: { type: 'boolean', description: 'jsビルダーを利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
-    init: { type: 'boolean', description: '設定ファイルを生成する' },
+    init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
+    configOnly: { type: 'boolean', default: false, description: '設定ファイルのみを出力する' },
   })
   .parseSync();
 
@@ -43,6 +44,9 @@ if (argv.init) {
   } else {
     configLoader.copyDefaultConfig(argv.force);
     console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
+  }
+  if(argv.configOnly){
+    process.exit(0);
   }
   const createDirectories: string[] = [];
   const htmlBuilderOption = configLoader.getHtmlOption();
@@ -106,7 +110,7 @@ if (configLoader.isEnable('js') || argv.js) {
     jsOrverrideOption.minify = true;
   }
   const jsBuilderOption = configLoader.getJsOption(jsOrverrideOption);
-  console.group(chalk.blue('javaScript Builder Option'));
+  console.group(chalk.blue('JavaScript Builder Option'));
   console.log(jsBuilderOption);
   console.groupEnd();
   jsBuilder.setOption(jsBuilderOption);
@@ -136,15 +140,16 @@ if (configLoader.isEnable('html') || argv.html) {
   builders.push(htmlBuilder);
 }
 
+builders.forEach((builder) => {
+  builder.buildAll();
+});
+
 if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
   });
-} else {
-  builders.forEach((builder) => {
-    builder.build();
-  });
 }
+
 if (argv.server) {
   const browserSyncOption = server.getBrowserSyncOption();
   console.group(chalk.blue('browserSync Server Option'));
