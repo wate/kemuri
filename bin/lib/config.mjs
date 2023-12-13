@@ -419,6 +419,7 @@ function parseEnv() {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+nunjucks.configure({ autoescape: false });
 class configLoader {
     /**
      * 設定ファイルを生成する
