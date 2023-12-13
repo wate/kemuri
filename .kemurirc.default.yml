@@ -97,7 +97,7 @@
 #   indexImportType: forward
 #   sourcemap: null
 #   loadPaths:
-#     - ${srcDir}
+#     - "{{ srcDir | default('src') }}"
 #     - node_modules
 ## ---------------
 ## javaScriptのビルド設定
