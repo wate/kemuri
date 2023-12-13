@@ -72,9 +72,7 @@ console.group(chalk.blue('Builder Option'));
 console.log(builderOption);
 console.groupEnd();
 jsBuilder.setOption(builderOption);
+jsBuilder.buildAll();
 if (argv.watch) {
     jsBuilder.watch();
-}
-else {
-    jsBuilder.build();
 }

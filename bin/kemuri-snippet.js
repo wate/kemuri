@@ -436,9 +436,7 @@ console.group(chalk.blue('Builder Option'));
 console.log(builderOption);
 console.groupEnd();
 snippetBuilder.setOption(builderOption);
+snippetBuilder.buildAll();
 if (argv.watch) {
     snippetBuilder.watch();
-}
-else {
-    snippetBuilder.build();
 }

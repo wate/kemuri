@@ -130,7 +130,7 @@ if (configLoader.isEnable('js') || argv.js) {
         jsOrverrideOption.minify = true;
     }
     const jsBuilderOption = configLoader.getJsOption(jsOrverrideOption);
-    console.group(chalk.blue('javaScript Builder Option'));
+    console.group(chalk.blue('JavaScript Builder Option'));
     console.log(jsBuilderOption);
     console.groupEnd();
     jsBuilder.setOption(jsBuilderOption);
@@ -159,14 +159,12 @@ if (configLoader.isEnable('html') || argv.html) {
     htmlBuilder.setOption(htmlBuilderOption);
     builders.push(htmlBuilder);
 }
+builders.forEach((builder) => {
+    builder.buildAll();
+});
 if (argv.watch) {
     builders.forEach((builder) => {
         builder.watch();
-    });
-}
-else {
-    builders.forEach((builder) => {
-        builder.build();
     });
 }
 if (argv.server) {
