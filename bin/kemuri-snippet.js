@@ -326,7 +326,7 @@ class vscodeSnippetBuilder extends baseBuilder {
         const groupdSnippets = _.groupBy(this.snipptes, 'group');
         Object.keys(groupdSnippets).forEach((groupName) => {
             //出力先ファイルパス
-            const outputPath = path.join(this.outputDir, groupName + '.' + this.outputExt);
+            const outputPath = path.join(this.outputDir, groupName + '[' + this.outputExt + ']');
             const snippetData = {};
             groupdSnippets[groupName].forEach((snippet) => {
                 let snippetPrefix = snippet.prefix;
@@ -340,7 +340,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                     snippetPrefix = _.uniq(snippetPrefix);
                 }
                 Object.keys(snippet.code).forEach((lang) => {
-                    const snippetkey = snippet.name + '.' + lang;
+                    const snippetkey = snippet.name + '-' + lang;
                     const snippetBody = snippet.code[lang];
                     let snippetScope = [lang];
                     if (snippet.extraSetting.scope) {

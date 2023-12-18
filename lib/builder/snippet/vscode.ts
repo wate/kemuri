@@ -355,7 +355,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
           snippetPrefix = _.uniq(snippetPrefix);
         }
         Object.keys(snippet.code).forEach((lang) => {
-          const snippetkey = snippet.name + '-' + lang;
+          const snippetkey = snippet.name + '[' + lang + ']';
           const snippetBody = snippet.code[lang];
           let snippetScope: string[] = [lang];
           if (snippet.extraSetting.scope) {
