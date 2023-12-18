@@ -355,7 +355,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
           snippetPrefix = _.uniq(snippetPrefix);
         }
         Object.keys(snippet.code).forEach((lang) => {
-          const snippetkey = snippet.name + '.' + lang;
+          const snippetkey = snippet.name + '-' + lang;
           const snippetBody = snippet.code[lang];
           let snippetScope: string[] = [lang];
           if (snippet.extraSetting.scope) {
@@ -380,6 +380,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
       fs.writeFileSync(outputPath, JSON.stringify(snippetData, null, 2));
     });
   }
+
   /**
    * -------------------------
    * 抽象化メソッドの実装
