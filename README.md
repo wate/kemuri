@@ -15,73 +15,21 @@ yarn add wate/kemuri -D
 pnpm add -D wate/kemuri
 ```
 
-利用方法
+初期設定
 ------------------
 
-### ファイルのビルド
+以下のコマンドを実行すると設定ファイルの雛形や各種ディレクトリが生成されます。
+
+デフォルト値の内容がコメントアウトされた状態で記載していますので、  
+必要に応じてコメントアウトを解除して設定を行ってください。
 
 ```bash
 # npm
-npx kemuri
+npx kemuri --init
 # yarn
-yarn dlx kemuri
+yarn exec kemuri --init
 # pnpm
-pnpm dlx kemuri
-```
-
-#### サーバーも同時に起動する
-
-```bash
-# npm
-npx kemuri --server
-# yarn
-yarn dlx kemuri --server
-# pnpm
-pnpm dlx kemuri --server
-```
-
-### ファイルの監視と変更されたファイルのビルド
-
-```bash
-# npm
-npx kemuri --watch
-# yarn
-yarn dlx kemuri --watch
-# pnpm
-pnpm dlx kemuri --watch
-```
-
-#### サーバーも同時に起動する
-
-```bash
-# npm
-npx kemuri --watch --server
-# yarn
-yarn dlx kemuri --watch --server
-# pnpm
-pnpm dlx kemuri --watch --server
-```
-
-### スクリーンショットの取得
-
-```bash
-# npm
-npx kemuri-screenshot
-# yarn
-yarn dlx kemuri-screenshot
-# pnpm
-pnpm dlx kemuri-screenshot
-```
-
-### スニペットファイルのビルド
-
-```bash
-# npm
-npx kemuri-snippet
-# yarn
-yarn dlx kemuri-snippet
-# pnpm
-pnpm dlx kemuri-snippet
+pnpm exec kemuri --init
 ```
 
 ディレクトリ構造
@@ -103,21 +51,93 @@ pnpm dlx kemuri-snippet
 └ src/ <= ソースファイル(HTML/CSS/JS共)格納ディレクトリ
 ```
 
-設定ファイル
+利用方法
 ------------------
 
-以下のコマンドを実行すると設定ファイルの雛形が生成されます。
-
-デフォルト値の内容がコメントアウトされた状態で記載していますので、  
-必要に応じてコメントアウトを解除して設定を行ってください。
+### ファイルのビルド
 
 ```bash
 # npm
-npx kemuri --init
+npx kemuri
 # yarn
-yarn dlx kemuri --init
+yarn dlx kemuri
 # pnpm
-pnpm dlx kemuri --init
+pnpm dlx kemuri
+```
+
+#### サーバーも同時に起動する
+
+```bash
+# npm
+npx kemuri --server
+# yarn
+yarn exec kemuri --server
+# pnpm
+pnpm exec kemuri --server
+```
+
+### ファイルの監視と変更されたファイルのビルド
+
+```bash
+# npm
+npx kemuri --watch
+# yarn
+yarn dlx kemuri --watch
+# pnpm
+pnpm dlx kemuri --watch
+```
+
+#### サーバーも同時に起動する
+
+```bash
+# npm
+npx kemuri --watch --server
+# yarn
+yarn exec kemuri --watch --server
+# pnpm
+pnpm exec kemuri --watch --server
+```
+
+### スクリーンショットの取得
+
+スクリーンショットの取得には、Playwrightを利用します、
+Playwrightの各バージョンが動作するには、特定のバージョンのブラウザバイナリが必要です。
+ブラウザバイナリをインストールするには、インストールコマンドを使用する必要があります。
+※ブラウザのインストール方法は「ブラウザバイナリのインストール」を参照してください。
+
+```bash
+# npm
+npx kemuri-screenshot
+# yarn
+yarn exec kemuri-screenshot
+# pnpm
+pnpm exec kemuri-screenshot
+```
+
+#### ブラウザバイナリのインストール
+
+Playwrightはリリースのたびにサポートするブラウザのバージョンを更新し、
+最新のPlaywrightがいつでも最新のブラウザをサポートできるようにします。
+つまり、Playwrightを更新するたびに、以下のインストールコマンドを再実行する必要がある可能性があります。
+
+```bash
+# npm
+npx playwright install
+# yarn
+yarn exec playwright install
+# pnpm
+pnpm exec playwright install
+```
+
+### スニペットファイルのビルド
+
+```bash
+# npm
+npx kemuri-snippet
+# yarn
+yarn exec kemuri-snippet
+# pnpm
+pnpm exec kemuri-snippet
 ```
 
 Tips
@@ -134,9 +154,9 @@ Tips
 # npm
 KEMURI_SERVER_PORT=8080 npx kemuri --server
 # yarn
-KEMURI_SERVER_PORT=8080 yarn dlx kemuri --server
+KEMURI_SERVER_PORT=8080 yarn exec kemuri --server
 # pnpm
-KEMURI_SERVER_PORT=8080 pnpm dlx kemuri --server
+KEMURI_SERVER_PORT=8080 pnpm exec kemuri --server
 ```
 
 ### パッケージマネージャー(npm/yarn/pnpm)ごとの実行方法の違い

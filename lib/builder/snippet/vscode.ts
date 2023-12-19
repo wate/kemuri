@@ -193,6 +193,33 @@ export class vscodeSnippetBuilder extends baseBuilder {
     return endPosition;
   }
   /**
+   * スニペットの説明を取得する
+   * @param startPosition
+   * @returns
+   */
+  protected getSnippetDescription(startPosition: any): string | null {
+    let description = null;
+    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    let descriptionNode = null;
+    if (nextSnippetPosition) {
+      const paragraphs = findAllBetween(this.tree, startPosition, nextSnippetPosition, { type: 'paragraph' });
+      if (paragraphs.length > 0) {
+        descriptionNode = paragraphs[0];
+      }
+    } else {
+      descriptionNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
+    }
+    if (descriptionNode) {
+      // @ts-ignore
+      const descriptionTextNode = find(descriptionNode, { type: 'text' });
+      if (descriptionTextNode) {
+        // @ts-ignore
+        description = descriptionTextNode.value;
+      }
+    }
+    return description;
+  }
+  /**
    * スニペットの拡張設定を取得する
    * @param startPosition
    * @returns
@@ -278,17 +305,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
             //スニペットの開始位置を取得する
             const startPosition = node;
             //スニペットの説明を取得する
-            let snippetDescription: string | null = null;
-
+            let snippetDescription: string | null = this.getSnippetDescription(startPosition);
             let snippets = null;
-            const firstParagraphNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
-            if (firstParagraphNode) {
-              const snippetDescriptionNode = find(firstParagraphNode, { type: 'text' });
-              if (snippetDescriptionNode) {
-                // @ts-ignore
-                snippetDescription = snippetDescriptionNode.value;
-              }
-            }
+
             //スニペットのコードを取得する
             const endPosition = this.getSnippetEndPosition(startPosition);
             if (endPosition) {
@@ -346,32 +365,46 @@ export class vscodeSnippetBuilder extends baseBuilder {
       const snippetData: any = {};
       groupdSnippets[groupName].forEach((snippet: any) => {
         let snippetPrefix: string[] = snippet.prefix;
-        if (snippet.extraSetting.prefix) {
-          if (snippet.extraSetting.orverwrite) {
-            snippetPrefix = snippet.extraSetting.prefix;
+        const extraSetting = snippet.extraSetting ?? {};
+        /**
+         * プレフィックスの設定
+         */
+        if (extraSetting.prefix) {
+          if (extraSetting.orverwrite) {
+            snippetPrefix = extraSetting.prefix;
           } else {
-            snippetPrefix = [...snippetPrefix, ...snippet.extraSetting.prefix];
+            snippetPrefix = [...snippetPrefix, ...extraSetting.prefix];
           }
           snippetPrefix = _.uniq(snippetPrefix);
         }
         Object.keys(snippet.code).forEach((lang) => {
-          const snippetkey = snippet.name + '.' + lang;
+          const snippetkey = snippet.name + '[' + lang + ']';
           const snippetBody = snippet.code[lang];
           let snippetScope: string[] = [lang];
-          if (snippet.extraSetting.scope) {
-            if (snippet.extraSetting.orverwrite) {
-              snippetScope = snippet.extraSetting.scope;
-            } else {
-              snippetScope = [...snippetScope, ...snippet.extraSetting.scope];
-            }
+          /**
+           * スコープの設定
+           */
+          if (extraSetting.scope) {
+            snippetScope = [...snippetScope, ...extraSetting.scope];
             snippetScope = _.uniq(snippetScope);
+          } else if (extraSetting[lang] && extraSetting[lang].scope) {
+            snippetScope = [...snippetScope, ...extraSetting[lang].scope];
+            snippetScope = _.uniq(snippetScope);
+          }
+          /**
+           * 説明の設定
+           */
+          if (extraSetting.description !== undefined) {
+            snippet.description = extraSetting.description;
+          }
+          if (extraSetting[lang] !== undefined && extraSetting[lang].description !== undefined) {
+            snippet.description = extraSetting[lang].description;
           }
           snippetData[snippetkey] = {
             prefix: snippetPrefix,
             body: snippetBody,
             scope: snippetScope.join(','),
           };
-          snippetData[snippetkey].scope = snippetScope.join(',');
           if (snippet.description) {
             snippetData[snippetkey]['description'] = snippet.description;
           }
@@ -380,6 +413,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
       fs.writeFileSync(outputPath, JSON.stringify(snippetData, null, 2));
     });
   }
+
   /**
    * -------------------------
    * 抽象化メソッドの実装
