@@ -1,4 +1,4 @@
-テストケース
+VSCodeスニペット設定テストケース
 =====================
 
 test-extra-setting-description
@@ -260,7 +260,7 @@ css:
     * `body`にソースコードブロックの内容が設定されている
     * `prefix`に`test-extra-setting-language-override`が設定されている
     * `scope`に`html`が設定されている
-    * `description`に`上書きするJavsScript用スニペットの説明`が出力されている
+    * `description`に`上書きするスニペットの説明`が出力されている
 * `test-extra-setting-language-override[javascript]`というスニペットが出力される
     * `body`にソースコードブロックの内容が設定されている
     * `prefix`に`test-extra-setting-language-override`が設定されている
