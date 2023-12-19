@@ -365,11 +365,15 @@ export class vscodeSnippetBuilder extends baseBuilder {
       const snippetData: any = {};
       groupdSnippets[groupName].forEach((snippet: any) => {
         let snippetPrefix: string[] = snippet.prefix;
-        if (snippet.extraSetting.prefix) {
-          if (snippet.extraSetting.orverwrite) {
-            snippetPrefix = snippet.extraSetting.prefix;
+        const extraSetting = snippet.extraSetting ?? {};
+        /**
+         * プレフィックスの設定
+         */
+        if (extraSetting.prefix) {
+          if (extraSetting.orverwrite) {
+            snippetPrefix = extraSetting.prefix;
           } else {
-            snippetPrefix = [...snippetPrefix, ...snippet.extraSetting.prefix];
+            snippetPrefix = [...snippetPrefix, ...extraSetting.prefix];
           }
           snippetPrefix = _.uniq(snippetPrefix);
         }
@@ -377,20 +381,30 @@ export class vscodeSnippetBuilder extends baseBuilder {
           const snippetkey = snippet.name + '[' + lang + ']';
           const snippetBody = snippet.code[lang];
           let snippetScope: string[] = [lang];
-          if (snippet.extraSetting.scope) {
-            if (snippet.extraSetting.orverwrite) {
-              snippetScope = snippet.extraSetting.scope;
-            } else {
-              snippetScope = [...snippetScope, ...snippet.extraSetting.scope];
-            }
+          /**
+           * スコープの設定
+           */
+          if (extraSetting.scope) {
+            snippetScope = [...snippetScope, ...extraSetting.scope];
             snippetScope = _.uniq(snippetScope);
+          } else if (extraSetting[lang] && extraSetting[lang].scope) {
+            snippetScope = [...snippetScope, ...extraSetting[lang].scope];
+            snippetScope = _.uniq(snippetScope);
+          }
+          /**
+           * 説明の設定
+           */
+          if (extraSetting.description !== undefined) {
+            snippet.description = extraSetting.description;
+          }
+          if (extraSetting[lang] !== undefined && extraSetting[lang].description !== undefined) {
+            snippet.description = extraSetting[lang].description;
           }
           snippetData[snippetkey] = {
             prefix: snippetPrefix,
             body: snippetBody,
             scope: snippetScope.join(','),
           };
-          snippetData[snippetkey].scope = snippetScope.join(',');
           if (snippet.description) {
             snippetData[snippetkey]['description'] = snippet.description;
           }
