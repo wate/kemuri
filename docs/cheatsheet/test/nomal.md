@@ -39,6 +39,14 @@ body {
 alert('test');
 ```
 
+test-no-source
+---------------------
+
+test-no-source-with-description
+---------------------
+
+この部分はスニペットとして出力されません。
+
 test-single-source-with-description
 ---------------------
 
