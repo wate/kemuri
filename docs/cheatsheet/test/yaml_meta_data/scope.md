@@ -22,6 +22,14 @@ test-scope-sample-01
 </html>
 ```
 
+### 想定値
+
+* `test-scope-sample-01[html]`というスニペットが出力される
+    * `body`にソースコードブロックの内容が設定されている
+    * `prefix`に`test-scope-sample-01`が設定されている
+    * `scope`に`html,twig,nunjucks`が設定されている
+    * `description`が出力されていない
+
 test-scope-sample-02
 ---------------------
 
@@ -36,6 +44,14 @@ test-scope-sample-02
 </html>
 ```
 
+### 想定値
+
+* `test-scope-sample-02[html]`というスニペットが出力される
+    * `body`にソースコードブロックの内容が設定されている
+    * `prefix`に`test-scope-sample-02`が設定されている
+    * `scope`に`html,twig,nunjucks`が設定されている
+    * `description`が出力されていない
+
 test-scope-sample-03
 ---------------------
 
@@ -49,3 +65,11 @@ test-scope-sample-03
   </body>
 </html>
 ```
+
+### 想定値
+
+* `test-scope-sample-03[html]`というスニペットが出力される
+    * `body`にソースコードブロックの内容が設定されている
+    * `prefix`に`test-scope-sample-03`が設定されている
+    * `scope`に`html,twig,nunjucks`が設定されている
+    * `description`が出力されていない
