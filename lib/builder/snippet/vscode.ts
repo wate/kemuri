@@ -193,6 +193,33 @@ export class vscodeSnippetBuilder extends baseBuilder {
     return endPosition;
   }
   /**
+   * スニペットの説明を取得する
+   * @param startPosition
+   * @returns
+   */
+  protected getSnippetDescription(startPosition: any): string | null {
+    let description = null;
+    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    let descriptionNode = null;
+    if (nextSnippetPosition) {
+      const paragraphs = findAllBetween(this.tree, startPosition, nextSnippetPosition, { type: 'paragraph' });
+      if (paragraphs.length > 0) {
+        descriptionNode = paragraphs[0];
+      }
+    } else {
+      descriptionNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
+    }
+    if (descriptionNode) {
+      // @ts-ignore
+      const descriptionTextNode = find(descriptionNode, { type: 'text' });
+      if (descriptionTextNode) {
+        // @ts-ignore
+        description = descriptionTextNode.value;
+      }
+    }
+    return description;
+  }
+  /**
    * スニペットの拡張設定を取得する
    * @param startPosition
    * @returns
@@ -278,17 +305,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
             //スニペットの開始位置を取得する
             const startPosition = node;
             //スニペットの説明を取得する
-            let snippetDescription: string | null = null;
-
+            let snippetDescription: string | null = this.getSnippetDescription(startPosition);
             let snippets = null;
-            const firstParagraphNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
-            if (firstParagraphNode) {
-              const snippetDescriptionNode = find(firstParagraphNode, { type: 'text' });
-              if (snippetDescriptionNode) {
-                // @ts-ignore
-                snippetDescription = snippetDescriptionNode.value;
-              }
-            }
+
             //スニペットのコードを取得する
             const endPosition = this.getSnippetEndPosition(startPosition);
             if (endPosition) {
