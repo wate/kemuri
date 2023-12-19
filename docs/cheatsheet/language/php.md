@@ -9,3 +9,4 @@ strictモードを有効にする
 ```php
 declare(strict_types=1);
 ```
+
