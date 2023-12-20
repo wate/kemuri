@@ -322,12 +322,12 @@ export class vscodeSnippetBuilder extends baseBuilder {
             if (snippets) {
               // メンバー変数に格納する
               snippets.forEach((snippet: any) => {
+                let snippetLang: string = 'global';
                 // スニペットの言語を取得する
                 if (snippet.lang) {
                   snippet.lang = snippet.lang.toLowerCase();
+                  snippetLang = this.languageMaps.get(snippet.lang) || snippet.lang;
                 }
-                // @ts-ignore
-                const snippetLang = this.languageMaps.get(snippet.lang) || snippet.lang;
                 if (this.snipptes[snippetName] === undefined) {
                   this.snipptes[snippetName] = {
                     name: snippetName,
@@ -381,9 +381,13 @@ export class vscodeSnippetBuilder extends baseBuilder {
           snippetPrefix = _.uniq(snippetPrefix);
         }
         Object.keys(snippet.code).forEach((lang) => {
-          const snippetkey = snippet.name + '[' + lang + ']';
-          const snippetBody = snippet.code[lang];
+          let snippetName = snippet.name + '[' + lang + ']';
           let snippetScope: string[] = [lang];
+          if (lang === 'global') {
+            snippetName = snippet.name;
+            snippetScope = [];
+          }
+          const snippetBody = snippet.code[lang];
           /**
            * スコープの設定
            */
@@ -403,13 +407,15 @@ export class vscodeSnippetBuilder extends baseBuilder {
           if (extraSetting[lang] !== undefined && extraSetting[lang].description !== undefined) {
             snippet.description = extraSetting[lang].description;
           }
-          snippetData[snippetkey] = {
+          snippetData[snippetName] = {
             prefix: snippetPrefix,
             body: snippetBody,
-            scope: snippetScope.join(','),
           };
+          if (snippetScope.length > 0) {
+            snippetData[snippetName]['scope'] = snippetScope.join(',');
+          }
           if (snippet.description) {
-            snippetData[snippetkey]['description'] = snippet.description;
+            snippetData[snippetName]['description'] = snippet.description;
           }
         });
       });
