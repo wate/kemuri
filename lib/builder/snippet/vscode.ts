@@ -321,8 +321,11 @@ export class vscodeSnippetBuilder extends baseBuilder {
             }
             if (snippets) {
               // メンバー変数に格納する
-              snippets.forEach((snippet) => {
+              snippets.forEach((snippet: any) => {
                 // スニペットの言語を取得する
+                if (snippet.lang) {
+                  snippet.lang = snippet.lang.toLowerCase();
+                }
                 // @ts-ignore
                 const snippetLang = this.languageMaps.get(snippet.lang) || snippet.lang;
                 if (this.snipptes[snippetName] === undefined) {
