@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
+import cpx from 'cpx';
 import * as server from './server/browser-sync';
 import configLoader from './config';
 import yargs from 'yargs';
@@ -25,6 +26,7 @@ const argv = yargs(process.argv.slice(2))
     html: { type: 'boolean', description: 'HTMLのビルド機能を利用する' },
     css: { type: 'boolean', description: 'CSSのビルド機能をを利用する' },
     js: { type: 'boolean', description: 'JSのビルド機能を利用する' },
+    copy: { type: 'boolean', description: 'コピー機能を利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
@@ -45,7 +47,7 @@ if (argv.init) {
     configLoader.copyDefaultConfig(argv.force);
     console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
   }
-  if(argv.configOnly){
+  if (argv.configOnly) {
     process.exit(0);
   }
   const createDirectories: string[] = [];
@@ -139,14 +141,38 @@ if (configLoader.isEnable('html') || argv.html) {
   htmlBuilder.setOption(htmlBuilderOption);
   builders.push(htmlBuilder);
 }
+let copyFiles: any = [];
+if (configLoader.isEnable('copy') || argv.copy) {
+  console.log();
+  copyFiles = configLoader.getCopyOption().filter((copyOption: any) => {
+    return copyOption.src && copyOption.src.length > 0 && copyOption.dest && copyOption.dest.length > 0;
+  });
+  console.group(chalk.blue('Copy Option'));
+  console.log(copyFiles);
+  console.groupEnd();
+}
 
 builders.forEach((builder) => {
   builder.buildAll();
 });
 
+copyFiles.forEach((copyOption: any) => {
+  const copySource = copyOption.src;
+  const copyDest = copyOption.dest;
+  const cpxOption = configLoader.convertCpxOption(copyOption);
+  console.log('Copy: ' + copySource + ' => ' + copyDest);
+  cpx.copy(copySource, copyDest, cpxOption);
+});
+
 if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
+  });
+  copyFiles.forEach((copyOption: any) => {
+    const copySource = copyOption.src;
+    const copyDest = copyOption.dest;
+    const cpxOption = configLoader.convertCpxOption(copyOption);
+    cpx.watch(copySource, copyDest, Object.assign(cpxOption, { initialCopy: false }));
   });
 }
 

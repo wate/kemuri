@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 nunjucks.configure({ autoescape: false });
 
-type settingType = 'js' | 'css' | 'html';
+type settingType = 'js' | 'css' | 'html' | 'copy';
 
 class configLoader {
   /**
@@ -139,6 +139,30 @@ class configLoader {
    */
   public static getJsOption(overrideOption?: any): object {
     return configLoader.getOption('js', overrideOption);
+  }
+  /**
+   * コピーのオプションを取得する
+   * @returns
+   */
+  public static getCopyOption(): Array<object> {
+    const allConfig = configLoader.load();
+    let copyOption = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
+    return copyOption;
+  }
+
+  /**
+   * コピーオプションをcpxのオプションに変換する
+   * @param copyOption
+   */
+  public static convertCpxOption(copyOption: any): object {
+    const cpxOption: any = {
+      clean: copyOption.clean ?? false,
+      dereference: copyOption.dereference ?? false,
+      includeEmptyDirs: copyOption.includeEmptyDirs ?? false,
+      preserve: copyOption.preserve ?? false,
+      update: copyOption.update ?? false,
+    };
+    return cpxOption;
   }
 
   /**
