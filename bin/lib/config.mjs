@@ -569,4 +569,4 @@ class configLoader {
     }
 }
 
-export { console as a, configLoader as c };
+export { configLoader as a, console as c };

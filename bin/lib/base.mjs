@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import * as chokidar from 'chokidar';
 import { rimraf, rimrafSync } from 'rimraf';
 import editorconfig from 'editorconfig';
-import { a as console } from './config.mjs';
+import { c as console } from './config.mjs';
 
 /**
  * ビルド処理の抽象クラス

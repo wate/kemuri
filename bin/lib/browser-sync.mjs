@@ -1,5 +1,5 @@
 import browserSync from 'browser-sync';
-import { c as configLoader } from './config.mjs';
+import { a as configLoader } from './config.mjs';
 import _ from 'lodash';
 
 /**

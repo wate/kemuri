@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
-import { c as configLoader, a as console } from './lib/config.mjs';
+import { a as configLoader, c as console } from './lib/config.mjs';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import 'browser-sync';

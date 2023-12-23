@@ -12,7 +12,7 @@ import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
-import { a as console$1, c as configLoader } from './lib/config.mjs';
+import { c as console$1, a as configLoader } from './lib/config.mjs';
 import chalk from 'chalk';
 import yargs from 'yargs';
 import 'glob';
