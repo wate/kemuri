@@ -104,7 +104,6 @@ if (/^https?:\/\//.test(sitemapLocation)) {
   }
 }
 
-
 if (pages.length === 0) {
   console.error('page not found.');
   process.exit(1);

@@ -8,7 +8,7 @@
 
     /* Modules */
     /* Specify what module code is generated. */
-    "module": "ES2020",
+    "module": "ESNext",
     /* Specify how TypeScript looks up a file from a given module specifier. */
     "moduleResolution": "bundler",
     /* Use the package.json 'exports' field when resolving package imports. */

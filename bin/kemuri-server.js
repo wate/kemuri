@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
-import { c as configLoader, a as console } from './lib/config.mjs';
+import { a as configLoader, c as console } from './lib/config.mjs';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import 'browser-sync';
 import 'lodash';
 import 'node:fs';
 import 'node:path';
+import 'node:child_process';
+import 'resolve';
+import 'shell-quote';
+import 'duplexer3';
 import 'node:url';
 import 'cosmiconfig';
 import 'nunjucks';

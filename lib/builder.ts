@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
+import cpx from 'cpx';
 import * as server from './server/browser-sync';
 import configLoader from './config';
 import yargs from 'yargs';
@@ -22,9 +23,10 @@ const argv = yargs(process.argv.slice(2))
     },
     p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
-    html: { type: 'boolean', description: 'htmlビルダーを利用する' },
-    css: { type: 'boolean', description: 'cssビルダーを利用する' },
-    js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    html: { type: 'boolean', description: 'HTMLのビルド機能を利用する' },
+    css: { type: 'boolean', description: 'CSSのビルド機能をを利用する' },
+    js: { type: 'boolean', description: 'JSのビルド機能を利用する' },
+    copy: { type: 'boolean', description: 'コピー機能を利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
@@ -45,7 +47,7 @@ if (argv.init) {
     configLoader.copyDefaultConfig(argv.force);
     console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
   }
-  if(argv.configOnly){
+  if (argv.configOnly) {
     process.exit(0);
   }
   const createDirectories: string[] = [];
@@ -139,14 +141,33 @@ if (configLoader.isEnable('html') || argv.html) {
   htmlBuilder.setOption(htmlBuilderOption);
   builders.push(htmlBuilder);
 }
+let copyFiles: any = [];
+if (configLoader.isEnable('copy') || argv.copy) {
+  copyFiles = configLoader.getCopyOption();
+  console.group(chalk.blue('Copy Option'));
+  console.log(copyFiles);
+  console.groupEnd();
+}
 
 builders.forEach((builder) => {
   builder.buildAll();
 });
 
+copyFiles.forEach((copyOption: any) => {
+  cpx.copy(copyOption.src, copyOption.dest, copyOption);
+});
+
 if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
+  });
+  if (copyFiles.length > 0) {
+    console.group(chalk.blue('Watch files'));
+    console.log(copyFiles.map((copyOption: any) => copyOption.src));
+    console.groupEnd();
+  }
+  copyFiles.forEach((copyOption: any) => {
+    cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
   });
 }
 
