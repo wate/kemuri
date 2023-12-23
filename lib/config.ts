@@ -166,14 +166,16 @@ class configLoader {
         if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
           const transforms = _.get(copySetting, 'transforms').map((filter: any) => {
             if (typeof filter === 'string') {
-              return configLoader.convertCpxTransformParam(filter);
+              const name = filter;
+              return configLoader.convertCpxTransformParam(name);
             } else {
               if (_.has(filter, 'command')) {
                 return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
               }
               if (_.has(filter, 'name')) {
+                const name = _.get(filter, 'name');
                 const args = _.has(filter, 'args') ? _.get(filter, 'args') : {};
-                return configLoader.convertCpxTransformParam(_.get(filter, 'name'), args);
+                return configLoader.convertCpxTransformParam(name, args);
               }
             }
           });
@@ -223,6 +225,7 @@ class configLoader {
    * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L72-L92
    */
   protected static convertCpxTransformParam(name: string, args?: any): any {
+    args = args || {};
     const createStream = /^[./]/.test(name)
       ? require(path.resolve(name))
       : require(resolve.sync(name, { basedir: process.cwd() }));

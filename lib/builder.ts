@@ -161,11 +161,13 @@ if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
   });
-  console.group(chalk.blue('Watch files'));
-  console.log(copyFiles.map((copyOption: any) => copyOption.src));
-  console.groupEnd();
+  if (copyFiles.length > 0) {
+    console.group(chalk.blue('Watch files'));
+    console.log(copyFiles.map((copyOption: any) => copyOption.src));
+    console.groupEnd();
+  }
   copyFiles.forEach((copyOption: any) => {
-    cpx.watch(copyOption.src, copyOption.dest, , Object.assign(copyOption, { initialCopy: false }));
+    cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
   });
 }
 

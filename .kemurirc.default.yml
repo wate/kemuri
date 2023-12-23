@@ -129,6 +129,28 @@
 #   minify: false
 #   minifyOption: {}
 ## ---------------
+## コピー機能の設定
+## ---------------
+# copy: []
+#   # ## -----------------
+#   # ## Example Setting
+#   # ## -----------------
+#   # - src: node_modules/mingcute_icon/font/MingCute.{eot,svg,ttf,woff}
+#   #   dest: public/assets/font
+#   #   ## ----
+#   #   ## コピーオプション
+#   #   ## ----
+#   #   ### コピーするときにシンボリックリンクをたどるか否か
+#   #   dereference: false
+#   #   ### 空のディレクトリもコピーするか否か
+#   #   includeEmptyDirs: false
+#   #   ### ファイルの属性(uid/gid/atime/mtime)を維持するか否か
+#   #   preserve: false
+#   #   ### コピー元のファイルが出力先ファイルより古い場合は上書きしない
+#   #   update: false
+#   #   ### 変換処理(experimental)
+#   #   transforms: []
+## ---------------
 ## スニペットのビルド設定
 ## ---------------
 # snippet:
