@@ -17,11 +17,16 @@ import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
 import _ from 'lodash';
+import cpx from 'cpx';
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import 'chokidar';
 import 'editorconfig';
+import 'node:child_process';
+import 'resolve';
+import 'shell-quote';
+import 'duplexer3';
 import 'cosmiconfig';
 import 'node:console';
 import 'dotenv';
@@ -1103,9 +1108,10 @@ const argv = yargs(process.argv.slice(2))
     },
     p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
     d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
-    html: { type: 'boolean', description: 'htmlビルダーを利用する' },
-    css: { type: 'boolean', description: 'cssビルダーを利用する' },
-    js: { type: 'boolean', description: 'jsビルダーを利用する' },
+    html: { type: 'boolean', description: 'HTMLのビルド機能を利用する' },
+    css: { type: 'boolean', description: 'CSSのビルド機能をを利用する' },
+    js: { type: 'boolean', description: 'JSのビルド機能を利用する' },
+    copy: { type: 'boolean', description: 'コピー機能を利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
@@ -1220,12 +1226,30 @@ if (configLoader.isEnable('html') || argv.html) {
     htmlBuilder.setOption(htmlBuilderOption);
     builders.push(htmlBuilder);
 }
+let copyFiles = [];
+if (configLoader.isEnable('copy') || argv.copy) {
+    copyFiles = configLoader.getCopyOption();
+    console.group(chalk.blue('Copy Option'));
+    console.log(copyFiles);
+    console.groupEnd();
+}
 builders.forEach((builder) => {
     builder.buildAll();
+});
+copyFiles.forEach((copyOption) => {
+    cpx.copy(copyOption.src, copyOption.dest, copyOption);
 });
 if (argv.watch) {
     builders.forEach((builder) => {
         builder.watch();
+    });
+    if (copyFiles.length > 0) {
+        console.group(chalk.blue('Watch files'));
+        console.log(copyFiles.map((copyOption) => copyOption.src));
+        console.groupEnd();
+    }
+    copyFiles.forEach((copyOption) => {
+        cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
     });
 }
 if (argv.server) {
