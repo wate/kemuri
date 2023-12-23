@@ -163,25 +163,24 @@ class configLoader {
           preserve: copySetting.preserve ?? false,
           update: copySetting.update ?? false,
         };
-        let transforms = [];
-        let commands = [];
-        if (_.has(copySetting, 'filters') && _.isArray(_.get(copySetting, 'filters'))) {
-          _.get(copySetting, 'filters').map((filter: any) => {
-            if (_.has(filter, 'transform')) {
-              transforms.push(filter.transform);
-            }
-            if (_.has(filter, 'command')) {
-              commands.push(filter.command);
+        if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
+          const transforms = _.get(copySetting, 'transforms').map((filter: any) => {
+            if (typeof filter === 'string') {
+              return configLoader.convertCpxTransformParam(filter);
+            } else {
+              if (_.has(filter, 'command')) {
+                return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
+              }
+              if (_.has(filter, 'name')) {
+                const args = _.has(filter, 'args') ? _.get(filter, 'args') : {};
+                return configLoader.convertCpxTransformParam(_.get(filter, 'name'), args);
+              }
             }
           });
+          if (transforms.length > 0) {
+            copyOption.transform = transforms;
+          }
         }
-        // if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
-        //   transforms = configLoader.convertCpxTransformParam(_.get(copySetting, 'transforms'));
-        // }
-        // if (_.has(copySetting, 'commands') && _.isArray(_.get(copySetting, 'commands'))) {
-        //   commands = configLoader.convertCpxTransformParam(_.get(copySetting, 'commands'));
-        // }
-
         return copyOption;
       });
     return copyOptions;
@@ -194,33 +193,27 @@ class configLoader {
    * ※以下のコードを元に実装
    * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L41-L69
    */
-  protected static convertCpxCommandPrams(commands: string[]): any[] {
-    return commands.map((command) => {
-      if (typeof command !== 'string') {
-        console.error('Invalid command option');
-        process.exit(1);
-      }
-      return (file: string) => {
-        const env = Object.create(process.env, {
-          FILE: { value: file },
-        });
-        const parts = shellQuote.parse(command, env);
-        //@ts-ignore
-        const child = child_process.spawn(parts[0], parts.slice(1), { env });
-        //@ts-ignore
-        const outer = duplexer(child.stdin, child.stdout);
-        //@ts-ignore
-        child.on('exit', (code) => {
-          if (code !== 0) {
-            const error = new Error(`non-zero exit code in command: ${command}`);
-            outer.emit('error', error);
-          }
-        });
-        //@ts-ignore
-        child.stderr.pipe(process.stderr);
-        return outer;
-      };
-    });
+  protected static convertCpxCommandParam(command: string): any {
+    return (file: string) => {
+      const env = Object.create(process.env, {
+        FILE: { value: file },
+      });
+      const parts = shellQuote.parse(command, env);
+      //@ts-ignore
+      const child = child_process.spawn(parts[0], parts.slice(1), { env });
+      //@ts-ignore
+      const outer = duplexer(child.stdin, child.stdout);
+      //@ts-ignore
+      child.on('exit', (code) => {
+        if (code !== 0) {
+          const error = new Error(`non-zero exit code in command: ${command}`);
+          outer.emit('error', error);
+        }
+      });
+      //@ts-ignore
+      child.stderr.pipe(process.stderr);
+      return outer;
+    };
   }
   /**
    * cpxのtransformパラメーターを変換する
@@ -229,24 +222,11 @@ class configLoader {
    * ※以下のコードを元に実装
    * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L72-L92
    */
-  protected static convertCpxTransformParam(transforms: string[]): any[] {
-    return transforms
-      .map((arg) => {
-        if (typeof arg === 'string') {
-          return { name: arg, argv: null };
-        }
-        if (typeof arg._[0] === 'string') {
-          return { name: arg._.shift(), argv: arg };
-        }
-        console.error('Invalid transform option');
-        process.exit(1);
-      })
-      .map((transform) => {
-        const createStream = /^[./]/.test(transform.name)
-          ? require(path.resolve(transform.name))
-          : require(resolve.sync(transform.name, { basedir: process.cwd() }));
-        return (file: string, opts: any) => createStream(file, Object.assign({ _flags: opts }, transform.argv));
-      });
+  protected static convertCpxTransformParam(name: string, args?: any): any {
+    const createStream = /^[./]/.test(name)
+      ? require(path.resolve(name))
+      : require(resolve.sync(name, { basedir: process.cwd() }));
+    return (file: string, opts: any) => createStream(file, Object.assign({ _flags: opts }, args));
   }
 
   /**
