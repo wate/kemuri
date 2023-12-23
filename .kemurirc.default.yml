@@ -1,11 +1,12 @@
 ---
 ## ---------------
-## ビルダーの有効化
+## ビルド機能の有効化
 ## ---------------
 # enable:
 #   - js
 #   - css
 #   - html
+#   - copy
 ## ---------------
 ## サーバーの設定
 ## ---------------
@@ -35,7 +36,7 @@
 #   dirNames: []
 # beautifyOption: {}
 ## ---------------
-## HTMLのビルド設定
+## HTMLビルド機能の設定
 ## ---------------
 # html:
 #   srcDir: "{{ srcDir | default('src') }}"
@@ -73,7 +74,7 @@
 #     </urlset>
 #   generatePageList: true
 ## ---------------
-## CSSのビルド設定
+## CSSビルド機能の設定
 ## ---------------
 # css:
 #   srcDir: "{{ srcDir | default('src') }}"
@@ -100,7 +101,7 @@
 #     - "{{ srcDir | default('src') }}"
 #     - node_modules
 ## ---------------
-## javaScriptのビルド設定
+## javaScriptビルド機能の設定
 ## ---------------
 # js:
 #   srcDir: "{{ srcDir | default('src') }}"
