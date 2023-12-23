@@ -92,7 +92,7 @@ class configLoader {
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
         builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
       }
-      const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'snippet', 'screenshot'];
+      const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'copy', 'snippet', 'screenshot'];
       removeKeys.forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
@@ -146,8 +146,22 @@ class configLoader {
    */
   public static getCopyOption(): Array<object> {
     const allConfig = configLoader.load();
-    let copyOption = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
-    return copyOption;
+    let copySettings = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
+    const copyOptions = copySettings
+      .filter((copySetting: any) => {
+        return copySetting.src && copySetting.src.length > 0 && copySetting.dest && copySetting.dest.length > 0;
+      })
+      .map((copySetting: any) => {
+        const copyOption: any = {
+          clean: copySetting.clean ?? false,
+          dereference: copySetting.dereference ?? false,
+          includeEmptyDirs: copySetting.includeEmptyDirs ?? false,
+          preserve: copySetting.preserve ?? false,
+          update: copySetting.update ?? false,
+        };
+        return copyOption;
+      });
+      return copyOptions;
   }
 
   /**

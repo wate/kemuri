@@ -143,10 +143,7 @@ if (configLoader.isEnable('html') || argv.html) {
 }
 let copyFiles: any = [];
 if (configLoader.isEnable('copy') || argv.copy) {
-  console.log();
-  copyFiles = configLoader.getCopyOption().filter((copyOption: any) => {
-    return copyOption.src && copyOption.src.length > 0 && copyOption.dest && copyOption.dest.length > 0;
-  });
+  copyFiles = configLoader.getCopyOption();
   console.group(chalk.blue('Copy Option'));
   console.log(copyFiles);
   console.groupEnd();
@@ -157,22 +154,18 @@ builders.forEach((builder) => {
 });
 
 copyFiles.forEach((copyOption: any) => {
-  const copySource = copyOption.src;
-  const copyDest = copyOption.dest;
-  const cpxOption = configLoader.convertCpxOption(copyOption);
-  console.log('Copy: ' + copySource + ' => ' + copyDest);
-  cpx.copy(copySource, copyDest, cpxOption);
+  cpx.copy(copyOption.src, copyOption.dest, copyOption);
 });
 
 if (argv.watch) {
   builders.forEach((builder) => {
     builder.watch();
   });
+  console.group(chalk.blue('Watch files'));
+  console.log(copyFiles.map((copyOption: any) => copyOption.src));
+  console.groupEnd();
   copyFiles.forEach((copyOption: any) => {
-    const copySource = copyOption.src;
-    const copyDest = copyOption.dest;
-    const cpxOption = configLoader.convertCpxOption(copyOption);
-    cpx.watch(copySource, copyDest, Object.assign(cpxOption, { initialCopy: false }));
+    cpx.watch(copyOption.src, copyOption.dest, , Object.assign(copyOption, { initialCopy: false }));
   });
 }
 
