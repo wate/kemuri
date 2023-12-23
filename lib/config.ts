@@ -1,5 +1,9 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as child_process from 'node:child_process';
+import resolve from 'resolve';
+import shellQuote from 'shell-quote';
+import duplexer from 'duplexer3';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
 import nunjucks from 'nunjucks';
@@ -159,24 +163,90 @@ class configLoader {
           preserve: copySetting.preserve ?? false,
           update: copySetting.update ?? false,
         };
+        let transforms = [];
+        let commands = [];
+        if (_.has(copySetting, 'filters') && _.isArray(_.get(copySetting, 'filters'))) {
+          _.get(copySetting, 'filters').map((filter: any) => {
+            if (_.has(filter, 'transform')) {
+              transforms.push(filter.transform);
+            }
+            if (_.has(filter, 'command')) {
+              commands.push(filter.command);
+            }
+          });
+        }
+        // if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
+        //   transforms = configLoader.convertCpxTransformParam(_.get(copySetting, 'transforms'));
+        // }
+        // if (_.has(copySetting, 'commands') && _.isArray(_.get(copySetting, 'commands'))) {
+        //   commands = configLoader.convertCpxTransformParam(_.get(copySetting, 'commands'));
+        // }
+
         return copyOption;
       });
-      return copyOptions;
+    return copyOptions;
   }
 
   /**
-   * コピーオプションをcpxのオプションに変換する
-   * @param copyOption
+   * cpxのcommandパラメーターを変換する
+   * @param commands
+   * @returns
+   * ※以下のコードを元に実装
+   * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L41-L69
    */
-  public static convertCpxOption(copyOption: any): object {
-    const cpxOption: any = {
-      clean: copyOption.clean ?? false,
-      dereference: copyOption.dereference ?? false,
-      includeEmptyDirs: copyOption.includeEmptyDirs ?? false,
-      preserve: copyOption.preserve ?? false,
-      update: copyOption.update ?? false,
-    };
-    return cpxOption;
+  protected static convertCpxCommandPrams(commands: string[]): any[] {
+    return commands.map((command) => {
+      if (typeof command !== 'string') {
+        console.error('Invalid command option');
+        process.exit(1);
+      }
+      return (file: string) => {
+        const env = Object.create(process.env, {
+          FILE: { value: file },
+        });
+        const parts = shellQuote.parse(command, env);
+        //@ts-ignore
+        const child = child_process.spawn(parts[0], parts.slice(1), { env });
+        //@ts-ignore
+        const outer = duplexer(child.stdin, child.stdout);
+        //@ts-ignore
+        child.on('exit', (code) => {
+          if (code !== 0) {
+            const error = new Error(`non-zero exit code in command: ${command}`);
+            outer.emit('error', error);
+          }
+        });
+        //@ts-ignore
+        child.stderr.pipe(process.stderr);
+        return outer;
+      };
+    });
+  }
+  /**
+   * cpxのtransformパラメーターを変換する
+   * @param transforms
+   * @returns
+   * ※以下のコードを元に実装
+   * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L72-L92
+   */
+  protected static convertCpxTransformParam(transforms: string[]): any[] {
+    return transforms
+      .map((arg) => {
+        if (typeof arg === 'string') {
+          return { name: arg, argv: null };
+        }
+        if (typeof arg._[0] === 'string') {
+          return { name: arg._.shift(), argv: arg };
+        }
+        console.error('Invalid transform option');
+        process.exit(1);
+      })
+      .map((transform) => {
+        const createStream = /^[./]/.test(transform.name)
+          ? require(path.resolve(transform.name))
+          : require(resolve.sync(transform.name, { basedir: process.cwd() }));
+        return (file: string, opts: any) => createStream(file, Object.assign({ _flags: opts }, transform.argv));
+      });
   }
 
   /**

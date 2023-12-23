@@ -35,6 +35,9 @@ dependencies:
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
+  duplexer3:
+    specifier: ^1.0.0
+    version: 1.0.0
   editorconfig:
     specifier: ^2.0.0
     version: 2.0.0
@@ -74,6 +77,9 @@ dependencies:
   playwright:
     specifier: ^1.40.1
     version: 1.40.1
+  resolve:
+    specifier: ^1.22.8
+    version: 1.22.8
   rimraf:
     specifier: ^5.0.5
     version: 5.0.5
@@ -83,6 +89,9 @@ dependencies:
   sass:
     specifier: ^1.69.5
     version: 1.69.5
+  shell-quote:
+    specifier: ^1.8.1
+    version: 1.8.1
   tslib:
     specifier: ^2.6.2
     version: 2.6.2
@@ -115,6 +124,9 @@ devDependencies:
   '@types/cpx':
     specifier: ^1.5.5
     version: 1.5.5
+  '@types/duplexer3':
+    specifier: ^0.1.4
+    version: 0.1.4
   '@types/glob':
     specifier: ^8.1.0
     version: 8.1.0
@@ -139,6 +151,12 @@ devDependencies:
   '@types/nunjucks':
     specifier: ^3.2.6
     version: 3.2.6
+  '@types/resolve':
+    specifier: ^1.20.6
+    version: 1.20.6
+  '@types/shell-quote':
+    specifier: ^1.7.5
+    version: 1.7.5
   '@types/yargs':
     specifier: ^17.0.32
     version: 17.0.32
@@ -664,6 +682,12 @@ packages:
       '@types/ms': 0.7.34
     dev: false
 
+  /@types/duplexer3@0.1.4:
+    resolution: {integrity: sha512-dvMpf/6D5nUKK/ATVSo2guk3Ya1cWmEbwg7j+dtzuwpG3dPCVjptzFGBx4GfrQC9VZRWkY3yUoq4C2H7uMBMGQ==}
+    dependencies:
+      '@types/node': 20.10.5
+    dev: true
+
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: false
@@ -739,12 +763,20 @@ packages:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: false
 
+  /@types/resolve@1.20.6:
+    resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
+    dev: true
+
   /@types/serve-static@1.15.5:
     resolution: {integrity: sha512-PDRk21MnK70hja/YF8AHfC7yIsiQHn1rcXx7ijCFBX/k+XQJhQT/gw3xekXKJvx+5SXaMMS8oqQy09Mzvz2TuQ==}
     dependencies:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.4
       '@types/node': 20.10.5
+    dev: true
+
+  /@types/shell-quote@1.7.5:
+    resolution: {integrity: sha512-+UE8GAGRPbJVQDdxi16dgadcBfQ+KG2vgZhV1+3A1XmHbmwcdwhCUwIdy+d3pAGrbvgRoVSjeI9vOWyq376Yzw==}
     dev: true
 
   /@types/tough-cookie@4.0.5:
@@ -1364,6 +1396,11 @@ packages:
   /dotenv@16.3.1:
     resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
     engines: {node: '>=12'}
+    dev: false
+
+  /duplexer3@1.0.0:
+    resolution: {integrity: sha512-6O5ndCyJ9CGF9cR2Yi3VFq1OvXXLEgX848InIOl8xUBPYwb8jn/93j10lGaZyLnMRa71IT5OHhURlOiVjH9OVg==}
+    engines: {node: '>=14.16'}
     dev: false
 
   /duplexer@0.1.2:
