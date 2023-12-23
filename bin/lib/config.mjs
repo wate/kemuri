@@ -1,5 +1,9 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as child_process from 'node:child_process';
+import resolve from 'resolve';
+import shellQuote from 'shell-quote';
+import duplexer from 'duplexer3';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
 import nunjucks from 'nunjucks';
@@ -493,7 +497,7 @@ class configLoader {
             if (_.has(allConfig, type) && _.get(allConfig, type)) {
                 builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
             }
-            const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'snippet', 'screenshot'];
+            const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'copy', 'snippet', 'screenshot'];
             removeKeys.forEach((removeKey) => {
                 _.unset(builderConfig, removeKey);
             });
@@ -538,6 +542,93 @@ class configLoader {
      */
     static getJsOption(overrideOption) {
         return configLoader.getOption('js', overrideOption);
+    }
+    /**
+     * コピーのオプションを取得する
+     * @returns
+     */
+    static getCopyOption() {
+        const allConfig = configLoader.load();
+        let copySettings = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
+        const copyOptions = copySettings
+            .filter((copySetting) => {
+            return copySetting.src && copySetting.src.length > 0 && copySetting.dest && copySetting.dest.length > 0;
+        })
+            .map((copySetting) => {
+            const copyOption = {
+                clean: copySetting.clean ?? false,
+                dereference: copySetting.dereference ?? false,
+                includeEmptyDirs: copySetting.includeEmptyDirs ?? false,
+                preserve: copySetting.preserve ?? false,
+                update: copySetting.update ?? false,
+            };
+            if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
+                const transforms = _.get(copySetting, 'transforms').map((filter) => {
+                    if (typeof filter === 'string') {
+                        const name = filter;
+                        return configLoader.convertCpxTransformParam(name);
+                    }
+                    else {
+                        if (_.has(filter, 'command')) {
+                            return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
+                        }
+                        if (_.has(filter, 'name')) {
+                            const name = _.get(filter, 'name');
+                            const args = _.has(filter, 'args') ? _.get(filter, 'args') : {};
+                            return configLoader.convertCpxTransformParam(name, args);
+                        }
+                    }
+                });
+                if (transforms.length > 0) {
+                    copyOption.transform = transforms;
+                }
+            }
+            return copyOption;
+        });
+        return copyOptions;
+    }
+    /**
+     * cpxのcommandパラメーターを変換する
+     * @param commands
+     * @returns
+     * ※以下のコードを元に実装
+     * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L41-L69
+     */
+    static convertCpxCommandParam(command) {
+        return (file) => {
+            const env = Object.create(process.env, {
+                FILE: { value: file },
+            });
+            const parts = shellQuote.parse(command, env);
+            //@ts-ignore
+            const child = child_process.spawn(parts[0], parts.slice(1), { env });
+            //@ts-ignore
+            const outer = duplexer(child.stdin, child.stdout);
+            //@ts-ignore
+            child.on('exit', (code) => {
+                if (code !== 0) {
+                    const error = new Error(`non-zero exit code in command: ${command}`);
+                    outer.emit('error', error);
+                }
+            });
+            //@ts-ignore
+            child.stderr.pipe(process.stderr);
+            return outer;
+        };
+    }
+    /**
+     * cpxのtransformパラメーターを変換する
+     * @param transforms
+     * @returns
+     * ※以下のコードを元に実装
+     * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L72-L92
+     */
+    static convertCpxTransformParam(name, args) {
+        args = args || {};
+        const createStream = /^[./]/.test(name)
+            ? require(path.resolve(name))
+            : require(resolve.sync(name, { basedir: process.cwd() }));
+        return (file, opts) => createStream(file, Object.assign({ _flags: opts }, args));
     }
     /**
      * スニペットのオプションを取得する
