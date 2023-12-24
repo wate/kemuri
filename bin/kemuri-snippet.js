@@ -323,7 +323,6 @@ class vscodeSnippetBuilder extends baseBuilder {
                                         code: {},
                                         prefix: [snippetName],
                                         description: snippetDescription,
-                                        extraSetting: extraSetting,
                                     };
                                 }
                                 if (this.snipptes[snippetName]['code'][snippetLang] !== undefined) {
@@ -332,6 +331,15 @@ class vscodeSnippetBuilder extends baseBuilder {
                                 }
                                 // @ts-ignore
                                 this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
+                                /**
+                                 * スニペットの拡張設定を設定する
+                                 */
+                                if (this.snipptes[snippetName].extraSetting === undefined) {
+                                    this.snipptes[snippetName].extraSetting = extraSetting;
+                                }
+                                else if (_.keys(extraSetting).length > 0) {
+                                    this.snipptes[snippetName].extraSetting[snippetLang] = extraSetting;
+                                }
                             });
                         }
                         else {
@@ -371,6 +379,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                     snippetPrefix = _.uniq(snippetPrefix);
                 }
                 Object.keys(snippet.code).forEach((lang) => {
+                    let langSnippetPrefix = snippetPrefix;
                     let snippetName = snippet.name + '[' + lang + ']';
                     let snippetScope = [lang];
                     if (lang === 'global') {
@@ -379,7 +388,23 @@ class vscodeSnippetBuilder extends baseBuilder {
                     }
                     const snippetBody = snippet.code[lang];
                     /**
-                     * スコープの設定
+                     * 言語別のプレフィックス設定
+                     */
+                    if (extraSetting[lang] && extraSetting[lang].prefix) {
+                        let isPrefixOrverwrite = extraSetting.orverwrite !== undefined ? extraSetting.orverwrite : false;
+                        if (extraSetting[lang].orverwrite !== undefined) {
+                            isPrefixOrverwrite = extraSetting[lang].orverwrite;
+                        }
+                        if (isPrefixOrverwrite) {
+                            langSnippetPrefix = extraSetting[lang].prefix;
+                        }
+                        else {
+                            langSnippetPrefix = [...langSnippetPrefix, ...extraSetting[lang].prefix];
+                        }
+                        langSnippetPrefix = _.uniq(langSnippetPrefix);
+                    }
+                    /**
+                     * 言語別のスコープ設定
                      */
                     if (extraSetting.scope) {
                         snippetScope = [...snippetScope, ...extraSetting.scope];
@@ -390,7 +415,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                         snippetScope = _.uniq(snippetScope);
                     }
                     /**
-                     * 説明の設定
+                     * 言語別の説明設定
                      */
                     if (extraSetting.description !== undefined) {
                         snippet.description = extraSetting.description;
@@ -399,7 +424,7 @@ class vscodeSnippetBuilder extends baseBuilder {
                         snippet.description = extraSetting[lang].description;
                     }
                     snippetData[snippetName] = {
-                        prefix: snippetPrefix,
+                        prefix: langSnippetPrefix,
                         body: snippetBody,
                     };
                     if (snippetScope.length > 0) {
