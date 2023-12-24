@@ -1,5 +1,4 @@
 import typescript from '@rollup/plugin-typescript';
-import { cleandir } from 'rollup-plugin-cleandir';
 
 export default {
   input: {
@@ -8,7 +7,7 @@ export default {
     'kemuri-screenshot': 'lib/screenshot.ts',
     'kemuri-snippet': 'lib/snippet-builder.ts',
   },
-  plugins: [cleandir(), typescript()],
+  plugins: [typescript()],
   output: {
     dir: 'bin',
     format: 'esm',
