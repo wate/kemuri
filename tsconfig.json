@@ -57,5 +57,9 @@
     /* Completeness */
     /* Skip type checking all .d.ts files. */
     "skipLibCheck": true
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }
