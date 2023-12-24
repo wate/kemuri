@@ -1,17 +1,21 @@
+#!/usr/bin/env node
+
 import { chromium, webkit, firefox, devices } from 'playwright';
-import * as fs from 'node:fs';
+import fs from 'fs-extra';
 import * as path from 'node:path';
 import { URL } from 'node:url';
 import configLoader from './config';
 import console from './console';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
+import chalk from 'chalk';
 import yargs from 'yargs';
 
 const argv = yargs(process.argv.slice(2))
   .options({
     l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
   })
   .parseSync();
 
@@ -108,7 +112,6 @@ if (pages.length === 0) {
   console.error('page not found.');
   process.exit(1);
 } else {
-  console.info('Start screenshot');
   let screenshotTargets: any = {};
   let headless: boolean = true;
   let fullPage: boolean = true;
@@ -150,6 +153,15 @@ if (pages.length === 0) {
     screenshotTargets = _.get(screenshotOption, 'targets');
   }
 
+  if (argv.clean) {
+    //スクリーンショット保存先ディレクトリを空にする
+    console.log(chalk.yellow('Clean up screenshot save directory: ' + screenshotBaseSaveDir));
+    fs.emptyDirSync(screenshotBaseSaveDir);
+  }
+  /**
+   * スクリーンショットの取得処理の実行
+   */
+  console.info('Start screenshot');
   const screenshotPages: ScreenshotPage[] = [];
   if (Object.keys(screenshotTargets).length === 0) {
     pages.forEach((page: Page) => {

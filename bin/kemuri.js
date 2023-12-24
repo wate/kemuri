@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs$1 from 'fs-extra';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { b as baseBuilder } from './lib/base.mjs';
@@ -9,9 +10,9 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
 import { c as console, a as configLoader } from './lib/config.mjs';
-import { glob } from 'glob';
+import * as glob from 'glob';
+import { glob as glob$1 } from 'glob';
 import * as sass from 'sass';
-import { rimraf } from 'rimraf';
 import { URL } from 'node:url';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
@@ -437,7 +438,7 @@ class sassBuilder extends baseBuilder {
             .sort();
         const indexFilePath = path.join(targetDir, this.indexFileName);
         if (partialMatchFiles.length === 0) {
-            rimraf(indexFilePath);
+            fs$1.remove(indexFilePath);
             console.log('Remove index file: ' + indexFilePath);
         }
         else {
@@ -472,15 +473,15 @@ class sassBuilder extends baseBuilder {
                 }));
             }
             const indexFileContent = indexFileContentLines.join('\n') + '\n';
-            if (fs.existsSync(indexFilePath)) {
-                const indexFileContentBefore = fs.readFileSync(indexFilePath, 'utf-8');
+            if (fs$1.existsSync(indexFilePath)) {
+                const indexFileContentBefore = fs$1.readFileSync(indexFilePath, 'utf-8');
                 if (indexFileContentBefore != indexFileContent) {
-                    fs.writeFileSync(indexFilePath, indexFileContent);
+                    fs$1.writeFileSync(indexFilePath, indexFileContent);
                     console.log('Update index file: ' + indexFilePath);
                 }
             }
             else {
-                fs.writeFileSync(indexFilePath, indexFileContent);
+                fs$1.writeFileSync(indexFilePath, indexFileContent);
                 console.log('Generate index file: ' + indexFilePath);
             }
         }
@@ -613,7 +614,7 @@ class sassBuilder extends baseBuilder {
         if (Array.from(this.entryPoint.values()).includes(filePath)) {
             this.entryPoint.delete(filePath);
             const outputPath = this.convertOutputPath(filePath);
-            rimraf(outputPath);
+            fs$1.remove(outputPath);
             console.log('Remove: ' + outputPath);
         }
         console.groupEnd();
@@ -635,10 +636,10 @@ class sassBuilder extends baseBuilder {
         if (compileOption.style !== 'compressed') {
             result.css = beautify$1(result.css, beautifyOption);
         }
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, result.css.trim() + '\n');
+        fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+        fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
         if (result.sourceMap) {
-            fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+            fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
         }
     }
     /**
@@ -675,11 +676,11 @@ class sassBuilder extends baseBuilder {
             if (compileOption.style !== 'compressed') {
                 result.css = beautify$1(result.css, beautifyOption);
             }
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, result.css.trim() + '\n');
+            fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
             if (result.sourceMap) {
-                fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+                fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
             }
         });
         // console.groupEnd();
@@ -800,7 +801,7 @@ class nunjucksBuilder extends baseBuilder {
      */
     loadTemplateVars() {
         const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
-        const varFiles = glob.sync(globPatterns);
+        const varFiles = glob$1.sync(globPatterns);
         varFiles.forEach((varFilePath) => {
             const key = path.dirname(varFilePath);
             // @ts-ignore
@@ -1117,10 +1118,11 @@ const argv = yargs(process.argv.slice(2))
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
     configOnly: { type: 'boolean', default: false, description: '設定ファイルのみを出力する' },
+    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
 })
     .parseSync();
 if (argv.init) {
-    if (fs.existsSync('.builderrc.yml')) {
+    if (fs$1.existsSync('.builderrc.yml')) {
         if (argv.force) {
             configLoader.copyDefaultConfig(argv.force);
             console.log(chalk.green('Configuration file(.builderrc.yml) has been overwritten.'));
@@ -1166,9 +1168,9 @@ if (argv.init) {
     }, [])
         .sort()
         .forEach((dir) => {
-        if (!fs.existsSync(dir)) {
+        if (!fs$1.existsSync(dir)) {
             console.log(chalk.green('Create directory: ' + dir));
-            fs.mkdirSync(dir, { recursive: true });
+            fs$1.mkdirSync(dir, { recursive: true });
         }
     });
     process.exit(0);
@@ -1188,6 +1190,7 @@ if (argv.config !== undefined) {
     configLoader.configFile = argv.config;
 }
 const builders = [];
+const outputDirectories = [];
 if (configLoader.isEnable('js') || argv.js) {
     const jsOrverrideOption = {};
     if (argv.sourcemap !== undefined) {
@@ -1201,6 +1204,7 @@ if (configLoader.isEnable('js') || argv.js) {
     console.log(jsBuilderOption);
     console.groupEnd();
     jsBuilder.setOption(jsBuilderOption);
+    outputDirectories.push(jsBuilder.getOutputDir());
     builders.push(jsBuilder);
 }
 if (configLoader.isEnable('css') || argv.css) {
@@ -1216,6 +1220,7 @@ if (configLoader.isEnable('css') || argv.css) {
     console.log(cssBuilderOption);
     console.groupEnd();
     cssBuilder.setOption(cssBuilderOption);
+    outputDirectories.push(cssBuilder.getOutputDir());
     builders.push(cssBuilder);
 }
 if (configLoader.isEnable('html') || argv.html) {
@@ -1224,14 +1229,29 @@ if (configLoader.isEnable('html') || argv.html) {
     console.log(htmlBuilderOption);
     console.groupEnd();
     htmlBuilder.setOption(htmlBuilderOption);
+    outputDirectories.push(htmlBuilder.getOutputDir());
     builders.push(htmlBuilder);
 }
 let copyFiles = [];
 if (configLoader.isEnable('copy') || argv.copy) {
     copyFiles = configLoader.getCopyOption();
+    copyFiles.forEach((copyOption) => {
+        outputDirectories.push(copyOption.dest);
+    });
     console.group(chalk.blue('Copy Option'));
     console.log(copyFiles);
     console.groupEnd();
+}
+if (argv.clean) {
+    //出力先ディレクトリを空にする
+    console.log(chalk.yellow('Clean up output directories'));
+    outputDirectories
+        .sort()
+        .reverse()
+        .forEach((dir) => {
+        console.log(chalk.yellow('Remove directory: ' + dir));
+        fs$1.emptyDirSync(dir);
+    });
 }
 builders.forEach((builder) => {
     builder.buildAll();

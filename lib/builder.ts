@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as fs from 'node:fs';
+import fs from 'fs-extra';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
@@ -32,6 +32,7 @@ const argv = yargs(process.argv.slice(2))
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
     force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
     configOnly: { type: 'boolean', default: false, description: '設定ファイルのみを出力する' },
+    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
   })
   .parseSync();
 
@@ -102,7 +103,9 @@ if (argv.config !== undefined) {
   configLoader.configFile = argv.config;
 }
 
-const builders = [];
+const builders: any[] = [];
+const outputDirectories: string[] = [];
+
 if (configLoader.isEnable('js') || argv.js) {
   const jsOrverrideOption: any = {};
   if (argv.sourcemap !== undefined) {
@@ -116,6 +119,7 @@ if (configLoader.isEnable('js') || argv.js) {
   console.log(jsBuilderOption);
   console.groupEnd();
   jsBuilder.setOption(jsBuilderOption);
+  outputDirectories.push(jsBuilder.getOutputDir());
   builders.push(jsBuilder);
 }
 if (configLoader.isEnable('css') || argv.css) {
@@ -131,6 +135,7 @@ if (configLoader.isEnable('css') || argv.css) {
   console.log(cssBuilderOption);
   console.groupEnd();
   cssBuilder.setOption(cssBuilderOption);
+  outputDirectories.push(cssBuilder.getOutputDir());
   builders.push(cssBuilder);
 }
 if (configLoader.isEnable('html') || argv.html) {
@@ -139,14 +144,30 @@ if (configLoader.isEnable('html') || argv.html) {
   console.log(htmlBuilderOption);
   console.groupEnd();
   htmlBuilder.setOption(htmlBuilderOption);
+  outputDirectories.push(htmlBuilder.getOutputDir());
   builders.push(htmlBuilder);
 }
 let copyFiles: any = [];
 if (configLoader.isEnable('copy') || argv.copy) {
   copyFiles = configLoader.getCopyOption();
+  copyFiles.forEach((copyOption: any) => {
+    outputDirectories.push(copyOption.dest);
+  });
   console.group(chalk.blue('Copy Option'));
   console.log(copyFiles);
   console.groupEnd();
+}
+
+if (argv.clean) {
+  //出力先ディレクトリを空にする
+  console.log(chalk.yellow('Clean up output directories'));
+  outputDirectories
+    .sort()
+    .reverse()
+    .forEach((dir) => {
+      console.log(chalk.yellow('Remove directory: ' + dir));
+      fs.emptyDirSync(dir);
+    });
 }
 
 builders.forEach((builder) => {

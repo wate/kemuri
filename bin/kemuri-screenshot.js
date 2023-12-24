@@ -1,18 +1,20 @@
+#!/usr/bin/env node
 import { devices, chromium, webkit, firefox } from 'playwright';
-import * as fs from 'node:fs';
+import fs from 'fs-extra';
 import * as path from 'node:path';
 import { URL } from 'node:url';
 import { a as configLoader, c as console } from './lib/config.mjs';
 import _ from 'lodash';
 import { JSDOM } from 'jsdom';
+import chalk from 'chalk';
 import yargs from 'yargs';
+import 'node:fs';
 import 'node:child_process';
 import 'resolve';
 import 'shell-quote';
 import 'duplexer3';
 import 'cosmiconfig';
 import 'nunjucks';
-import 'chalk';
 import 'node:console';
 import 'dotenv';
 
@@ -20,6 +22,7 @@ const argv = yargs(process.argv.slice(2))
     .options({
     l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
 })
     .parseSync();
 if (argv.config !== undefined) {
@@ -93,7 +96,6 @@ if (pages.length === 0) {
     process.exit(1);
 }
 else {
-    console.info('Start screenshot');
     let screenshotTargets = {};
     let headless = true;
     let fullPage = true;
@@ -133,6 +135,15 @@ else {
         //@ts-ignore
         screenshotTargets = _.get(screenshotOption, 'targets');
     }
+    if (argv.clean) {
+        //スクリーンショット保存先ディレクトリを空にする
+        console.log(chalk.yellow('Clean up screenshot save directory: ' + screenshotBaseSaveDir));
+        fs.emptyDirSync(screenshotBaseSaveDir);
+    }
+    /**
+     * スクリーンショットの取得処理の実行
+     */
+    console.info('Start screenshot');
     const screenshotPages = [];
     if (Object.keys(screenshotTargets).length === 0) {
         pages.forEach((page) => {

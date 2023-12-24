@@ -1,9 +1,8 @@
-import * as fs from 'node:fs';
+import fs from 'fs-extra';
 import * as path from 'node:path';
 import { baseBuilder, builderOption } from '../base';
-import { glob, Path } from 'glob';
+import * as glob from 'glob';
 import * as sass from 'sass';
-import { rimraf } from 'rimraf';
 import js_beautify from 'js-beautify';
 import console from '../../console';
 
@@ -152,7 +151,7 @@ export class sassBuilder extends baseBuilder {
       .sort();
     const indexFilePath = path.join(targetDir, this.indexFileName);
     if (partialMatchFiles.length === 0) {
-      rimraf(indexFilePath);
+      fs.remove(indexFilePath)
       console.log('Remove index file: ' + indexFilePath);
     } else {
       const partialFiles = {
@@ -328,7 +327,7 @@ export class sassBuilder extends baseBuilder {
     if (Array.from(this.entryPoint.values()).includes(filePath)) {
       this.entryPoint.delete(filePath);
       const outputPath = this.convertOutputPath(filePath);
-      rimraf(outputPath);
+      fs.remove(outputPath);
       console.log('Remove: ' + outputPath);
     }
     console.groupEnd();
