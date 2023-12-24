@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import snippetBuilder from './builder/snippet';
 import configLoader from './config';
 import * as path from 'node:path';

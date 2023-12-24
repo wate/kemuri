@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { chromium, webkit, firefox, devices } from 'playwright';
 import fs from 'fs-extra';
 import * as path from 'node:path';
