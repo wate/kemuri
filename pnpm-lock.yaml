@@ -169,9 +169,6 @@ devDependencies:
   prettier:
     specifier: ^3.1.1
     version: 3.1.1
-  rollup-plugin-cleandir:
-    specifier: ^2.0.0
-    version: 2.0.0(rollup@4.9.1)
   tsx:
     specifier: ^3.14.0
     version: 3.14.0
@@ -444,11 +441,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
-  /@mstssk/cleandir@1.2.1:
-    resolution: {integrity: sha512-n/62eVEJOBb3CI1Y4r/IOLzvXoI0/MxGGOryT7UGF2C2WSXV3HozwrowqtHoDDbLmWIw+HJbuHZl9vledmGpoQ==}
-    hasBin: true
-    dev: true
-
   /@one-ini/wasm@0.1.1:
     resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
     dev: false
@@ -551,6 +543,7 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-android-arm64@4.9.1:
@@ -558,6 +551,7 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-darwin-arm64@4.9.1:
@@ -565,6 +559,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-darwin-x64@4.9.1:
@@ -572,6 +567,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm-gnueabihf@4.9.1:
@@ -579,6 +575,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm64-gnu@4.9.1:
@@ -586,6 +583,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-arm64-musl@4.9.1:
@@ -593,6 +591,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-riscv64-gnu@4.9.1:
@@ -600,6 +599,7 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-x64-gnu@4.9.1:
@@ -607,6 +607,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-linux-x64-musl@4.9.1:
@@ -614,6 +615,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-win32-arm64-msvc@4.9.1:
@@ -621,6 +623,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-win32-ia32-msvc@4.9.1:
@@ -628,6 +631,7 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@rollup/rollup-win32-x64-msvc@4.9.1:
@@ -635,6 +639,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@socket.io/component-emitter@3.1.0:
@@ -2713,15 +2718,6 @@ packages:
       - supports-color
     dev: false
 
-  /rollup-plugin-cleandir@2.0.0(rollup@4.9.1):
-    resolution: {integrity: sha512-cTL/WbBJqHQkYBplhtiQ/yc0IqTuRR7EGw/S+XtQdaFhtv6+Xq/j8dxkk5lzTcxd0hCahUebZFYhLBRzSsgynw==}
-    peerDependencies:
-      rollup: '>=2.0.0'
-    dependencies:
-      '@mstssk/cleandir': 1.2.1
-      rollup: 4.9.1
-    dev: true
-
   /rollup@4.9.1:
     resolution: {integrity: sha512-pgPO9DWzLoW/vIhlSoDByCzcpX92bKEorbgXuZrqxByte3JFk2xSW2JEeAcyLc9Ru9pqcNNW+Ob7ntsk2oT/Xw==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -2741,6 +2737,7 @@ packages:
       '@rollup/rollup-win32-ia32-msvc': 4.9.1
       '@rollup/rollup-win32-x64-msvc': 4.9.1
       fsevents: 2.3.3
+    dev: false
 
   /rrweb-cssom@0.6.0:
     resolution: {integrity: sha512-APM0Gt1KoXBz0iIkkdB/kfvGOwC4UuJFeG/c+yV7wSc7q96cG/kJ0HiYCnzivD9SB53cLV1MlHFNfOuPaadYSw==}
