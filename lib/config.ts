@@ -157,6 +157,8 @@ class configLoader {
       })
       .map((copySetting: any) => {
         const copyOption: any = {
+          src: copySetting.src,
+          dest: copySetting.dest,
           clean: copySetting.clean ?? false,
           dereference: copySetting.dereference ?? false,
           includeEmptyDirs: copySetting.includeEmptyDirs ?? false,

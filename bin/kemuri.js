@@ -1267,10 +1267,10 @@ if (argv.watch) {
         console.group(chalk.blue('Watch files'));
         console.log(copyFiles.map((copyOption) => copyOption.src));
         console.groupEnd();
+        copyFiles.forEach((copyOption) => {
+            cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
+        });
     }
-    copyFiles.forEach((copyOption) => {
-        cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
-    });
 }
 if (argv.server) {
     const browserSyncOption = getBrowserSyncOption();
