@@ -18,7 +18,6 @@ import chalk from 'chalk';
 import fs$1 from 'fs-extra';
 import yargs from 'yargs';
 import 'chokidar';
-import 'rimraf';
 import 'editorconfig';
 import 'node:child_process';
 import 'resolve';

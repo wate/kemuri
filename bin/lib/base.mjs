@@ -1,8 +1,7 @@
-import fs__default from 'node:fs';
+import fs from 'fs-extra';
 import * as path from 'node:path';
 import { glob } from 'glob';
 import * as chokidar from 'chokidar';
-import { rimraf, rimrafSync } from 'rimraf';
 import editorconfig from 'editorconfig';
 import { c as console } from './config.mjs';
 
@@ -534,8 +533,8 @@ class baseBuilder {
         console.group('Remove file: ' + filePath);
         if (Array.from(this.entryPoint.values()).includes(filePath)) {
             const outputPath = this.convertOutputPath(filePath);
-            if (fs__default.existsSync(outputPath)) {
-                rimraf(outputPath);
+            if (fs.existsSync(outputPath)) {
+                fs.remove(outputPath);
                 console.log('Remove: ' + outputPath);
             }
             //エントリポイントから該当ファイルのエントリを削除する
@@ -564,8 +563,8 @@ class baseBuilder {
     watchUnlinkDirCallBack(filePath) {
         console.group('Remove directory: ' + filePath);
         const outputPath = this.convertOutputPath(filePath, true);
-        if (fs__default.existsSync(outputPath)) {
-            rimraf(outputPath);
+        if (fs.existsSync(outputPath)) {
+            fs.remove(outputPath);
             console.log('Remove: ' + outputPath);
         }
         //エントリポイントから該当ディレクトリのエントリを削除する
@@ -635,7 +634,7 @@ class baseBuilder {
      */
     build(cleanup) {
         if (cleanup) {
-            rimrafSync(this.outputDir);
+            fs.emptyDirSync(this.outputDir);
         }
         this.buildAll();
     }

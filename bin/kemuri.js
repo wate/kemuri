@@ -10,9 +10,9 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
 import { c as console, a as configLoader } from './lib/config.mjs';
-import { glob } from 'glob';
+import * as glob from 'glob';
+import { glob as glob$1 } from 'glob';
 import * as sass from 'sass';
-import { rimraf } from 'rimraf';
 import { URL } from 'node:url';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
@@ -438,7 +438,7 @@ class sassBuilder extends baseBuilder {
             .sort();
         const indexFilePath = path.join(targetDir, this.indexFileName);
         if (partialMatchFiles.length === 0) {
-            rimraf(indexFilePath);
+            fs$1.remove(indexFilePath);
             console.log('Remove index file: ' + indexFilePath);
         }
         else {
@@ -473,15 +473,15 @@ class sassBuilder extends baseBuilder {
                 }));
             }
             const indexFileContent = indexFileContentLines.join('\n') + '\n';
-            if (fs.existsSync(indexFilePath)) {
-                const indexFileContentBefore = fs.readFileSync(indexFilePath, 'utf-8');
+            if (fs$1.existsSync(indexFilePath)) {
+                const indexFileContentBefore = fs$1.readFileSync(indexFilePath, 'utf-8');
                 if (indexFileContentBefore != indexFileContent) {
-                    fs.writeFileSync(indexFilePath, indexFileContent);
+                    fs$1.writeFileSync(indexFilePath, indexFileContent);
                     console.log('Update index file: ' + indexFilePath);
                 }
             }
             else {
-                fs.writeFileSync(indexFilePath, indexFileContent);
+                fs$1.writeFileSync(indexFilePath, indexFileContent);
                 console.log('Generate index file: ' + indexFilePath);
             }
         }
@@ -614,7 +614,7 @@ class sassBuilder extends baseBuilder {
         if (Array.from(this.entryPoint.values()).includes(filePath)) {
             this.entryPoint.delete(filePath);
             const outputPath = this.convertOutputPath(filePath);
-            rimraf(outputPath);
+            fs$1.remove(outputPath);
             console.log('Remove: ' + outputPath);
         }
         console.groupEnd();
@@ -636,10 +636,10 @@ class sassBuilder extends baseBuilder {
         if (compileOption.style !== 'compressed') {
             result.css = beautify$1(result.css, beautifyOption);
         }
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, result.css.trim() + '\n');
+        fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+        fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
         if (result.sourceMap) {
-            fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+            fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
         }
     }
     /**
@@ -676,11 +676,11 @@ class sassBuilder extends baseBuilder {
             if (compileOption.style !== 'compressed') {
                 result.css = beautify$1(result.css, beautifyOption);
             }
-            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs.writeFileSync(outputPath, result.css.trim() + '\n');
+            fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
             if (result.sourceMap) {
-                fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+                fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
             }
         });
         // console.groupEnd();
@@ -801,7 +801,7 @@ class nunjucksBuilder extends baseBuilder {
      */
     loadTemplateVars() {
         const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
-        const varFiles = glob.sync(globPatterns);
+        const varFiles = glob$1.sync(globPatterns);
         varFiles.forEach((varFilePath) => {
             const key = path.dirname(varFilePath);
             // @ts-ignore

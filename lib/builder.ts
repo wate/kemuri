@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs, { copy } from 'fs-extra';
+import fs from 'fs-extra';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';

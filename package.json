@@ -37,7 +37,6 @@
     "nunjucks": "^3.2.4",
     "playwright": "^1.40.1",
     "resolve": "^1.22.8",
-    "rimraf": "^5.0.5",
     "rollup": "^4.9.1",
     "sass": "^1.69.5",
     "shell-quote": "^1.8.1",
@@ -68,6 +67,7 @@
     "@types/yargs": "^17.0.32",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.1.1",
+    "rollup-plugin-cleandir": "^2.0.0",
     "tsx": "^3.14.0"
   },
   "scripts": {
@@ -79,15 +79,10 @@
     "screenshot": "run-s screenshot:*",
     "screenshot:rebuild": "run-s builder:build bin-build:build",
     "screenshot:screenshot": "node bin/kemuri-screenshot.js --clean",
-    "cleanup:all": "rimraf public/*",
-    "cleanup:assets": "run-p cleanup:assets:*",
-    "cleanup:assets:js": "rimraf public/assets/js/*",
-    "cleanup:assets:css": "rimraf public/assets/css/*",
     "snippet-builder:watch": "tsx lib/snippet-builder.ts --watch",
     "snippet-builder:build": "tsx lib/snippet-builder.ts --clean",
     "----------": "",
     "bin-build": "run-s bin-build:*",
-    "bin-build:cleanup": "rimraf bin/*",
     "bin-build:build": "rollup -c",
     "bin-build:chmod": "chmod 0755 bin/*.js"
   }
