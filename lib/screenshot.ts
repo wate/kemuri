@@ -153,7 +153,7 @@ if (pages.length === 0) {
 
   if (argv.clean) {
     //スクリーンショット保存先ディレクトリを空にする
-    console.log(chalk.yellow('Clean up screenshot save dir'));
+    console.log(chalk.yellow('Clean up screenshot save directory: ' + screenshotBaseSaveDir));
     fs.emptyDirSync(screenshotBaseSaveDir);
   }
   /**

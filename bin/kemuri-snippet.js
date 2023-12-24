@@ -13,9 +13,10 @@ import findAllBetween from 'unist-util-find-all-between';
 import _ from 'lodash';
 import yaml from 'js-yaml';
 import { c as console$1, a as configLoader } from './lib/config.mjs';
+import * as glob from 'glob';
 import chalk from 'chalk';
+import fs$1 from 'fs-extra';
 import yargs from 'yargs';
-import 'glob';
 import 'chokidar';
 import 'rimraf';
 import 'editorconfig';
@@ -472,6 +473,7 @@ const argv = yargs(process.argv.slice(2))
     .options({
     w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリのスニペットファイルを削除する' },
 })
     .parseSync();
 if (argv.config !== undefined) {
@@ -483,6 +485,15 @@ console.group(chalk.blue('Builder Option'));
 console.log(builderOption);
 console.groupEnd();
 snippetBuilder.setOption(builderOption);
+if (argv.clean) {
+    console.group(chalk.yellow('Clean up snippet files'));
+    const removeFilePattern = path.join(snippetBuilder.getOutputDir(), '*.' + snippetBuilder.getOutputExt());
+    glob.sync(removeFilePattern).forEach((removeFile) => {
+        console.log(chalk.yellow('Remove file: ' + removeFile));
+        fs$1.removeSync(removeFile);
+    });
+    console.groupEnd();
+}
 snippetBuilder.buildAll();
 if (argv.watch) {
     snippetBuilder.watch();

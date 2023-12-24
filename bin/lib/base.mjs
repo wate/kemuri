@@ -105,6 +105,27 @@ class baseBuilder {
         }
     }
     /**
+     * 出力先のディレクトリを取得する
+     * @returns
+     */
+    getOutputDir() {
+        return this.outputDir;
+    }
+    /**
+     * ソースコードのディレクトリを取得する
+     * @returns
+     */
+    getSrcDir() {
+        return this.srcDir;
+    }
+    /**
+     * 出力ファイルの拡張子を取得する
+     * @returns
+     */
+    getOutputExt() {
+        return this.outputExt;
+    }
+    /**
      * コンパイラーのオプションを設定する
      *
      * @param compileOption

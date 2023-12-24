@@ -30,7 +30,7 @@ if (argv.clean) {
   console.group(chalk.yellow('Clean up snippet files'));
   const removeFilePattern = path.join(snippetBuilder.getOutputDir(), '*.' + snippetBuilder.getOutputExt());
   glob.sync(removeFilePattern).forEach((removeFile) => {
-    console.log('Remove file: ' + removeFile);
+    console.log(chalk.yellow('Remove file: ' + removeFile));
     fs.removeSync(removeFile);
   });
   console.groupEnd();
