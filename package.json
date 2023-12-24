@@ -23,6 +23,7 @@
     "dotenv": "^16.3.1",
     "duplexer3": "^1.0.0",
     "editorconfig": "^2.0.0",
+    "fs-extra": "^11.2.0",
     "glob": "^10.3.10",
     "gray-matter": "^4.0.3",
     "js-beautify": "^1.14.11",

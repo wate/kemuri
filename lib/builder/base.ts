@@ -150,6 +150,29 @@ export abstract class baseBuilder {
       this.setBeautifyOption(option.beautifyOption);
     }
   }
+
+  /**
+   * 出力先のディレクトリを取得する
+   * @returns
+   */
+  public getOutputDir(): string {
+    return this.outputDir;
+  }
+  /**
+   * ソースコードのディレクトリを取得する
+   * @returns
+   */
+  public getSrcDir(): string {
+    return this.srcDir;
+  }
+  /**
+   * 出力ファイルの拡張子を取得する
+   * @returns
+   */
+  public getOutputExt(): string {
+    return this.outputExt;
+  }
+
   /**
    * コンパイラーのオプションを設定する
    *
