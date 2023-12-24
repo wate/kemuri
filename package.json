@@ -65,7 +65,7 @@
     "@types/resolve": "^1.20.6",
     "@types/shell-quote": "^1.7.5",
     "@types/yargs": "^17.0.32",
-    "npm-run-all": "^4.1.5",
+    "npm-run-all2": "^6.1.1",
     "prettier": "^3.1.1",
     "rollup-plugin-cleandir": "^2.0.0",
     "tsx": "^3.14.0"
