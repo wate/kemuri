@@ -125,7 +125,7 @@ class typescriptBuilder extends baseBuilder {
         /**
          * Roolup.jsに指定する出力形式
          */
-        this.outputFortmat = 'iife';
+        this.outputFortmat = 'es';
         /**
          * Minyfy化のオプション
          * https://github.com/terser/terser#minify-options
