@@ -54,7 +54,18 @@ else {
 }
 console.info('Sitemap location: ' + sitemapLocation);
 if (/^https?:\/\//.test(sitemapLocation)) {
-    const dom = new JSDOM(await (await fetch(sitemapLocation)).text());
+    const fetchOption = {};
+    /**
+     * Basic認証の設定
+     */
+    if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+        const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
+        const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+        if (authBasicUsername && authBasicPassword) {
+            fetchOption.headers = { Authorization: 'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`) };
+        }
+    }
+    const dom = new JSDOM(await (await fetch(sitemapLocation, fetchOption)).text());
     const urls = dom.window.document.querySelectorAll('url');
     urls.forEach((url) => {
         const loc = url.querySelector('loc');
@@ -203,9 +214,49 @@ else {
             screenshotSaveDir = path.join(screenshotBaseSaveDir, screenshotPage.group);
         }
         if (!browserContexts[screenshotGroup]) {
-            browserContexts[screenshotGroup] = await browser.newContext({
+            const browserContextOption = {
                 viewport: { width: screenshotPage.width, height: screenshotPage.height },
-            });
+            };
+            /**
+             * Basic認証の設定
+             */
+            if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+                const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
+                const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+                if (authBasicUsername && authBasicPassword) {
+                    browserContextOption.httpCredentials = {
+                        username: authBasicUsername,
+                        password: authBasicPassword,
+                    };
+                }
+            }
+            const browserContext = await browser.newContext(browserContextOption);
+            /**
+             * フォーム認証の設定
+             */
+            if (_.has(screenshotOption, 'auth.form.url') && _.has(screenshotOption, 'auth.form.actions')) {
+                const authFormPage = await browserContext.newPage();
+                const authFormURL = _.get(screenshotOption, 'auth.form.url', null);
+                const authFormActions = _.get(screenshotOption, 'auth.form.actions', null);
+                await authFormPage.goto(authFormURL);
+                authFormActions.forEach(async (action) => {
+                    switch (action.action) {
+                        case 'fill': // フォームのフィールドを入力する
+                            await authFormPage.fill(action.selector, action.value);
+                            break;
+                        case 'select': // フォームのセレクトボックスのオプションを選択する
+                            await authFormPage.selectOption(action.selector, action.value);
+                            break;
+                        case 'check': // チェックボックスまたはラジオボタンのチェックを変更する
+                            await authFormPage.check(action.selector);
+                            break;
+                        case 'click': // ボタンをクリックする
+                            await authFormPage.click(action.selector);
+                            break;
+                    }
+                });
+            }
+            browserContexts[screenshotGroup] = browserContext;
         }
         const context = browserContexts[screenshotGroup];
         const testUrl = new URL(screenshotPage.url);
