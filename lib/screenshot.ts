@@ -6,7 +6,7 @@ import * as path from 'node:path';
 import { URL } from 'node:url';
 import configLoader from './config';
 import console from './console';
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { JSDOM } from 'jsdom';
 import chalk from 'chalk';
 import yargs from 'yargs';
@@ -77,10 +77,10 @@ if (/^https?:\/\//.test(sitemapLocation)) {
    * Basic認証の設定
    */
   if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
-    const auth_basic_username = _.get(screenshotOption, 'auth.basic.username', null);
-    const auth_basic_password = _.get(screenshotOption, 'auth.basic.password', null);
-    if (auth_basic_username && auth_basic_password) {
-      fetchOption.headers = { Authorization: 'Basic ' + btoa(`${auth_basic_username}:${auth_basic_username}`) };
+    const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
+    const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+    if (authBasicUsername && authBasicPassword) {
+      fetchOption.headers = { Authorization: 'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`) };
     }
   }
   const dom = new JSDOM(await (await fetch(sitemapLocation, fetchOption)).text());
@@ -237,16 +237,42 @@ if (pages.length === 0) {
          * Basic認証の設定
          */
         if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
-          const auth_basic_username = _.get(screenshotOption, 'auth.basic.username', null);
-          const auth_basic_password = _.get(screenshotOption, 'auth.basic.password', null);
-          if (auth_basic_username && auth_basic_password) {
+          const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
+          const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+          if (authBasicUsername && authBasicPassword) {
             browserContextOption.httpCredentials = {
-              username: auth_basic_username,
-              password: auth_basic_password,
+              username: authBasicUsername,
+              password: authBasicPassword,
             };
           }
         }
-        browserContexts[screenshotGroup] = await browser.newContext(browserContextOption);
+        const browserContext = await browser.newContext(browserContextOption);
+        /**
+         * フォーム認証の設定
+         */
+        if (_.has(screenshotOption, 'auth.form.url') && _.has(screenshotOption, 'auth.form.actions')) {
+          const authFormPage = await browserContext.newPage();
+          const authFormURL = _.get(screenshotOption, 'auth.form.url', null);
+          const authFormActions = _.get(screenshotOption, 'auth.form.actions', null);
+          await authFormPage.goto(authFormURL);
+          authFormActions.forEach(async (action: any) => {
+            switch (action.action) {
+              case 'fill': // フォームのフィールドを入力する
+                await authFormPage.fill(action.selector, action.value);
+                break;
+              case 'select': // フォームのセレクトボックスのオプションを選択する
+                await authFormPage.selectOption(action.selector, action.value);
+                break;
+              case 'check': // チェックボックスまたはラジオボタンのチェックを変更する
+                await authFormPage.check(action.selector);
+                break;
+              case 'click': // ボタンをクリックする
+                await authFormPage.click(action.selector);
+                break;
+            }
+          });
+        }
+        browserContexts[screenshotGroup] = browserContext;
       }
       const context = browserContexts[screenshotGroup];
       const testUrl = new URL(screenshotPage.url);
