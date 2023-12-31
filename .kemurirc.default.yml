@@ -171,6 +171,12 @@
 ## スクリーンショットの設定
 ## ---------------
 # screenshot:
+#   ## 認証設定(experimental)
+#   auth:
+#     ## Basic認証設定
+#     basic:
+#       username: null
+#       password: null
 #   ## スクリーンショットの保存先ディレクトリ
 #   outputDir: screenshots
 #   ## ディレクトリを作成せずにフラットにスクリーンショットを保存する

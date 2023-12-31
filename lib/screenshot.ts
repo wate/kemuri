@@ -49,7 +49,7 @@ if (argv.config !== undefined) {
 }
 
 let pages: Page[] = [];
-const screenshotOption = configLoader.getScreenshotOption();
+const screenshotOption: any = configLoader.getScreenshotOption();
 let sitemapLocation: any = null;
 if (argv.location) {
   sitemapLocation = argv.location;
@@ -72,7 +72,18 @@ if (argv.location) {
 console.info('Sitemap location: ' + sitemapLocation);
 
 if (/^https?:\/\//.test(sitemapLocation)) {
-  const dom = new JSDOM(await (await fetch(sitemapLocation)).text());
+  const fetchOption: any = {};
+  /**
+   * Basic認証の設定
+   */
+  if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+    const auth_basic_username = _.get(screenshotOption, 'auth.basic.username', null);
+    const auth_basic_password = _.get(screenshotOption, 'auth.basic.password', null);
+    if (auth_basic_username && auth_basic_password) {
+      fetchOption.headers = { Authorization: 'Basic ' + btoa(`${auth_basic_username}:${auth_basic_username}`) };
+    }
+  }
+  const dom = new JSDOM(await (await fetch(sitemapLocation, fetchOption)).text());
   const urls = dom.window.document.querySelectorAll('url');
   urls.forEach((url) => {
     const loc = url.querySelector('loc');
@@ -219,9 +230,23 @@ if (pages.length === 0) {
         screenshotSaveDir = path.join(screenshotBaseSaveDir, screenshotPage.group);
       }
       if (!browserContexts[screenshotGroup]) {
-        browserContexts[screenshotGroup] = await browser.newContext({
+        const browserContextOption: any = {
           viewport: { width: screenshotPage.width, height: screenshotPage.height },
-        });
+        };
+        /**
+         * Basic認証の設定
+         */
+        if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+          const auth_basic_username = _.get(screenshotOption, 'auth.basic.username', null);
+          const auth_basic_password = _.get(screenshotOption, 'auth.basic.password', null);
+          if (auth_basic_username && auth_basic_password) {
+            browserContextOption.httpCredentials = {
+              username: auth_basic_username,
+              password: auth_basic_password,
+            };
+          }
+        }
+        browserContexts[screenshotGroup] = await browser.newContext(browserContextOption);
       }
       const context = browserContexts[screenshotGroup];
       const testUrl = new URL(screenshotPage.url);
