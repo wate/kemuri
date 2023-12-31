@@ -171,12 +171,6 @@
 ## スクリーンショットの設定
 ## ---------------
 # screenshot:
-#   ## 認証設定(experimental)
-#   auth:
-#     ## Basic認証設定
-#     basic:
-#       username: null
-#       password: null
 #   ## スクリーンショットの保存先ディレクトリ
 #   outputDir: screenshots
 #   ## ディレクトリを作成せずにフラットにスクリーンショットを保存する
@@ -219,3 +213,36 @@
 #   #     type: iPhone 14 Pro
 #   #   mobile_landscape:
 #   #     type: iPhone 14 Pro landscape
+#   # ## 認証設定(experimental)
+#   # auth:
+#   #   ## Basic認証設定
+#   #   basic:
+#   #     username: null
+#   #     password: null
+#   #   ## フォーム(ログイン画面)認証設定
+#   #   form:
+#   #     ### -----------
+#   #     ### Example
+#   #     ### -----------
+#   #     ## 認証フォームのURL
+#   #     url: http://example.com/
+#   #     ## 認証フォームの操作
+#   #     actions:
+#   #       ## ユーザー名(テキストフィールド)を入力
+#   #       - selector: "#username"
+#   #         action: fill
+#   #         value: admin
+#   #       ## パスワード(パスワードフィールド)を入力
+#   #       - selector: "#password"
+#   #         action: fill
+#   #         value: password
+#   #       ## ログイン先(コンボボックス)を選択
+#   #       - selector: "#choice"
+#   #         action: select
+#   #         value: admin
+#   #       ## ログイン情報を記憶する(チェックボックス)にチェックを入れる
+#   #       - selector: "#remember_me"
+#   #         action: check
+#   #       ## ログインボタンをクリックする
+#   #       - selector: "#submit"
+#   #         action: click
