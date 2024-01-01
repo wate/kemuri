@@ -26,6 +26,10 @@ export type ignoreOption = {
    */
   fileSuffix?: string;
   /**
+   * 除外ファイル名
+   */
+  fileNames?: string[];
+  /**
    * 除外するディレクトリのプレフィックス
    */
   dirPrefix?: string;
@@ -87,6 +91,10 @@ export abstract class baseBuilder {
    * (この接頭語を持つディレクトリ以下に配置されているファイルはエントリポイントから除外される)
    */
   protected ignoreDirPrefix: string | null = null;
+  /**
+   * エントリポイントから除外するファイル名
+   */
+  protected ignoreFileNames: string[] = [];
   /**
    * エントリポイントから除外するディレクトリ名の接尾語
    */
@@ -221,14 +229,23 @@ export abstract class baseBuilder {
     if (option.suffix && option.dirSuffix === undefined) {
       option.dirSuffix = option.suffix;
     }
+    /**
+     * ファイル名を元にした除外設定
+     */
     if (option.filePrefix !== undefined && option.filePrefix) {
       this.setIgnoreFilePrefix(option.filePrefix);
     }
-    if (option.dirPrefix !== undefined && option.dirPrefix) {
-      this.setIgnoreDirPrefix(option.dirPrefix);
-    }
     if (option.fileSuffix !== undefined && option.fileSuffix) {
       this.setIgnoreFileSuffix(option.fileSuffix);
+    }
+    if (option.fileNames !== undefined) {
+      this.setIgnoreFileNames(option.fileNames);
+    }
+    /**
+     * ディレクトリ名を元にした除外設定
+     */
+    if (option.dirPrefix !== undefined && option.dirPrefix) {
+      this.setIgnoreDirPrefix(option.dirPrefix);
     }
     if (option.dirSuffix !== undefined && option.dirSuffix) {
       this.setIgnoreDirSuffix(option.dirSuffix);
@@ -270,6 +287,14 @@ export abstract class baseBuilder {
    */
   public setIgnoreFileSuffix(ignoreSuffix: string): void {
     this.ignoreFileSuffix = ignoreSuffix;
+  }
+  /**
+   * エントリポイントから除外するファイル名を設定する
+   * @param fileNames
+   * @returns
+   */
+  public setIgnoreFileNames(fileNames: string[]): void {
+    this.ignoreFileNames = fileNames;
   }
   /**
    * エントリポイントから除外するファイル名の接尾語を設定する
@@ -355,6 +380,17 @@ export abstract class baseBuilder {
     return '';
   }
   /**
+   * ファイル名による除外パターンを取得する
+   * @returns
+   */
+  public getIgnoreFileNamePattern(): string {
+    if (this.ignoreFileNames.length > 0) {
+      return this.convertGlobPattern(this.srcDir) + '/**/{' + this.ignoreFileNames.join(',') + '}';
+    }
+    return '';
+  }
+
+  /**
    * ディレクトリ名の接頭語による除外パターンを取得する
    * @returns
    */
@@ -410,6 +446,7 @@ export abstract class baseBuilder {
     const ignorePatterns = [
       this.getIgnoreFilePrefixPattern(),
       this.getIgnoreFileSuffixPattern(),
+      this.getIgnoreFileNamePattern(),
       this.getIgnoreDirPrefixPattern(),
       this.getIgnoreDirSuffixPattern(),
       this.getIgnoreDirNamePattern(),
@@ -427,7 +464,7 @@ export abstract class baseBuilder {
     const fileName = path.basename(p.name, path.extname(p.name));
     const prefixCheck = this.ignoreFilePrefix ? RegExp('^' + this.ignoreFilePrefix).test(fileName) : false;
     const suffixCheck = this.ignoreFileSuffix ? RegExp(this.ignoreFileSuffix + '$').test(fileName) : false;
-    return prefixCheck || suffixCheck;
+    return prefixCheck || suffixCheck || this.ignoreFileNames.includes(p.name);
   }
 
   /**
