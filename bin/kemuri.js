@@ -511,14 +511,24 @@ class sassBuilder extends baseBuilder {
         if (option.generateIndex !== undefined && option.generateIndex !== null) {
             this.setGenerateIndex(option.generateIndex);
         }
-        if (option.indexFileName !== undefined) {
+        if (this.generateIndex && option.indexFileName !== undefined) {
             this.setIndexFileName(option.indexFileName);
+        }
+        if (this.generateIndex && option.indexImportType !== undefined) {
+            this.setIndexImportType(option.indexImportType);
         }
         let sassLoadPaths = [this.srcDir, 'node_modules'];
         if (option.loadPaths !== undefined) {
             sassLoadPaths = option.loadPaths;
         }
         this.setLoadPaths(sassLoadPaths);
+        /**
+         * インデックスファイルの自動生成を行う場合は、
+         * インデックスファイルをエントリポイントから除外する
+         */
+        if (this.generateIndex && !this.ignoreFileNames.includes(this.indexFileName)) {
+            this.ignoreFileNames.push(this.indexFileName);
+        }
     }
     /**
      * コンパイルオプションを取得する
