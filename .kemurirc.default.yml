@@ -31,6 +31,7 @@
 # ignore:
 #   filePrefix: null
 #   fileSuffix: null
+#   fileNames: []
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
@@ -48,6 +49,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames: []
@@ -87,6 +89,7 @@
 #   ignore:
 #     filePrefix: _
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames: []
@@ -117,6 +120,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames:
