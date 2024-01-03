@@ -20,8 +20,6 @@
 #   open: true
 #   browser: default
 #   notify: false
-#   ui: false
-#   uiPort: 3001
 ## ---------------
 ## 共通設定項目
 ## ---------------
