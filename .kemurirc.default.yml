@@ -137,11 +137,11 @@
 #   # ## -----------------
 #   # ## Example Setting
 #   # ## -----------------
-#   # - src: node_modules/mingcute_icon/font/MingCute.{eot,svg,ttf,woff}
+#   # - src: node_modules/remixicon/font/remixicon.{eot,svg,ttf,woff,woff2,css}
 #   #   dest: public/assets/font
-#   #   ## ----
+#   #   ## --------------
 #   #   ## コピーオプション
-#   #   ## ----
+#   #   ## --------------
 #   #   ### コピーするときにシンボリックリンクをたどるか否か
 #   #   dereference: false
 #   #   ### 空のディレクトリもコピーするか否か
@@ -152,6 +152,19 @@
 #   #   update: false
 #   #   ### 変換処理(experimental)
 #   #   transforms: []
+#   #     # ## -----------------
+#   #     # ## Example Setting
+#   #     # ## -----------------
+#   #     # ### command
+#   #     # - command: babel --source-maps inline
+#   #     # ### minify
+#   #     # - name: terser
+#   #     #   args:
+#   #     #     parse: {}
+#   #     #     compress: {}
+#   #     #     mangle:
+#   #     #       properties: {}
+#   #     #     format: {}
 ## ---------------
 ## スニペットのビルド設定
 ## ---------------

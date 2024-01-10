@@ -195,7 +195,7 @@ class configLoader {
    * @param commands
    * @returns
    * ※以下のコードを元に実装
-   * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L41-L69
+   * @see https://github.com/bcomnes/cpx2/blob/master/bin/main.js#L50-L68
    */
   protected static convertCpxCommandParam(command: string): any {
     return (file: string) => {
@@ -224,7 +224,7 @@ class configLoader {
    * @param transforms
    * @returns
    * ※以下のコードを元に実装
-   * @see https://github.com/mysticatea/cpx/blob/master/bin/main.js#L72-L92
+   * @see https://github.com/bcomnes/cpx2/blob/master/bin/main.js#L87-L91
    */
   protected static convertCpxTransformParam(name: string, args?: any): any {
     args = args || {};

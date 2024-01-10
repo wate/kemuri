@@ -18,7 +18,7 @@ import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
 import _ from 'lodash';
-import cpx from 'cpx';
+import cpx from 'cpx2';
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
 import yargs from 'yargs';
 import chalk from 'chalk';

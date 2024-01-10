@@ -4,13 +4,13 @@ import fs from 'fs-extra';
 import jsBuilder from './builder/js';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
-import cpx from 'cpx';
+// @ts-ignore
+import cpx from 'cpx2';
 import * as server from './server/browser-sync';
 import configLoader from './config';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import console from './console';
-import { a } from '../bin/lib/config.mjs';
 
 const argv = yargs(process.argv.slice(2))
   .options({
