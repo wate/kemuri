@@ -15,7 +15,7 @@ dependencies:
     specifier: ^0.4.4
     version: 0.4.4(rollup@4.9.4)
   '@rollup/plugin-typescript':
-    specifier: ^11.1.5
+    specifier: ^11.1.6
     version: 11.1.6(rollup@4.9.4)(tslib@2.6.2)(typescript@5.3.3)
   browser-sync:
     specifier: ^3.0.2
@@ -57,7 +57,7 @@ dependencies:
     specifier: ^4.1.0
     version: 4.1.0
   jsdom:
-    specifier: ^23.0.1
+    specifier: ^23.2.0
     version: 23.2.0
   lodash:
     specifier: ^4.17.21
@@ -87,7 +87,7 @@ dependencies:
     specifier: ^1.22.8
     version: 1.22.8
   rollup:
-    specifier: ^4.9.2
+    specifier: ^4.9.4
     version: 4.9.4
   sass:
     specifier: ^1.69.7
@@ -152,7 +152,7 @@ devDependencies:
     specifier: ^4.0.3
     version: 4.0.3
   '@types/node':
-    specifier: ^20.10.6
+    specifier: ^20.10.8
     version: 20.10.8
   '@types/nunjucks':
     specifier: ^3.2.6
