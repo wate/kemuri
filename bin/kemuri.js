@@ -1113,7 +1113,6 @@ const argv = yargs(process.argv.slice(2))
     m: {
         type: 'string',
         choices: ['develop', 'production'],
-        default: 'develop',
         alias: 'mode',
         description: 'ビルド処理のモード指定',
     },
@@ -1186,7 +1185,9 @@ if (argv.init) {
     process.exit(0);
 }
 let mode = 'develop';
+// console.log(argv);
 if (argv.mode !== undefined) {
+    // @ts-ignore
     mode = String(argv.mode);
 }
 else if (argv.develop !== undefined) {
@@ -1195,6 +1196,7 @@ else if (argv.develop !== undefined) {
 else if (argv.production !== undefined) {
     mode = 'production';
 }
+// console.log(mode);
 if (argv.config !== undefined) {
     //@ts-ignore
     configLoader.configFile = argv.config;

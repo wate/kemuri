@@ -26,8 +26,6 @@ const argv = yargs(process.argv.slice(2))
     open: { type: 'boolean', description: 'UIオプションを設定する' },
     browser: { type: 'string', description: 'ブラウザオプションを設定する' },
     notify: { type: 'boolean', description: '更新通知オプションを設定する' },
-    ui: { type: 'boolean', description: 'UIオプションを設定する' },
-    uiPort: { type: 'number', description: 'UIオプションのポート番号を設定する' },
     c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
 })
     .parseSync();
@@ -66,14 +64,6 @@ if (argv.browser !== undefined) {
 if (argv.notify !== undefined) {
     //@ts-ignore
     orverrideOption.notify = argv.notify;
-}
-if (argv.ui !== undefined) {
-    //@ts-ignore
-    orverrideOption.ui = argv.ui;
-}
-if (argv.niPort !== undefined) {
-    //@ts-ignore
-    orverrideOption.ui = argv.uiPort;
 }
 const browserSyncOption = getBrowserSyncOption(orverrideOption);
 console.group(chalk.blue('browserSync Server Option'));
