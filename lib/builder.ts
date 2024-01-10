@@ -10,6 +10,7 @@ import configLoader from './config';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import console from './console';
+import { a } from '../bin/lib/config.mjs';
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -17,7 +18,6 @@ const argv = yargs(process.argv.slice(2))
     m: {
       type: 'string',
       choices: ['develop', 'production'],
-      default: 'develop',
       alias: 'mode',
       description: 'ビルド処理のモード指定',
     },
@@ -89,14 +89,17 @@ if (argv.init) {
   process.exit(0);
 }
 
-let mode: string = 'develop';
+let mode: 'develop' | 'production' = 'develop';
+// console.log(argv);
 if (argv.mode !== undefined) {
+  // @ts-ignore
   mode = String(argv.mode);
 } else if (argv.develop !== undefined) {
   mode = 'develop';
 } else if (argv.production !== undefined) {
   mode = 'production';
 }
+// console.log(mode);
 
 if (argv.config !== undefined) {
   //@ts-ignore

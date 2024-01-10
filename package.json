@@ -76,7 +76,7 @@
   "scripts": {
     "builder": "run-s builder:build",
     "builder:watch": "tsx lib/builder.ts --html --css --js --copy --watch --server",
-    "builder:build": "tsx lib/builder.ts --html --css --js --copy",
+    "builder:build": "tsx lib/builder.ts --html --css --js --copy --production",
     "builder:init": "tsx lib/builder.ts --init",
     "server": "tsx lib/server.ts",
     "screenshot": "tsx lib/screenshot.ts",
