@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -10,16 +10,19 @@
     "kemuri-screenshot": "bin/kemuri-screenshot.js",
     "kemuri-snippet": "bin/kemuri-snippet.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.5",
-    "browser-sync": "^2.29.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "browser-sync": "^3.0.2",
     "chalk": "^5.3.0",
     "chokidar": "^3.5.3",
-    "cosmiconfig": "^8.3.6",
-    "cpx": "github:mysticatea/cpx",
+    "cosmiconfig": "^9.0.0",
+    "cpx2": "^7.0.1",
     "dotenv": "^16.3.1",
     "duplexer3": "^1.0.0",
     "editorconfig": "^2.0.0",
@@ -28,17 +31,18 @@
     "gray-matter": "^4.0.3",
     "js-beautify": "^1.14.11",
     "js-yaml": "^4.1.0",
-    "jsdom": "^22.1.0",
+    "jsdom": "^23.2.0",
     "lodash": "^4.17.21",
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-frontmatter": "^2.0.1",
     "micromark-extension-frontmatter": "^2.0.0",
     "micromatch": "^4.0.5",
+    "npm-check-updates": "^16.14.12",
     "nunjucks": "^3.2.4",
     "playwright": "^1.40.1",
     "resolve": "^1.22.8",
-    "rollup": "^4.9.1",
-    "sass": "^1.69.5",
+    "rollup": "^4.9.4",
+    "sass": "^1.69.7",
     "shell-quote": "^1.8.1",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
@@ -60,7 +64,7 @@
     "@types/jsdom": "^21.1.6",
     "@types/lodash": "^4.14.202",
     "@types/mdast": "^4.0.3",
-    "@types/node": "^20.10.5",
+    "@types/node": "^20.10.8",
     "@types/nunjucks": "^3.2.6",
     "@types/resolve": "^1.20.6",
     "@types/shell-quote": "^1.7.5",
@@ -72,7 +76,7 @@
   "scripts": {
     "builder": "run-s builder:build",
     "builder:watch": "tsx lib/builder.ts --html --css --js --copy --watch --server",
-    "builder:build": "tsx lib/builder.ts --html --css --js --copy",
+    "builder:build": "tsx lib/builder.ts --html --css --js --copy --production",
     "builder:init": "tsx lib/builder.ts --init",
     "server": "tsx lib/server.ts",
     "screenshot": "tsx lib/screenshot.ts",
@@ -81,6 +85,7 @@
     "----------": "",
     "bin-build": "run-s bin-build:*",
     "bin-build:build": "rollup -c",
-    "bin-build:chmod": "chmod 0755 bin/*.js"
+    "bin-build:chmod": "chmod 0755 bin/*.js",
+    "npm-check-updates": "ncu -u"
   }
 }

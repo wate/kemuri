@@ -18,7 +18,7 @@ import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
 import _ from 'lodash';
-import cpx from 'cpx';
+import cpx from 'cpx2';
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
 import yargs from 'yargs';
 import chalk from 'chalk';
@@ -125,7 +125,7 @@ class typescriptBuilder extends baseBuilder {
         /**
          * Roolup.jsに指定する出力形式
          */
-        this.outputFortmat = 'es';
+        this.outputFortmat = 'esm';
         /**
          * Minyfy化のオプション
          * https://github.com/terser/terser#minify-options
@@ -511,14 +511,24 @@ class sassBuilder extends baseBuilder {
         if (option.generateIndex !== undefined && option.generateIndex !== null) {
             this.setGenerateIndex(option.generateIndex);
         }
-        if (option.indexFileName !== undefined) {
+        if (this.generateIndex && option.indexFileName !== undefined) {
             this.setIndexFileName(option.indexFileName);
+        }
+        if (this.generateIndex && option.indexImportType !== undefined) {
+            this.setIndexImportType(option.indexImportType);
         }
         let sassLoadPaths = [this.srcDir, 'node_modules'];
         if (option.loadPaths !== undefined) {
             sassLoadPaths = option.loadPaths;
         }
         this.setLoadPaths(sassLoadPaths);
+        /**
+         * インデックスファイルの自動生成を行う場合は、
+         * インデックスファイルをエントリポイントから除外する
+         */
+        if (this.generateIndex && !this.ignoreFileNames.includes(this.indexFileName)) {
+            this.ignoreFileNames.push(this.indexFileName);
+        }
     }
     /**
      * コンパイルオプションを取得する
@@ -1103,7 +1113,6 @@ const argv = yargs(process.argv.slice(2))
     m: {
         type: 'string',
         choices: ['develop', 'production'],
-        default: 'develop',
         alias: 'mode',
         description: 'ビルド処理のモード指定',
     },
@@ -1176,7 +1185,9 @@ if (argv.init) {
     process.exit(0);
 }
 let mode = 'develop';
+// console.log(argv);
 if (argv.mode !== undefined) {
+    // @ts-ignore
     mode = String(argv.mode);
 }
 else if (argv.develop !== undefined) {
@@ -1185,6 +1196,7 @@ else if (argv.develop !== undefined) {
 else if (argv.production !== undefined) {
     mode = 'production';
 }
+// console.log(mode);
 if (argv.config !== undefined) {
     //@ts-ignore
     configLoader.configFile = argv.config;

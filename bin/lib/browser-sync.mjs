@@ -85,18 +85,6 @@ function getBrowserSyncOption(orverrideOption) {
         //@ts-ignore
         browserSyncOption.notify = _.get(serverOption, 'notify');
     }
-    /**
-     * UIオプション
-     */
-    if (_.has(serverOption, 'ui') && _.get(serverOption, 'ui')) {
-        browserSyncOption.ui = true;
-        if (browserSyncOption.ui && _.has(serverOption, 'uiPort')) {
-            //browserSyncのUIポート番号を設定
-            browserSyncOption.ui = {
-                port: _.get(serverOption, 'uiPort'),
-            };
-        }
-    }
     return browserSyncOption;
 }
 /**

@@ -20,8 +20,6 @@
 #   open: true
 #   browser: default
 #   notify: false
-#   ui: false
-#   uiPort: 3001
 ## ---------------
 ## 共通設定項目
 ## ---------------
@@ -31,6 +29,7 @@
 # ignore:
 #   filePrefix: null
 #   fileSuffix: null
+#   fileNames: []
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
@@ -48,6 +47,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames: []
@@ -87,6 +87,7 @@
 #   ignore:
 #     filePrefix: _
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames: []
@@ -117,6 +118,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
+#     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames:
@@ -135,11 +137,11 @@
 #   # ## -----------------
 #   # ## Example Setting
 #   # ## -----------------
-#   # - src: node_modules/mingcute_icon/font/MingCute.{eot,svg,ttf,woff}
+#   # - src: node_modules/remixicon/font/remixicon.{eot,svg,ttf,woff,woff2,css}
 #   #   dest: public/assets/font
-#   #   ## ----
+#   #   ## --------------
 #   #   ## コピーオプション
-#   #   ## ----
+#   #   ## --------------
 #   #   ### コピーするときにシンボリックリンクをたどるか否か
 #   #   dereference: false
 #   #   ### 空のディレクトリもコピーするか否か
@@ -150,6 +152,19 @@
 #   #   update: false
 #   #   ### 変換処理(experimental)
 #   #   transforms: []
+#   #     # ## -----------------
+#   #     # ## Example Setting
+#   #     # ## -----------------
+#   #     # ### command
+#   #     # - command: babel --source-maps inline
+#   #     # ### minify
+#   #     # - name: terser
+#   #     #   args:
+#   #     #     parse: {}
+#   #     #     compress: {}
+#   #     #     mangle:
+#   #     #       properties: {}
+#   #     #     format: {}
 ## ---------------
 ## スニペットのビルド設定
 ## ---------------
@@ -213,3 +228,36 @@
 #   #     type: iPhone 14 Pro
 #   #   mobile_landscape:
 #   #     type: iPhone 14 Pro landscape
+#   # ## 認証設定(experimental)
+#   # auth:
+#   #   ## Basic認証設定
+#   #   basic:
+#   #     username: null
+#   #     password: null
+#   #   ## フォーム(ログイン画面)認証設定
+#   #   form:
+#   #     ### -----------
+#   #     ### Example
+#   #     ### -----------
+#   #     ## 認証フォームのURL
+#   #     url: http://example.com/
+#   #     ## 認証フォームの操作
+#   #     actions:
+#   #       ## ユーザー名(テキストフィールド)を入力
+#   #       - selector: "#username"
+#   #         action: fill
+#   #         value: admin
+#   #       ## パスワード(パスワードフィールド)を入力
+#   #       - selector: "#password"
+#   #         action: fill
+#   #         value: password
+#   #       ## ログイン先(コンボボックス)を選択
+#   #       - selector: "#choice"
+#   #         action: select
+#   #         value: admin
+#   #       ## ログイン情報を記憶する(チェックボックス)にチェックを入れる
+#   #       - selector: "#remember_me"
+#   #         action: check
+#   #       ## ログインボタンをクリックする
+#   #       - selector: "#submit"
+#   #         action: click

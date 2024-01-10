@@ -124,7 +124,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * Roolup.jsに指定する出力形式
    */
-  private outputFortmat: outputFormat = 'es';
+  private outputFortmat: outputFormat = 'esm';
 
   /**
    * SourceMapファイル出力の可否

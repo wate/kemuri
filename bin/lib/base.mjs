@@ -44,6 +44,10 @@ class baseBuilder {
          */
         this.ignoreDirPrefix = null;
         /**
+         * エントリポイントから除外するファイル名
+         */
+        this.ignoreFileNames = [];
+        /**
          * エントリポイントから除外するディレクトリ名の接尾語
          */
         this.ignoreDirSuffix = null;
@@ -173,14 +177,23 @@ class baseBuilder {
         if (option.suffix && option.dirSuffix === undefined) {
             option.dirSuffix = option.suffix;
         }
+        /**
+         * ファイル名を元にした除外設定
+         */
         if (option.filePrefix !== undefined && option.filePrefix) {
             this.setIgnoreFilePrefix(option.filePrefix);
         }
-        if (option.dirPrefix !== undefined && option.dirPrefix) {
-            this.setIgnoreDirPrefix(option.dirPrefix);
-        }
         if (option.fileSuffix !== undefined && option.fileSuffix) {
             this.setIgnoreFileSuffix(option.fileSuffix);
+        }
+        if (option.fileNames !== undefined) {
+            this.setIgnoreFileNames(option.fileNames);
+        }
+        /**
+         * ディレクトリ名を元にした除外設定
+         */
+        if (option.dirPrefix !== undefined && option.dirPrefix) {
+            this.setIgnoreDirPrefix(option.dirPrefix);
         }
         if (option.dirSuffix !== undefined && option.dirSuffix) {
             this.setIgnoreDirSuffix(option.dirSuffix);
@@ -222,6 +235,14 @@ class baseBuilder {
      */
     setIgnoreFileSuffix(ignoreSuffix) {
         this.ignoreFileSuffix = ignoreSuffix;
+    }
+    /**
+     * エントリポイントから除外するファイル名を設定する
+     * @param fileNames
+     * @returns
+     */
+    setIgnoreFileNames(fileNames) {
+        this.ignoreFileNames = fileNames;
     }
     /**
      * エントリポイントから除外するファイル名の接尾語を設定する
@@ -303,6 +324,16 @@ class baseBuilder {
         return '';
     }
     /**
+     * ファイル名による除外パターンを取得する
+     * @returns
+     */
+    getIgnoreFileNamePattern() {
+        if (this.ignoreFileNames.length > 0) {
+            return this.convertGlobPattern(this.srcDir) + '/**/{' + this.ignoreFileNames.join(',') + '}';
+        }
+        return '';
+    }
+    /**
      * ディレクトリ名の接頭語による除外パターンを取得する
      * @returns
      */
@@ -352,6 +383,7 @@ class baseBuilder {
         const ignorePatterns = [
             this.getIgnoreFilePrefixPattern(),
             this.getIgnoreFileSuffixPattern(),
+            this.getIgnoreFileNamePattern(),
             this.getIgnoreDirPrefixPattern(),
             this.getIgnoreDirSuffixPattern(),
             this.getIgnoreDirNamePattern(),
@@ -369,7 +401,7 @@ class baseBuilder {
         const fileName = path.basename(p.name, path.extname(p.name));
         const prefixCheck = this.ignoreFilePrefix ? RegExp('^' + this.ignoreFilePrefix).test(fileName) : false;
         const suffixCheck = this.ignoreFileSuffix ? RegExp(this.ignoreFileSuffix + '$').test(fileName) : false;
-        return prefixCheck || suffixCheck;
+        return prefixCheck || suffixCheck || this.ignoreFileNames.includes(p.name);
     }
     /**
      * エントリポイントからの除外ディレクトリ判定処理
