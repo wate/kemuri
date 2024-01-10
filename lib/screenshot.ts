@@ -6,7 +6,7 @@ import * as path from 'node:path';
 import { URL } from 'node:url';
 import configLoader from './config';
 import console from './console';
-import _, { forEach } from 'lodash';
+import _ from 'lodash';
 import { JSDOM } from 'jsdom';
 import chalk from 'chalk';
 import yargs from 'yargs';
