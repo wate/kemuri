@@ -84,9 +84,9 @@
     "snippet-builder:watch": "tsx lib/snippet-builder.ts --watch",
     "snippet-builder:build": "tsx lib/snippet-builder.ts --clean",
     "----------": "",
+    "npm-check-updates": "ncu -u",
     "bin-build": "run-s bin-build:*",
     "bin-build:build": "rollup -c",
-    "bin-build:chmod": "chmod 0755 bin/*.js",
-    "npm-check-updates": "ncu -u"
+    "bin-build:chmod": "chmod 0755 bin/*.js"
   }
 }
