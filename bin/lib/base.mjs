@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { glob } from 'glob';
 import * as chokidar from 'chokidar';
 import editorconfig from 'editorconfig';
+import { escapeRegExp } from 'lodash';
 import { c as console } from './config.mjs';
 
 /**
@@ -399,8 +400,12 @@ class baseBuilder {
      */
     globIgnoredFunc(p) {
         const fileName = path.basename(p.name, path.extname(p.name));
-        const prefixCheck = this.ignoreFilePrefix ? RegExp('^' + this.ignoreFilePrefix).test(fileName) : false;
-        const suffixCheck = this.ignoreFileSuffix ? RegExp(this.ignoreFileSuffix + '$').test(fileName) : false;
+        const prefixCheck = this.ignoreFilePrefix
+            ? RegExp('^' + escapeRegExp(this.ignoreFilePrefix)).test(fileName)
+            : false;
+        const suffixCheck = this.ignoreFileSuffix
+            ? RegExp(escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
+            : false;
         return prefixCheck || suffixCheck || this.ignoreFileNames.includes(p.name);
     }
     /**
@@ -411,8 +416,8 @@ class baseBuilder {
      */
     globChildrenIgnoredFunc(p) {
         const dirName = p.name;
-        const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + this.ignoreDirPrefix).test(dirName) : false;
-        const suffixCheck = this.ignoreDirSuffix ? RegExp(this.ignoreDirSuffix + '$').test(dirName) : false;
+        const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + escapeRegExp(this.ignoreDirPrefix)).test(dirName) : false;
+        const suffixCheck = this.ignoreDirSuffix ? RegExp(escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName) : false;
         return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
     }
     /**
