@@ -53,6 +53,10 @@ class typescriptBuilder extends baseBuilder {
          */
         this.moduleExts = ['mjs', 'cjs', 'mts', 'cts'];
         /**
+         * エントリポイントから除外するファイル名の接尾語
+         */
+        this.ignoreFileSuffix = '.d';
+        /**
          * エントリポイントから除外するディレクトリ名
          * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
          */

@@ -26,22 +26,22 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
-  protected srcDir: string = 'docs/cheatsheet';
+  protected srcDir = 'docs/cheatsheet';
 
   /**
    * 出力先ディレクトリ
    */
-  protected outputDir: string = '.vscode';
+  protected outputDir = '.vscode';
 
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['md'];
+  protected fileExts = ['md'];
 
   /**
    * 出力時の拡張子
    */
-  protected outputExt: string = 'code-snippets';
+  protected outputExt = 'code-snippets';
 
   /**
    * 言語コードに対応する言語名のマップ

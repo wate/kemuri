@@ -8,15 +8,16 @@ import console from '../../console';
 
 const beautify = js_beautify.css;
 
+type sassBuilderIndexImportTypeOption = 'use' | 'forward';
 /**
  * CSSビルドの設定オプション
  */
 export interface sassBuilderOption extends builderOption {
-  style?: 'expanded' | 'compressed';
+  style?: sass.OutputStyle;
   sourcemap?: boolean;
   generateIndex?: boolean;
   indexFileName?: string;
-  indexImportType?: 'use' | 'forward';
+  indexImportType?: sassBuilderIndexImportTypeOption;
   loadPaths?: string[];
 }
 
@@ -27,12 +28,12 @@ export class sassBuilder extends baseBuilder {
   /**
    * 出力先ディレクトリ
    */
-  protected outputDir: string = 'public/assets/css';
+  protected outputDir = 'public/assets/css';
 
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['scss', 'sass', 'css'];
+  protected fileExts = ['scss', 'sass', 'css'];
 
   /**
    * エントリポイントから除外するファイル名の接頭語
@@ -53,7 +54,7 @@ export class sassBuilder extends baseBuilder {
   /**
    * 出力スタイルの設定
    */
-  private style?: 'expanded' | 'compressed';
+  private style?: sass.OutputStyle;
 
   /**
    * SourceMapファイル出力の可否
@@ -78,14 +79,14 @@ export class sassBuilder extends baseBuilder {
   /**
    * インデックスファイルにインポートする際の方法
    */
-  private indexImportType: 'forward' | 'use' = 'forward';
+  private indexImportType: sassBuilderIndexImportTypeOption = 'forward';
 
   /**
    * 出力スタイルの設定
    *
    * @param style
    */
-  public setStyle(style: 'expanded' | 'compressed'): void {
+  public setStyle(style: sass.OutputStyle): void {
     this.style = style;
   }
   /**
@@ -126,7 +127,7 @@ export class sassBuilder extends baseBuilder {
    *
    * @param importType
    */
-  public setIndexImportType(importType: 'forward' | 'use'): void {
+  public setIndexImportType(importType: sassBuilderIndexImportTypeOption): void {
     this.indexImportType = importType;
   }
 

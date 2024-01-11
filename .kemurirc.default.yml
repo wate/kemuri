@@ -117,7 +117,7 @@
 #     - cts
 #   ignore:
 #     filePrefix: null
-#     fileSuffix: null
+#     fileSuffix: ".d"
 #     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null

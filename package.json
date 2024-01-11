@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -69,6 +69,7 @@
     "@types/resolve": "^1.20.6",
     "@types/shell-quote": "^1.7.5",
     "@types/yargs": "^17.0.32",
+    "bulma": "^0.9.4",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.1.1",
     "tsx": "^4.7.0"

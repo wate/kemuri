@@ -78,27 +78,33 @@ export abstract class baseBuilder {
    * エントリポイントではないが変更の監視対象となるファイルの拡張子
    */
   protected moduleExts: string[] = [];
+
   /**
    * エントリポイントから除外するファイル名の接頭語
    */
   protected ignoreFilePrefix: string | null = null;
+
   /**
    * エントリポイントから除外するファイル名の接尾語
    */
-  protected ignoreFileSuffix?: string | null = null;
+  protected ignoreFileSuffix: string | null = null;
+
+  /**
+   * エントリポイントから除外するファイル名
+   */
+  protected ignoreFileNames: string[] = [];
+
   /**
    * エントリポイントから除外するディレクトリ名の接頭語
    * (この接頭語を持つディレクトリ以下に配置されているファイルはエントリポイントから除外される)
    */
   protected ignoreDirPrefix: string | null = null;
-  /**
-   * エントリポイントから除外するファイル名
-   */
-  protected ignoreFileNames: string[] = [];
+
   /**
    * エントリポイントから除外するディレクトリ名の接尾語
    */
   protected ignoreDirSuffix: string | null = null;
+
   /**
    * エントリポイントから除外するディレクトリ名
    * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)

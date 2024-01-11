@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { baseBuilder, builderOption } from '../base';
-import { rollup } from 'rollup';
+import { rollup, ModuleFormat as moduleFormat } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
@@ -11,8 +11,7 @@ import console from '../../console';
 
 const beautify = js_beautify.js;
 
-type outputFormat = 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
-
+type outputFormat = moduleFormat;
 /**
  * JSビルドの設定オプション
  */
@@ -46,6 +45,11 @@ export class typescriptBuilder extends baseBuilder {
    * エントリポイントではないが変更の監視対象となるファイルの拡張子
    */
   protected moduleExts = ['mjs', 'cjs', 'mts', 'cts'];
+  /**
+   * エントリポイントから除外するファイル名の接尾語
+   */
+  protected ignoreFileSuffix = '.d';
+
   /**
    * エントリポイントから除外するディレクトリ名
    * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)

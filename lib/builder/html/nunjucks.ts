@@ -44,12 +44,12 @@ export class nunjucksBuilder extends baseBuilder {
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['njk', 'twig'];
+  protected fileExts = ['njk', 'twig'];
 
   /**
    * 出力時の拡張子
    */
-  protected outputExt: string = 'html';
+  protected outputExt = 'html';
 
   /**
    * コンパイルオプション

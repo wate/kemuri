@@ -39,14 +39,14 @@ class baseBuilder {
          */
         this.ignoreFileSuffix = null;
         /**
+         * エントリポイントから除外するファイル名
+         */
+        this.ignoreFileNames = [];
+        /**
          * エントリポイントから除外するディレクトリ名の接頭語
          * (この接頭語を持つディレクトリ以下に配置されているファイルはエントリポイントから除外される)
          */
         this.ignoreDirPrefix = null;
-        /**
-         * エントリポイントから除外するファイル名
-         */
-        this.ignoreFileNames = [];
         /**
          * エントリポイントから除外するディレクトリ名の接尾語
          */
