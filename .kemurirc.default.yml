@@ -125,7 +125,7 @@
 #       - node_modules
 #   compileOption: {}
 #   beautifyOption: {}
-#   format: iife
+#   format: esm
 #   globals: {}
 #   sourcemap: false
 #   minify: false
