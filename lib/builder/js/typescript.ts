@@ -268,7 +268,7 @@ export class typescriptBuilder extends baseBuilder {
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
         } else {
           let outputCode: string = chunkOrAsset.code;
-          if (this.minify === undefined || !this.minify) {
+          if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -324,7 +324,7 @@ export class typescriptBuilder extends baseBuilder {
           outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           let outputCode = chunkOrAsset.code;
-          if (this.minify === undefined || !this.minify) {
+          if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(outputPath, outputCode.trim() + '\n');

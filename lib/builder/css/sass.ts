@@ -359,7 +359,7 @@ export class sassBuilder extends baseBuilder {
     const compileOption = this.getCompileOption();
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     const result = sass.compile(srcPath, compileOption);
-    if (compileOption.style !== 'compressed') {
+    if (compileOption.style !== 'compressed' && this.beautify) {
       result.css = beautify(result.css, beautifyOption);
     }
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -400,7 +400,7 @@ export class sassBuilder extends baseBuilder {
     entries.forEach((srcFile, entryPoint) => {
       const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
       const result = sass.compile(srcFile, compileOption);
-      if (compileOption.style !== 'compressed') {
+      if (compileOption.style !== 'compressed' && this.beautify) {
         result.css = beautify(result.css, beautifyOption);
       }
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });

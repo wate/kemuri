@@ -59,6 +59,11 @@ export class nunjucksBuilder extends baseBuilder {
   };
 
   /**
+   * 整形のオプション
+   */
+  protected beautify = true;
+
+  /**
    * -------------------------
    * このクラス固有のメンバ変数/メソッド
    * -------------------------
@@ -402,7 +407,9 @@ export class nunjucksBuilder extends baseBuilder {
     const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
     let html = nunjucks.render(templatePath, templateVars);
-    html = beautify(html, beautifyOption);
+    if (this.beautify) {
+      html = beautify(html, beautifyOption);
+    }
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
   }
@@ -425,7 +432,9 @@ export class nunjucksBuilder extends baseBuilder {
       const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
       const templateVars = this.getTemplateVars(srcFile);
       let html = nunjucks.render(templatePath, templateVars);
-      html = beautify(html, beautifyOption);
+      if (this.beautify) {
+        html = beautify(html, beautifyOption);
+      }
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
       console.log('Compile: ' + srcFile + ' => ' + outputPath);

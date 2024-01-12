@@ -33,6 +33,7 @@
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
+# beautify: false
 # beautifyOption: {}
 ## ---------------
 ## HTMLビルド機能の設定
@@ -52,6 +53,7 @@
 #     dirSuffix: null
 #     dirNames: []
 #   compileOption: {}
+#   beautify: true
 #   beautifyOption: {}
 #   varFileName: vars.yml
 #   siteUrl: 'http://localhost:3000/'
@@ -92,6 +94,7 @@
 #     dirSuffix: null
 #     dirNames: []
 #   compileOption: {}
+#   beautify: false
 #   beautifyOption: {}
 #   style: null
 #   generateIndex: false
@@ -124,6 +127,7 @@
 #     dirNames:
 #       - node_modules
 #   compileOption: {}
+#   beautify: false
 #   beautifyOption: {}
 #   format: esm
 #   globals: {}
