@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "browser-sync": "^3.0.2",

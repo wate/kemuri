@@ -127,6 +127,11 @@
 #     dirNames:
 #       - node_modules
 #   compileOption: {}
+#   ## @see https://github.com/rollup/plugins/tree/master/packages/replace
+#   replaceOption:
+#     preventAssignment: true
+#     values:
+#       "process.env.NODE_ENV": "'production'"
 #   beautify: false
 #   beautifyOption: {}
 #   format: esm

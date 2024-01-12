@@ -5,6 +5,8 @@ import { rollup, ModuleFormat as moduleFormat } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import replace from '@rollup/plugin-replace';
+import type { RollupReplaceOptions } from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
 import console from '../../console';
@@ -20,6 +22,8 @@ export interface typescriptBuilderOption extends builderOption {
   globals?: object;
   // https://rollupjs.org/configuration-options/#output-format
   format?: outputFormat;
+  // https://github.com/rollup/plugins/tree/master/packages/replace
+  replaceOption?: RollupReplaceOptions;
   // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean;
   minify?: boolean;
@@ -131,6 +135,16 @@ export class typescriptBuilder extends baseBuilder {
   private outputFortmat: outputFormat = 'esm';
 
   /**
+   * 置換オプション
+   */
+  protected replaceOption: RollupReplaceOptions = {
+    preventAssignment: true,
+    values: {
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    },
+  };
+
+  /**
    * SourceMapファイル出力の可否
    */
   private sourcemap?: boolean;
@@ -157,6 +171,7 @@ export class typescriptBuilder extends baseBuilder {
   public setGlobals(globals: any): void {
     this.globals = globals;
   }
+
   /**
    * 出力形式を設定する
    *
@@ -165,6 +180,15 @@ export class typescriptBuilder extends baseBuilder {
   public setOutputFormat(format: outputFormat): void {
     this.outputFortmat = format;
   }
+
+  /**
+   * 置換オプションを設定する
+   * @param replaceOption
+   */
+  public setReplaceOption(replaceOption: RollupReplaceOptions): void {
+    this.replaceOption = replaceOption;
+  }
+
   /**
    * SourceMapファイル出力の可否
    *
@@ -209,6 +233,9 @@ export class typescriptBuilder extends baseBuilder {
     if (option.format !== undefined && option.format !== null) {
       this.setOutputFormat(option.format);
     }
+    if (option.replaceOption !== undefined && option.replaceOption !== null) {
+      this.setReplaceOption(option.replaceOption);
+    }
     if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
     }
@@ -247,7 +274,7 @@ export class typescriptBuilder extends baseBuilder {
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -300,7 +327,7 @@ export class typescriptBuilder extends baseBuilder {
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }

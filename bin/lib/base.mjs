@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import { glob } from 'glob';
 import * as chokidar from 'chokidar';
 import editorconfig from 'editorconfig';
-import { escapeRegExp } from 'lodash';
+import _ from 'lodash';
 import { c as console } from './config.mjs';
 
 /**
@@ -66,6 +66,10 @@ class baseBuilder {
          */
         this.compileOption = {};
         /**
+         * 整形のオプション
+         */
+        this.beautify = false;
+        /**
          * js-beautifyのオプション
          */
         this.beautifyOption = {};
@@ -104,6 +108,9 @@ class baseBuilder {
         if (option.compileOption !== undefined && option.compileOption) {
             this.setCompileOption(option.compileOption);
         }
+        if (option.beautify !== undefined) {
+            this.setBeautify(option.beautify);
+        }
         if (option.beautifyOption !== undefined && option.beautifyOption) {
             this.setBeautifyOption(option.beautifyOption);
         }
@@ -138,9 +145,17 @@ class baseBuilder {
         this.compileOption = compileOption;
     }
     /**
+     * 出力時に整形するかどうかを設定する
+     *
+     * @param beautifyOption
+     */
+    setBeautify(beautify) {
+        this.beautify = beautify;
+    }
+    /**
      * js-beautifyのオプションを設定する
      *
-     * @param compileOption
+     * @param beautifyOption
      */
     setBeautifyOption(beautifyOption) {
         this.beautifyOption = beautifyOption;
@@ -401,10 +416,10 @@ class baseBuilder {
     globIgnoredFunc(p) {
         const fileName = path.basename(p.name, path.extname(p.name));
         const prefixCheck = this.ignoreFilePrefix
-            ? RegExp('^' + escapeRegExp(this.ignoreFilePrefix)).test(fileName)
+            ? RegExp('^' + _.escapeRegExp(this.ignoreFilePrefix)).test(fileName)
             : false;
         const suffixCheck = this.ignoreFileSuffix
-            ? RegExp(escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
+            ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
             : false;
         return prefixCheck || suffixCheck || this.ignoreFileNames.includes(p.name);
     }
@@ -416,8 +431,8 @@ class baseBuilder {
      */
     globChildrenIgnoredFunc(p) {
         const dirName = p.name;
-        const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + escapeRegExp(this.ignoreDirPrefix)).test(dirName) : false;
-        const suffixCheck = this.ignoreDirSuffix ? RegExp(escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName) : false;
+        const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + _.escapeRegExp(this.ignoreDirPrefix)).test(dirName) : false;
+        const suffixCheck = this.ignoreDirSuffix ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName) : false;
         return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
     }
     /**

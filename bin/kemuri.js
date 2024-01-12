@@ -7,6 +7,7 @@ import { rollup } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
 import { c as console, a as configLoader } from './lib/config.mjs';
@@ -131,6 +132,15 @@ class typescriptBuilder extends baseBuilder {
          */
         this.outputFortmat = 'esm';
         /**
+         * 置換オプション
+         */
+        this.replaceOption = {
+            preventAssignment: true,
+            values: {
+                'process.env.NODE_ENV': JSON.stringify('production'),
+            },
+        };
+        /**
          * Minyfy化のオプション
          * https://github.com/terser/terser#minify-options
          */
@@ -154,6 +164,13 @@ class typescriptBuilder extends baseBuilder {
      */
     setOutputFormat(format) {
         this.outputFortmat = format;
+    }
+    /**
+     * 置換オプションを設定する
+     * @param replaceOption
+     */
+    setReplaceOption(replaceOption) {
+        this.replaceOption = replaceOption;
     }
     /**
      * SourceMapファイル出力の可否
@@ -198,6 +215,9 @@ class typescriptBuilder extends baseBuilder {
         if (option.format !== undefined && option.format !== null) {
             this.setOutputFormat(option.format);
         }
+        if (option.replaceOption !== undefined && option.replaceOption !== null) {
+            this.setReplaceOption(option.replaceOption);
+        }
         if (option.sourcemap !== undefined && option.sourcemap !== null) {
             this.setSourceMap(option.sourcemap);
         }
@@ -234,7 +254,7 @@ class typescriptBuilder extends baseBuilder {
                 exclude: this.ignoreDirNames,
                 compilerOptions: this.getCompileOption(),
             };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser(this.minifyOption));
             }
@@ -256,7 +276,7 @@ class typescriptBuilder extends baseBuilder {
                 }
                 else {
                     let outputCode = chunkOrAsset.code;
-                    if (this.minify === undefined || !this.minify) {
+                    if ((this.minify === undefined || !this.minify) && this.beautify) {
                         outputCode = beautify$2(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -288,7 +308,7 @@ class typescriptBuilder extends baseBuilder {
                 exclude: this.ignoreDirNames,
                 compilerOptions: this.getCompileOption(),
             };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser(this.minifyOption));
             }
@@ -313,7 +333,7 @@ class typescriptBuilder extends baseBuilder {
                     outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
                     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
                     let outputCode = chunkOrAsset.code;
-                    if (this.minify === undefined || !this.minify) {
+                    if ((this.minify === undefined || !this.minify) && this.beautify) {
                         outputCode = beautify$2(outputCode, beautifyOption);
                     }
                     fs.writeFileSync(outputPath, outputCode.trim() + '\n');
@@ -647,7 +667,7 @@ class sassBuilder extends baseBuilder {
         const compileOption = this.getCompileOption();
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         const result = sass.compile(srcPath, compileOption);
-        if (compileOption.style !== 'compressed') {
+        if (compileOption.style !== 'compressed' && this.beautify) {
             result.css = beautify$1(result.css, beautifyOption);
         }
         fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -687,7 +707,7 @@ class sassBuilder extends baseBuilder {
         entries.forEach((srcFile, entryPoint) => {
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const result = sass.compile(srcFile, compileOption);
-            if (compileOption.style !== 'compressed') {
+            if (compileOption.style !== 'compressed' && this.beautify) {
                 result.css = beautify$1(result.css, beautifyOption);
             }
             fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -737,6 +757,10 @@ class nunjucksBuilder extends baseBuilder {
         this.compileOption = {
             autoescape: false,
         };
+        /**
+         * 整形のオプション
+         */
+        this.beautify = true;
         /**
          * -------------------------
          * このクラス固有のメンバ変数/メソッド
@@ -1074,7 +1098,9 @@ class nunjucksBuilder extends baseBuilder {
         const templatePath = path.relative(this.srcDir, srcPath);
         const templateVars = this.getTemplateVars(srcPath);
         let html = nunjucks.render(templatePath, templateVars);
-        html = beautify(html, beautifyOption);
+        if (this.beautify) {
+            html = beautify(html, beautifyOption);
+        }
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
     }
@@ -1096,7 +1122,9 @@ class nunjucksBuilder extends baseBuilder {
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const templateVars = this.getTemplateVars(srcFile);
             let html = nunjucks.render(templatePath, templateVars);
-            html = beautify(html, beautifyOption);
+            if (this.beautify) {
+                html = beautify(html, beautifyOption);
+            }
             fs.mkdirSync(path.dirname(outputPath), { recursive: true });
             fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
             console.log('Compile: ' + srcFile + ' => ' + outputPath);
