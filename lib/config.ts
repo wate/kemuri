@@ -37,6 +37,19 @@ class configLoader {
       console.error('Configuration file(.builderrc.yml) already exists');
     }
   }
+  /**
+   * TypeScriptの初期設定ファイルを生成する
+   * @param force
+   */
+  public static copyDefaultTSConfig(force?: boolean): void {
+    const srcConfigFilePath = path.resolve(__dirname, '../../tsconfig.json');
+    const destConfigFilePath = path.resolve(process.cwd(), 'tsconfig.json');
+    if (!fs.existsSync(destConfigFilePath) || force) {
+      fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
+    } else {
+      console.error('Configuration file(tsconfig.json) already exists');
+    }
+  }
 
   /**
    * 設定ファイルをロードする
