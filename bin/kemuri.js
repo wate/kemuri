@@ -1176,6 +1176,15 @@ if (argv.init) {
         configLoader.copyDefaultConfig(argv.force);
         console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
     }
+    if (fs$1.existsSync('tsconfig.json')) {
+        if (argv.force) {
+            configLoader.copyDefaultTSConfig(argv.force);
+            console.log(chalk.green('Configuration file(tsconfig.json) has been overwritten.'));
+        }
+        else {
+            console.warn('Configuration file(tsconfig.json) already exists.');
+        }
+    }
     if (argv.configOnly) {
         process.exit(0);
     }
