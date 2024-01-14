@@ -6,4 +6,5 @@
 .test {
   content: str-replace('bootstrap-function', 'bootstrap-', 'kemuri-');
   @include reset;
+  @include placeholder;
 }
