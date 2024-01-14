@@ -44,3 +44,6 @@ pages.json
 ### screenshot
 screenshots/*
 !/screenshots/.gitkeep
+
+### test
+tests/output/*
