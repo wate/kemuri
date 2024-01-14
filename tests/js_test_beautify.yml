@@ -7,6 +7,9 @@ js:
     fileNames:
       - type
       - types
+    dirNames:
+      - type
+      - types
   beautify: true
   beautifyOption:
     indent_size: 4

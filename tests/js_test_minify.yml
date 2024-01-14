@@ -7,4 +7,7 @@ js:
     fileNames:
       - type
       - types
+    dirNames:
+      - type
+      - types
   minify: true

@@ -1,7 +1,7 @@
 ---
 html:
   srcDir: tests/fixture/html
-  outputDir: tests/output/html/default
+  outputDir: tests/output/html/no-beautify
   ignore:
     filePrefix: _
     fileSuffix: -bk
@@ -10,5 +10,6 @@ html:
     dirNames:
       - element
       - layout
+  beautify: false
   beautifyOption:
     indent_size: 4
