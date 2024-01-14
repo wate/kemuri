@@ -358,6 +358,8 @@ class vscodeSnippetBuilder extends baseBuilder {
      * スニペットファイルを出力する
      */
     buildSnippet() {
+        //出力先ディレクトリを作成する
+        fs.mkdirSync(this.outputDir, { recursive: true });
         const groupdSnippets = _.groupBy(this.snipptes, 'group');
         Object.keys(groupdSnippets).forEach((groupName) => {
             //出力先ファイルパス

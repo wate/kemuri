@@ -134,11 +134,8 @@ class typescriptBuilder extends baseBuilder {
         /**
          * 置換オプション
          */
-        this.replaceOption = {
-            preventAssignment: true,
-            values: {
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            },
+        this.replace = {
+            'process.env.NODE_ENV': JSON.stringify('production'),
         };
         /**
          * Minyfy化のオプション
@@ -167,10 +164,10 @@ class typescriptBuilder extends baseBuilder {
     }
     /**
      * 置換オプションを設定する
-     * @param replaceOption
+     * @param replace
      */
-    setReplaceOption(replaceOption) {
-        this.replaceOption = replaceOption;
+    setReplace(replace) {
+        this.replace = replace;
     }
     /**
      * SourceMapファイル出力の可否
@@ -215,8 +212,8 @@ class typescriptBuilder extends baseBuilder {
         if (option.format !== undefined && option.format !== null) {
             this.setOutputFormat(option.format);
         }
-        if (option.replaceOption !== undefined && option.replaceOption !== null) {
-            this.setReplaceOption(option.replaceOption);
+        if (option.replace !== undefined && option.replace !== null) {
+            this.setReplace(option.replace);
         }
         if (option.sourcemap !== undefined && option.sourcemap !== null) {
             this.setSourceMap(option.sourcemap);
@@ -254,7 +251,11 @@ class typescriptBuilder extends baseBuilder {
                 exclude: this.ignoreDirNames,
                 compilerOptions: this.getCompileOption(),
             };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
+            const replaceOption = {
+                preventAssignment: true,
+                values: this.replace,
+            };
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser(this.minifyOption));
             }
@@ -308,7 +309,11 @@ class typescriptBuilder extends baseBuilder {
                 exclude: this.ignoreDirNames,
                 compilerOptions: this.getCompileOption(),
             };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
+            const replaceOption = {
+                preventAssignment: true,
+                values: this.replace,
+            };
+            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
             if (this.minify !== undefined && this.minify) {
                 rollupPlugins.push(terser(this.minifyOption));
             }

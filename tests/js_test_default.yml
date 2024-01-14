@@ -1,0 +1,6 @@
+---
+js:
+  srcDir: tests/fixture/js
+  outputDir: tests/output/js/default
+  compileOption:
+    allowSyntheticDefaultImports: true
