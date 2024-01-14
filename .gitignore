@@ -36,6 +36,7 @@ node_modules/
 
 pages.json
 **/vars.yml
+!tests/fixture/**/vars.yml
 /src/*
 !/src/.gitkeep
 /public/*

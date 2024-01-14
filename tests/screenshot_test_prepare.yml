@@ -1,0 +1,25 @@
+---
+enable:
+  - html
+  - css
+  - js
+server:
+  baseDir: tests/output/html/screenshot
+  watch: false
+html:
+  srcDir: tests/fixture/html
+  outputDir: tests/output/html/screenshot
+  ignore:
+    filePrefix: _
+    fileSuffix: -bk
+    fileNames:
+      - skeleton
+    dirNames:
+      - element
+      - layout
+css:
+  srcDir: tests/fixture/html
+  outputDir: tests/output/html/screenshot/assets/css
+js:
+  srcDir: tests/fixture/html/events
+  outputDir: tests/output/html/screenshot/assets/js

@@ -1,0 +1,32 @@
+---
+feature_name: 予約管理
+feature_url: /events/
+event_data:
+  range:
+    from: 2023/11/22
+    to: 2023/11/24
+  events:
+    ## @see https://fullcalendar.io/docs/event-source-object
+    ## @see https://fullcalendar.io/docs/event-object
+    - id: 1234567
+      startStr: 20220904T110000
+      endStr: 20220904T113500
+      title: テストイベント
+      url: /events/view.html
+      backgroundColor: "#ff0000"
+    - id: 7654321
+      startStr: 20220904T110000
+      endStr: 20220904T113500
+      title: テストイベント2
+      url: /events/view.html
+      backgroundColor: "#ffff00"
+action:
+  index:
+    name: 予約一覧
+    url: /events/
+  edit:
+    name: 予約情報の編集
+    url: /events/edit.html
+  view:
+    name: 予約情報の表示
+    url: /events/view.html
