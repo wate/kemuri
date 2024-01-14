@@ -1,0 +1,18 @@
+---
+screenshot:
+  outputDir: tests/output/screenshot/multi_device_and_flat
+  sitemapLocation: http://localhost:3000/sitemap.xml
+  saveFlatPath: true
+  targets:
+    desktop:
+      type: Desktop Chrome
+      width: 1920
+      height: 1080
+    tablet:
+      type: iPad Mini
+    tablet_landscape:
+      type: iPad Mini landscape
+    mobile:
+      type: iPhone 14 Pro
+    mobile_landscape:
+      type: iPhone 14 Pro landscape

@@ -44,13 +44,18 @@ export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption):
     }
   }
   /**
+   * ベースディレクトリのオプション
+   */
+  if (_.has(serverOption, 'baseDir')) {
+    //@ts-ignore
+    staticServer.baseDir = _.get(serverOption, 'baseDir');
+  }
+  /**
    * プロキシのオプション
    */
   if (_.has(serverOption, 'proxy')) {
     browserSyncOption.proxy = _.get(serverOption, 'proxy');
-    browserSyncOption.files = [
-      staticServer.baseDir + '/**',
-    ];
+    browserSyncOption.files = [staticServer.baseDir + '/**'];
   } else {
     browserSyncOption.server = staticServer;
   }

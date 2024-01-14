@@ -1,0 +1,4 @@
+---
+screenshot:
+  outputDir: tests/output/screenshot/default
+  sitemapLocation: http://localhost:3000/sitemap.xml

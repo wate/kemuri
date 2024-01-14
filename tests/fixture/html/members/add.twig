@@ -1,0 +1,20 @@
+---
+title: 会員管理 - 会員の新規登録
+action_name: 会員の新規登録
+---
+{% extends "layout/default.twig" %}
+{% block content %}
+<div class="card card-outline">
+  <div class="card-header">
+    <h3 class="card-title">{{ action.add.name }}</h3>
+  </div>
+  <div class="card-body">
+    {% include 'element/form/member.twig' %}
+  </div>
+  <div class="card-footer">
+    <a href="{{ action.index.url }}" class="btn btn-secondary">一覧に戻る</a>
+    <a href="{{ action.view.url }}" class="btn btn-success float-right">登録</a>
+  </div>
+</div>
+<!-- /.card -->
+{% endblock %}

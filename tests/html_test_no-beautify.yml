@@ -1,0 +1,15 @@
+---
+html:
+  srcDir: tests/fixture/html
+  outputDir: tests/output/html/no-beautify
+  ignore:
+    filePrefix: _
+    fileSuffix: -bk
+    fileNames:
+      - skeleton
+    dirNames:
+      - element
+      - layout
+  beautify: false
+  beautifyOption:
+    indent_size: 4

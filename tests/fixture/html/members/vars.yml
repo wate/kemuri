@@ -1,0 +1,16 @@
+---
+feature_name: 会員管理
+feature_url: /members/
+action:
+  index:
+    name: 会員一覧
+    url: /members/
+  add:
+    name: 会員情報の新規登録
+    url: /members/add.html
+  edit:
+    name: 会員情報の編集
+    url: /members/edit.html
+  view:
+    name: 会員情報の表示
+    url: /members/view.html

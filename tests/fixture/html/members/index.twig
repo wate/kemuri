@@ -1,0 +1,86 @@
+---
+title: 会員管理 - 会員一覧
+action_name: 会員一覧
+---
+{% extends "layout/default.twig" %}
+{% block content %}
+<div class="row">
+  <div class="col">
+    <div class="card card-outline">
+      <div class="card-header">
+        <h3 class="card-title">{{ action.index.name }}</h3>
+        <div class="card-tools">
+          <div class="row">
+            <div class="col">
+              <div class="input-group input-group-sm" style="width: 150px;">
+                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-default">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <a href="{{ action.add.url }}" class="btn btn-primary btn-sm">新規登録</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">名前(<small>フリガナ</small>)</th>
+                <th scope="col">フリガナ</th>
+                <th scope="col">メールアドレス</th>
+                <th scope="col">電話番号</th>
+                <th scope="col" class="col-2">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>山田太郎</td>
+                <td>ヤマダタロウ</td>
+                <td>yamada@example.com</td>
+                <td>090-1111-2222</td>
+                <td>
+                  <a href="{{ action.edit.url }}" class="btn btn-outline-primary btn-sm">編集</a>
+                  <a href="{{ action.view.url }}" class="btn btn-outline-info btn-sm">表示</a>
+                  <a href="#" class="btn btn-outline-warning btn-sm">ロック</a>
+                  <button type="button" class="btn btn-outline-danger btn-sm">削除</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- /.table -->
+        </div>
+        <!-- /.table-responsive -->
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col">
+            &nbsp;
+          </div>
+          <div class="col">
+            <ul class="pagination pagination-sm float-right">
+              <li class="page-item disabled"><a class="page-link" href="#">前へ</a></li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">次へ</a></li>
+            </ul>
+            <!-- /.pagination-->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div>
+    </div>
+    <!-- /.card -->
+  </div>
+</div>
+<!-- /.row -->
+{% endblock %}

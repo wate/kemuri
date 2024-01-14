@@ -421,7 +421,7 @@ class baseBuilder {
         const suffixCheck = this.ignoreFileSuffix
             ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
             : false;
-        return prefixCheck || suffixCheck || this.ignoreFileNames.includes(p.name);
+        return prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName);
     }
     /**
      * エントリポイントからの除外ディレクトリ判定処理

@@ -3,6 +3,14 @@
 js:
   srcDir: tests/fixture/js
   outputDir: tests/output/js/beautify_minify
+  ignore:
+    fileSuffix: .d
+    fileNames:
+      - type
+      - types
+    dirNames:
+      - type
+      - types
   minify: true
   beautify: true
   beautifyOption:
