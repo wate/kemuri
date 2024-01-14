@@ -1,0 +1,4 @@
+---
+css:
+  srcDir: tests/fixture/scss
+  outputDir: tests/output/css/default
