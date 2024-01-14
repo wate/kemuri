@@ -1,8 +1,4 @@
 ---
-
-## ---------------
-## スニペットのビルド設定
-## ---------------
 snippet:
   srcDir: tests/fixture/snippet
   outputDir: tests/output/snippet

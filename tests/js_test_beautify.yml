@@ -2,6 +2,11 @@
 js:
   srcDir: tests/fixture/js
   outputDir: tests/output/js/beautify
+  ignore:
+    fileSuffix: .d
+    fileNames:
+      - type
+      - types
   beautify: true
   beautifyOption:
     indent_size: 4

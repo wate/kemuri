@@ -2,5 +2,10 @@
 js:
   srcDir: tests/fixture/js
   outputDir: tests/output/js/default
+  ignore:
+    fileSuffix: .d
+    fileNames:
+      - type
+      - types
   compileOption:
     allowSyntheticDefaultImports: true

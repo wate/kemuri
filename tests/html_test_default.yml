@@ -1,0 +1,9 @@
+---
+html:
+  srcDir: tests/fixture/html
+  outputDir: tests/output/html
+  ignore:
+    prefix: _
+
+
+
