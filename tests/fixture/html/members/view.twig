@@ -1,0 +1,83 @@
+---
+title: 会員管理 - 会員情報の表示
+action_name: 会員情報の表示
+---
+{% extends "layout/default.twig" %}
+{% block content %}
+<div class="card card-outline">
+  <div class="card-header">
+    <h3 class="card-title">{{ action.view.name }}</h3>
+  </div>
+  <div class="card-body">
+    {% include 'element/view/member.twig' %}
+  </div>
+  <div class="card-footer">
+    <a href="{{ action.index.url }}" class="btn btn-secondary">一覧に戻る</a>
+    <a href="{{ action.edit.url }}" class="btn btn-success float-right">編集</a>
+  </div>
+</div>
+<!-- /.card -->
+<div class="row">
+  <div class="col-6">
+    <div class="card card-outline">
+      <div class="card-header">
+        <h3 class="card-title">予約状況</h3>
+      </div>
+      <div class="card-body">
+        <!-- /.table-responsive -->
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th scope="col">予約日</th>
+              <th scope="col">開始時間</th>
+              <th scope="col">終了時間</th>
+              <th scope="col" class="col-2">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>YYYY/MM/DD</td>
+              <td>HH:MM</td>
+              <td>HH:MM</td>
+              <td>
+                <a href="#" class="btn btn-info btn-xs">表示</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- /.table -->
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card card-outline">
+      <div class="card-header">
+        <h3 class="card-title">利用履歴</h3>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th scope="col">利用日</th>
+              <th scope="col">開始時間</th>
+              <th scope="col">終了時間</th>
+              <th scope="col" class="col-2">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>YYYY/MM/DD</td>
+              <td>HH:MM</td>
+              <td>HH:MM</td>
+              <td>
+                <a href="#" class="btn btn-info btn-xs">表示</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- /.table -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

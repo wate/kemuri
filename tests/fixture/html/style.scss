@@ -32,8 +32,6 @@ th a:hover::after {
 }
 
 .card-title {
-  /* display: block;
-  float: inherit; */
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
@@ -45,12 +43,12 @@ th a:hover::after {
   display: flex !important;
 }
 
-.card-toolbox > * {
+.card-toolbox>* {
   height: max-content;
   margin-right: 0.25rem;
 }
 
-.card-toolbox > *:last-child {
+.card-toolbox>*:last-child {
   margin-right: 0;
 }
 
@@ -58,7 +56,7 @@ th a:hover::after {
   margin-bottom: 0;
 }
 
-.required > label::after {
+.required>label::after {
   content: " *";
   color: tomato;
 }

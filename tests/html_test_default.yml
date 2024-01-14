@@ -1,4 +1,10 @@
 ---
+enable:
+  - html
+  - css
+  - js
+server:
+  baseDir: tests/output/html/default
 html:
   srcDir: tests/fixture/html
   outputDir: tests/output/html/default
@@ -12,3 +18,9 @@ html:
       - layout
   beautifyOption:
     indent_size: 4
+css:
+  srcDir: tests/fixture/html
+  outputDir: tests/output/html/default/assets/css
+js:
+  srcDir: tests/fixture/html/events
+  outputDir: tests/output/html/default/assets/js
