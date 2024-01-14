@@ -5,6 +5,7 @@ import { rollup, ModuleFormat as moduleFormat } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import type { RollupTypescriptOptions, PartialCompilerOptions } from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import type { RollupReplaceOptions } from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
@@ -23,9 +24,10 @@ export interface typescriptBuilderOption extends builderOption {
   // https://rollupjs.org/configuration-options/#output-format
   format?: outputFormat;
   // https://github.com/rollup/plugins/tree/master/packages/replace
-  replaceOption?: RollupReplaceOptions;
+  replace?: Record<string, string>;
   // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean;
+  compileOption?: PartialCompilerOptions;
   minify?: boolean;
   // https://github.com/terser/terser#minify-options
   minifyOption?: object;
@@ -74,7 +76,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * TypeScriptのデフォルトのコンパイルオプション
    */
-  protected typeScriptCompoleOption = {
+  protected typeScriptCompoleOption: PartialCompilerOptions = {
     /* ------------------------ */
     /* Language and Environment */
     /* ------------------------ */
@@ -137,11 +139,8 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * 置換オプション
    */
-  protected replaceOption: RollupReplaceOptions = {
-    preventAssignment: true,
-    values: {
-      'process.env.NODE_ENV': JSON.stringify('production'),
-    },
+  protected replace: Record<string, string> = {
+    'process.env.NODE_ENV': JSON.stringify('production'),
   };
 
   /**
@@ -183,10 +182,10 @@ export class typescriptBuilder extends baseBuilder {
 
   /**
    * 置換オプションを設定する
-   * @param replaceOption
+   * @param replace
    */
-  public setReplaceOption(replaceOption: RollupReplaceOptions): void {
-    this.replaceOption = replaceOption;
+  public setReplace(replace: Record<string, string>): void {
+    this.replace = replace;
   }
 
   /**
@@ -219,6 +218,7 @@ export class typescriptBuilder extends baseBuilder {
    * 既存メソッドのオーバーライド
    * -------------------------
    */
+
   /**
    * ビルドオプションを設定する
    *
@@ -233,8 +233,8 @@ export class typescriptBuilder extends baseBuilder {
     if (option.format !== undefined && option.format !== null) {
       this.setOutputFormat(option.format);
     }
-    if (option.replaceOption !== undefined && option.replaceOption !== null) {
-      this.setReplaceOption(option.replaceOption);
+    if (option.replace !== undefined && option.replace !== null) {
+      this.setReplace(option.replace);
     }
     if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
@@ -256,7 +256,7 @@ export class typescriptBuilder extends baseBuilder {
    * コンパイルオプションを取得する
    * @returns
    */
-  protected getCompileOption(): any {
+  protected getCompileOption(): PartialCompilerOptions {
     return Object.assign(this.typeScriptCompoleOption, this.compileOption);
   }
 
@@ -269,12 +269,16 @@ export class typescriptBuilder extends baseBuilder {
     let bundle;
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const typescriptConfig = {
+      const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
+      const replaceOption: RollupReplaceOptions = {
+        preventAssignment: true,
+        values: this.replace,
+      };
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -322,12 +326,16 @@ export class typescriptBuilder extends baseBuilder {
     }
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const typescriptConfig = {
+      const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(this.replaceOption)];
+      const replaceOption: RollupReplaceOptions = {
+        preventAssignment: true,
+        values: this.replace,
+      };
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
