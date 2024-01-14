@@ -1,18 +1,20 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { baseBuilder, builderOption } from '../base';
-import { rollup } from 'rollup';
+import { rollup, ModuleFormat as moduleFormat } from 'rollup';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import type { RollupTypescriptOptions, PartialCompilerOptions } from '@rollup/plugin-typescript';
+import replace from '@rollup/plugin-replace';
+import type { RollupReplaceOptions } from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import js_beautify from 'js-beautify';
 import console from '../../console';
 
 const beautify = js_beautify.js;
 
-type outputFormat = 'iife' | 'es' | 'esm' | 'module' | 'cjs' | 'commonjs' | 'umd';
-
+type outputFormat = moduleFormat;
 /**
  * JSビルドの設定オプション
  */
@@ -21,8 +23,11 @@ export interface typescriptBuilderOption extends builderOption {
   globals?: object;
   // https://rollupjs.org/configuration-options/#output-format
   format?: outputFormat;
+  // https://github.com/rollup/plugins/tree/master/packages/replace
+  replace?: Record<string, string>;
   // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean;
+  compileOption?: PartialCompilerOptions;
   minify?: boolean;
   // https://github.com/terser/terser#minify-options
   minifyOption?: object;
@@ -47,6 +52,11 @@ export class typescriptBuilder extends baseBuilder {
    */
   protected moduleExts = ['mjs', 'cjs', 'mts', 'cts'];
   /**
+   * エントリポイントから除外するファイル名の接尾語
+   */
+  protected ignoreFileSuffix = '.d';
+
+  /**
    * エントリポイントから除外するディレクトリ名
    * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
    */
@@ -66,7 +76,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * TypeScriptのデフォルトのコンパイルオプション
    */
-  protected typeScriptCompoleOption = {
+  protected typeScriptCompoleOption: PartialCompilerOptions = {
     /* ------------------------ */
     /* Language and Environment */
     /* ------------------------ */
@@ -127,6 +137,13 @@ export class typescriptBuilder extends baseBuilder {
   private outputFortmat: outputFormat = 'esm';
 
   /**
+   * 置換オプション
+   */
+  protected replace: Record<string, string> = {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+  };
+
+  /**
    * SourceMapファイル出力の可否
    */
   private sourcemap?: boolean;
@@ -153,6 +170,7 @@ export class typescriptBuilder extends baseBuilder {
   public setGlobals(globals: any): void {
     this.globals = globals;
   }
+
   /**
    * 出力形式を設定する
    *
@@ -161,6 +179,15 @@ export class typescriptBuilder extends baseBuilder {
   public setOutputFormat(format: outputFormat): void {
     this.outputFortmat = format;
   }
+
+  /**
+   * 置換オプションを設定する
+   * @param replace
+   */
+  public setReplace(replace: Record<string, string>): void {
+    this.replace = replace;
+  }
+
   /**
    * SourceMapファイル出力の可否
    *
@@ -191,6 +218,7 @@ export class typescriptBuilder extends baseBuilder {
    * 既存メソッドのオーバーライド
    * -------------------------
    */
+
   /**
    * ビルドオプションを設定する
    *
@@ -204,6 +232,9 @@ export class typescriptBuilder extends baseBuilder {
     }
     if (option.format !== undefined && option.format !== null) {
       this.setOutputFormat(option.format);
+    }
+    if (option.replace !== undefined && option.replace !== null) {
+      this.setReplace(option.replace);
     }
     if (option.sourcemap !== undefined && option.sourcemap !== null) {
       this.setSourceMap(option.sourcemap);
@@ -225,7 +256,7 @@ export class typescriptBuilder extends baseBuilder {
    * コンパイルオプションを取得する
    * @returns
    */
-  protected getCompileOption(): any {
+  protected getCompileOption(): PartialCompilerOptions {
     return Object.assign(this.typeScriptCompoleOption, this.compileOption);
   }
 
@@ -238,12 +269,16 @@ export class typescriptBuilder extends baseBuilder {
     let bundle;
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const typescriptConfig = {
+      const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+      const replaceOption: RollupReplaceOptions = {
+        preventAssignment: true,
+        values: this.replace,
+      };
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -264,7 +299,7 @@ export class typescriptBuilder extends baseBuilder {
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
         } else {
           let outputCode: string = chunkOrAsset.code;
-          if (this.minify === undefined || !this.minify) {
+          if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
@@ -291,12 +326,16 @@ export class typescriptBuilder extends baseBuilder {
     }
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const typescriptConfig = {
+      const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
         compilerOptions: this.getCompileOption(),
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig)];
+      const replaceOption: RollupReplaceOptions = {
+        preventAssignment: true,
+        values: this.replace,
+      };
+      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -320,7 +359,7 @@ export class typescriptBuilder extends baseBuilder {
           outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           let outputCode = chunkOrAsset.code;
-          if (this.minify === undefined || !this.minify) {
+          if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(outputPath, outputCode.trim() + '\n');

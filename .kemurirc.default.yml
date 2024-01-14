@@ -33,6 +33,7 @@
 #   dirPrefix: null
 #   dirSuffix: null
 #   dirNames: []
+# beautify: false
 # beautifyOption: {}
 ## ---------------
 ## HTMLビルド機能の設定
@@ -52,6 +53,7 @@
 #     dirSuffix: null
 #     dirNames: []
 #   compileOption: {}
+#   beautify: true
 #   beautifyOption: {}
 #   varFileName: vars.yml
 #   siteUrl: 'http://localhost:3000/'
@@ -92,6 +94,7 @@
 #     dirSuffix: null
 #     dirNames: []
 #   compileOption: {}
+#   beautify: false
 #   beautifyOption: {}
 #   style: null
 #   generateIndex: false
@@ -117,15 +120,19 @@
 #     - cts
 #   ignore:
 #     filePrefix: null
-#     fileSuffix: null
+#     fileSuffix: ".d"
 #     fileNames: []
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames:
 #       - node_modules
 #   compileOption: {}
+#   ## @see https://github.com/rollup/plugins/tree/master/packages/replace
+#   replace:
+#     'process.env.NODE_ENV': '"production"'
+#   beautify: false
 #   beautifyOption: {}
-#   format: iife
+#   format: esm
 #   globals: {}
 #   sourcemap: false
 #   minify: false

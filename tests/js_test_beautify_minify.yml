@@ -1,0 +1,9 @@
+---
+## minifyが有効な場合、beautifyは評価されない
+js:
+  srcDir: tests/fixture/js
+  outputDir: tests/output/js/beautify_minify
+  minify: true
+  beautify: true
+  beautifyOption:
+    indent_size: 4

@@ -1,0 +1,5 @@
+---
+js:
+  srcDir: tests/fixture/js
+  outputDir: tests/output/js/minify
+  minify: true

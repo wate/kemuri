@@ -440,6 +440,20 @@ class configLoader {
         }
     }
     /**
+     * TypeScriptの初期設定ファイルを生成する
+     * @param force
+     */
+    static copyDefaultTSConfig(force) {
+        const srcConfigFilePath = path.resolve(__dirname, '../../tsconfig.json');
+        const destConfigFilePath = path.resolve(process.cwd(), 'tsconfig.json');
+        if (!fs.existsSync(destConfigFilePath) || force) {
+            fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
+        }
+        else {
+            console.error('Configuration file(tsconfig.json) already exists');
+        }
+    }
+    /**
      * 設定ファイルをロードする
      * @returns
      */

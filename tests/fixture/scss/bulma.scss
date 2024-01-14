@@ -1,0 +1,4 @@
+//Bootstrapの関数のみを読み込み
+@forward "bootstrap/scss/functions";
+//Sass形式ファイルの読み込み
+@import "bulma/bulma";

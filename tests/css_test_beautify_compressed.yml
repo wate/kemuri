@@ -1,0 +1,9 @@
+---
+## styleにcompressedが指定されている場合、beautifyの処理は行われない
+css:
+  srcDir: tests/fixture/scss
+  outputDir: tests/output/css/beautify_compressed
+  style: compressed
+  beautify: true
+  beautifyOption:
+    indent_size: 4

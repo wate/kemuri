@@ -1,0 +1,5 @@
+---
+css:
+  srcDir: tests/fixture/scss
+  outputDir: tests/output/css/style_compressed
+  style: compressed

@@ -1,0 +1,7 @@
+---
+js:
+  srcDir: tests/fixture/js
+  outputDir: tests/output/js/beautify
+  beautify: true
+  beautifyOption:
+    indent_size: 4

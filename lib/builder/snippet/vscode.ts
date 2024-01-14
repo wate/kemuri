@@ -26,22 +26,22 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
-  protected srcDir: string = 'docs/cheatsheet';
+  protected srcDir = 'docs/cheatsheet';
 
   /**
    * 出力先ディレクトリ
    */
-  protected outputDir: string = '.vscode';
+  protected outputDir = '.vscode';
 
   /**
    * エントリポイントとなるファイルの拡張子
    */
-  protected fileExts: string[] = ['md'];
+  protected fileExts = ['md'];
 
   /**
    * 出力時の拡張子
    */
-  protected outputExt: string = 'code-snippets';
+  protected outputExt = 'code-snippets';
 
   /**
    * 言語コードに対応する言語名のマップ
@@ -368,6 +368,8 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * スニペットファイルを出力する
    */
   protected buildSnippet(): void {
+    //出力先ディレクトリを作成する
+    fs.mkdirSync(this.outputDir, { recursive: true });
     const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
     Object.keys(groupdSnippets).forEach((groupName) => {
       //出力先ファイルパス
