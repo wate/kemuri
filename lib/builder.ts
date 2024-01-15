@@ -8,6 +8,7 @@ import htmlBuilder from './builder/html';
 import cpx from 'cpx2';
 import * as server from './server/browser-sync';
 import configLoader from './config';
+import type { settingType } from './config';
 import yargs from 'yargs';
 import chalk from 'chalk';
 import console from './console';
@@ -115,10 +116,12 @@ if (argv.config !== undefined) {
   configLoader.configFile = argv.config;
 }
 
+const orverrideEnable: settingType[] = [];
 const builders: any[] = [];
 const outputDirectories: string[] = [];
 
 if (configLoader.isEnable('js') || argv.js) {
+  orverrideEnable.push('js');
   const jsOrverrideOption: any = {};
   if (argv.sourcemap !== undefined) {
     jsOrverrideOption.sourcemap = true;
@@ -135,6 +138,7 @@ if (configLoader.isEnable('js') || argv.js) {
   builders.push(jsBuilder);
 }
 if (configLoader.isEnable('css') || argv.css) {
+  orverrideEnable.push('css');
   const cssOrverrideOption: any = {};
   if (argv.sourcemap !== undefined) {
     cssOrverrideOption.sourcemap = true;
@@ -151,6 +155,7 @@ if (configLoader.isEnable('css') || argv.css) {
   builders.push(cssBuilder);
 }
 if (configLoader.isEnable('html') || argv.html) {
+  orverrideEnable.push('html');
   const htmlBuilderOption = configLoader.getHtmlOption();
   console.group(chalk.blue('HTML Builder Option'));
   console.log(htmlBuilderOption);
@@ -205,9 +210,9 @@ if (argv.watch) {
 }
 
 if (argv.server) {
-  const browserSyncOption = server.getBrowserSyncOption();
+  const browserSyncOption = server.getBrowserSyncOption({}, orverrideEnable);
   console.group(chalk.blue('browserSync Server Option'));
   console.log(browserSyncOption);
   console.groupEnd();
-  server.run();
+  server.run(browserSyncOption, orverrideEnable);
 }

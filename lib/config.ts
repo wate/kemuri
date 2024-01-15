@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 
 nunjucks.configure({ autoescape: false });
 
-type settingType = 'js' | 'css' | 'html' | 'copy';
+export type settingType = 'js' | 'css' | 'html' | 'copy';
 
 class configLoader {
   /**

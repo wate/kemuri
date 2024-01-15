@@ -1203,9 +1203,11 @@ if (argv.config !== undefined) {
     //@ts-ignore
     configLoader.configFile = argv.config;
 }
+const orverrideEnable = [];
 const builders = [];
 const outputDirectories = [];
 if (configLoader.isEnable('js') || argv.js) {
+    orverrideEnable.push('js');
     const jsOrverrideOption = {};
     if (argv.sourcemap !== undefined) {
         jsOrverrideOption.sourcemap = true;
@@ -1222,6 +1224,7 @@ if (configLoader.isEnable('js') || argv.js) {
     builders.push(jsBuilder);
 }
 if (configLoader.isEnable('css') || argv.css) {
+    orverrideEnable.push('css');
     const cssOrverrideOption = {};
     if (argv.sourcemap !== undefined) {
         cssOrverrideOption.sourcemap = true;
@@ -1238,6 +1241,7 @@ if (configLoader.isEnable('css') || argv.css) {
     builders.push(cssBuilder);
 }
 if (configLoader.isEnable('html') || argv.html) {
+    orverrideEnable.push('html');
     const htmlBuilderOption = configLoader.getHtmlOption();
     console.group(chalk.blue('HTML Builder Option'));
     console.log(htmlBuilderOption);
@@ -1287,9 +1291,9 @@ if (argv.watch) {
     }
 }
 if (argv.server) {
-    const browserSyncOption = getBrowserSyncOption();
+    const browserSyncOption = getBrowserSyncOption({}, orverrideEnable);
     console.group(chalk.blue('browserSync Server Option'));
     console.log(browserSyncOption);
     console.groupEnd();
-    run();
+    run(browserSyncOption, orverrideEnable);
 }

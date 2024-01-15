@@ -1,10 +1,5 @@
 ---
-enable:
-  - html
-  - css
-  - js
 server:
-  baseDir: tests/output/html/screenshot
   watch: false
 html:
   srcDir: tests/fixture/html

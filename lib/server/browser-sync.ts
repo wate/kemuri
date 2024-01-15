@@ -1,5 +1,7 @@
 import browserSync from 'browser-sync';
+import type { ProxyOptions } from 'browser-sync';
 import configLoader from '../config';
+import type { settingType } from '../config';
 import _ from 'lodash';
 
 export interface browserSyncServerOption {
@@ -7,18 +9,21 @@ export interface browserSyncServerOption {
   port?: number;
   watch?: boolean;
   watchFiles?: string | string[] | boolean;
-  proxy?: string;
-  open?: boolean;
+  proxy?: string | ProxyOptions;
+  open?: string | boolean;
   notify?: boolean;
   browser?: string | string[];
 }
-
 /**
  * browserSyncのオプションを取得する
  * @param orverrideOption
+ * @param orverrideEnable
  * @returns
  */
-export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption): browserSync.Options {
+export function getBrowserSyncOption(
+  orverrideOption?: browserSyncServerOption,
+  orverrideEnable?: settingType[],
+): browserSync.Options {
   const browserSyncOption: browserSync.Options = {
     port: 3000,
     open: true,
@@ -36,7 +41,7 @@ export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption):
   const staticServer = {
     baseDir: 'public',
   };
-  if (configLoader.isEnable('html')) {
+  if (configLoader.isEnable('html') || orverrideEnable?.includes('html')) {
     const htmlOption = configLoader.getHtmlOption();
     if (_.has(htmlOption, 'outputDir')) {
       //@ts-ignore
@@ -109,10 +114,11 @@ export function getBrowserSyncOption(orverrideOption?: browserSyncServerOption):
   return browserSyncOption;
 }
 /**
- * BrowserSyncを起動する
+ * browserSyncサーバーを起動する
  * @param orverrideOption
+ * @param orverrideEnable
  */
-export function run(orverrideOption?: browserSyncServerOption) {
-  let serverOption = getBrowserSyncOption(orverrideOption);
+export function run(orverrideOption?: browserSyncServerOption, orverrideEnable?: settingType[]) {
+  let serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
   browserSync(serverOption);
 }

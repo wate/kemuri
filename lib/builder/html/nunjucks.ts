@@ -6,7 +6,7 @@ import { glob } from 'glob';
 import yaml from 'js-yaml';
 import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
-import _, { has } from 'lodash';
+import _ from 'lodash';
 import js_beautify from 'js-beautify';
 import console from '../../console';
 
