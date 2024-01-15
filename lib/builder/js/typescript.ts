@@ -106,7 +106,7 @@ export class typescriptBuilder extends baseBuilder {
     /* Interop Constraints      */
     /* ------------------------ */
     // Ensure that each file can be safely transpiled without relying on other imports.
-    isolatedModules: false,
+    // isolatedModules: false,
     // Allow 'import x from y' when a module doesn't have a default export.
     allowSyntheticDefaultImports: true,
     // Emit additional JavaScript to ease support for importing CommonJS modules.

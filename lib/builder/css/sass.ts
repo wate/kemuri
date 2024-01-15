@@ -155,9 +155,11 @@ export class sassBuilder extends baseBuilder {
       fs.remove(indexFilePath);
       console.log('Remove index file: ' + indexFilePath);
     } else {
+      const partialFilesChildren: string[] = [];
+      const partialFilesFiles: string[] = [];
       const partialFiles = {
-        children: [],
-        files: [],
+        children: partialFilesChildren,
+        files: partialFilesFiles,
       };
       partialMatchFiles.forEach((partialFile) => {
         if (partialFile.includes(path.sep)) {

@@ -171,7 +171,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   protected getSnippetEndPosition(startPosition: any): any {
     const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
-    let endPosition = nextSnippetPosition;
+    let endPosition: any = nextSnippetPosition;
     let extraSettingStartNode: any = null;
     if (nextSnippetPosition) {
       const extraSettingHeaders = findAllBetween(
@@ -309,7 +309,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
             let snippets = null;
 
             //スニペットのコードを取得する
-            const endPosition = this.getSnippetEndPosition(startPosition);
+            const endPosition: any = this.getSnippetEndPosition(startPosition);
             if (endPosition) {
               snippets = findAllBetween(this.tree, startPosition, endPosition, { type: 'code' });
             } else {
