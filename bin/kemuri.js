@@ -71,56 +71,11 @@ class typescriptBuilder extends baseBuilder {
          * -------------------------
          */
         /**
-         * TypeScriptのデフォルトのコンパイルオプション
+         * 上書きするTypeScriptのコンパイルオプション
          */
         this.typeScriptCompoleOption = {
-            /* ------------------------ */
-            /* Language and Environment */
-            /* ------------------------ */
-            // Set the JavaScript language version for emitted JavaScript and include compatible library declarations.
-            target: 'ES2020',
-            // Specify a set of bundled library declaration files that describe the target runtime environment.
-            lib: ['ES2020', 'DOM', 'DOM.Iterable'],
-            /* ------------------------ */
-            /* Modules                  */
-            /* ------------------------ */
-            // Specify what module code is generated.
-            module: 'ESNext',
-            // Specify how TypeScript looks up a file from a given module specifier.
-            moduleResolution: 'bundler',
-            // Use the package.json 'exports' field when resolving package imports.
-            resolvePackageJsonExports: true,
-            // Use the package.json 'imports' field when resolving imports.
-            resolvePackageJsonImports: true,
-            // Enable importing .json files.
-            resolveJsonModule: true,
-            /* ------------------------ */
-            /* JavaScript Support       */
-            /* ------------------------ */
             allowJs: true,
             checkJs: true,
-            /* ------------------------ */
-            /* Interop Constraints      */
-            /* ------------------------ */
-            // Ensure that each file can be safely transpiled without relying on other imports.
-            isolatedModules: true,
-            // Allow 'import x from y' when a module doesn't have a default export.
-            allowSyntheticDefaultImports: true,
-            // Emit additional JavaScript to ease support for importing CommonJS modules.
-            // This enables 'allowSyntheticDefaultImports' for type compatibility.
-            esModuleInterop: true,
-            // Ensure that casing is correct in imports.
-            forceConsistentCasingInFileNames: true,
-            /* ------------------------ */
-            /* Type Checking            */
-            /* ------------------------ */
-            // Enable all strict type-checking options.
-            strict: true,
-            /* ------------------------ */
-            /* Completeness             */
-            /* ------------------------ */
-            // Skip type checking all .d.ts files.
-            skipLibCheck: true,
         };
         /**
          * ビルド時に設定するグローバルオブジェクトの内容
@@ -470,9 +425,11 @@ class sassBuilder extends baseBuilder {
             console.log('Remove index file: ' + indexFilePath);
         }
         else {
+            const partialFilesChildren = [];
+            const partialFilesFiles = [];
             const partialFiles = {
-                children: [],
-                files: [],
+                children: partialFilesChildren,
+                files: partialFilesFiles,
             };
             partialMatchFiles.forEach((partialFile) => {
                 if (partialFile.includes(path.sep)) {
