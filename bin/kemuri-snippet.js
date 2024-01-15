@@ -20,7 +20,6 @@ import yargs from 'yargs';
 import 'chokidar';
 import 'editorconfig';
 import 'node:child_process';
-import 'resolve';
 import 'shell-quote';
 import 'duplexer3';
 import 'node:url';

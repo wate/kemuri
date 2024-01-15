@@ -1,7 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as child_process from 'node:child_process';
-import resolve from 'resolve';
 import shellQuote from 'shell-quote';
 import duplexer from 'duplexer3';
 import { fileURLToPath } from 'node:url';
@@ -578,20 +577,14 @@ class configLoader {
                 preserve: copySetting.preserve ?? false,
                 update: copySetting.update ?? false,
             };
-            if (_.has(copySetting, 'transforms') && _.isArray(_.get(copySetting, 'transforms'))) {
-                const transforms = _.get(copySetting, 'transforms').map((filter) => {
+            if (_.has(copySetting, 'commands') && _.isArray(_.get(copySetting, 'commands'))) {
+                const transforms = _.get(copySetting, 'commands').map((filter) => {
                     if (typeof filter === 'string') {
-                        const name = filter;
-                        return configLoader.convertCpxTransformParam(name);
+                        return configLoader.convertCpxCommandParam(filter);
                     }
                     else {
                         if (_.has(filter, 'command')) {
                             return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
-                        }
-                        if (_.has(filter, 'name')) {
-                            const name = _.get(filter, 'name');
-                            const args = _.has(filter, 'args') ? _.get(filter, 'args') : {};
-                            return configLoader.convertCpxTransformParam(name, args);
                         }
                     }
                 });
@@ -631,20 +624,6 @@ class configLoader {
             child.stderr.pipe(process.stderr);
             return outer;
         };
-    }
-    /**
-     * cpxのtransformパラメーターを変換する
-     * @param transforms
-     * @returns
-     * ※以下のコードを元に実装
-     * @see https://github.com/bcomnes/cpx2/blob/master/bin/main.js#L87-L91
-     */
-    static convertCpxTransformParam(name, args) {
-        args = args || {};
-        const createStream = /^[./]/.test(name)
-            ? require(path.resolve(name))
-            : require(resolve.sync(name, { basedir: process.cwd() }));
-        return (file, opts) => createStream(file, Object.assign({ _flags: opts }, args));
     }
     /**
      * スニペットのオプションを取得する

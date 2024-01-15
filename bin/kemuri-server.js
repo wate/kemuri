@@ -8,7 +8,6 @@ import 'lodash';
 import 'node:fs';
 import 'node:path';
 import 'node:child_process';
-import 'resolve';
 import 'shell-quote';
 import 'duplexer3';
 import 'node:url';
