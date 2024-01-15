@@ -10,7 +10,6 @@ import chalk from 'chalk';
 import yargs from 'yargs';
 import 'node:fs';
 import 'node:child_process';
-import 'resolve';
 import 'shell-quote';
 import 'duplexer3';
 import 'cosmiconfig';
