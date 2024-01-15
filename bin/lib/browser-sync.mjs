@@ -5,9 +5,10 @@ import _ from 'lodash';
 /**
  * browserSyncのオプションを取得する
  * @param orverrideOption
+ * @param orverrideEnable
  * @returns
  */
-function getBrowserSyncOption(orverrideOption) {
+function getBrowserSyncOption(orverrideOption, orverrideEnable) {
     const browserSyncOption = {
         port: 3000,
         open: true,
@@ -24,7 +25,7 @@ function getBrowserSyncOption(orverrideOption) {
     const staticServer = {
         baseDir: 'public',
     };
-    if (configLoader.isEnable('html')) {
+    if (configLoader.isEnable('html') || orverrideEnable?.includes('html')) {
         const htmlOption = configLoader.getHtmlOption();
         if (_.has(htmlOption, 'outputDir')) {
             //@ts-ignore
@@ -93,11 +94,12 @@ function getBrowserSyncOption(orverrideOption) {
     return browserSyncOption;
 }
 /**
- * BrowserSyncを起動する
+ * browserSyncサーバーを起動する
  * @param orverrideOption
+ * @param orverrideEnable
  */
-function run(orverrideOption) {
-    let serverOption = getBrowserSyncOption(orverrideOption);
+function run(orverrideOption, orverrideEnable) {
+    let serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
     browserSync(serverOption);
 }
 
