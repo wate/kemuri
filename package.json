@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -40,7 +40,6 @@
     "micromatch": "^4.0.5",
     "nunjucks": "^3.2.4",
     "playwright": "^1.40.1",
-    "resolve": "^1.22.8",
     "rollup": "^4.9.5",
     "sass": "^1.69.7",
     "shell-quote": "^1.8.1",
@@ -87,6 +86,7 @@
     "npm-check-updates": "^16.14.12",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.2.2",
+    "remixicon": "^4.1.0",
     "rimraf": "^5.0.5",
     "tsx": "^4.7.0",
     "vue": "^3.4.13"
