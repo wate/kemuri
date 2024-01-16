@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendar = new Calendar(calendarEl, {
       initialDate: new Date(),
       locale: jaLocale,
+      editable: true,
+      selectable: true,
       plugins: [
         dayGridPlugin,
         timeGridPlugin,
