@@ -56,6 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     calendar.render();
   } else {
-    console.log('calendar element not found');
+    console.error('calendar element not found');
   }
 });
