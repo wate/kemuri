@@ -1,0 +1,9 @@
+//node_modules内にあるBootstrapの関数のみを読み込み
+@import "bootstrap/scss/functions";
+
+.test-load-package {
+  content: str-replace('bootstrap-function', 'bootstrap-', 'kemuri-');
+}
+
+//Sass形式ファイルの読み込み
+@import "bulma/bulma";
