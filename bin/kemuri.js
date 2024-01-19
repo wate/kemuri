@@ -1,322 +1,39 @@
 #!/usr/bin/env node
+import chalk from 'chalk';
+import cpx from 'cpx2';
 import fs$1 from 'fs-extra';
-import * as fs from 'node:fs';
+import yargs from 'yargs';
 import * as path from 'node:path';
-import { b as baseBuilder } from './lib/base.mjs';
-import { rollup } from 'rollup';
-import nodeResolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import replace from '@rollup/plugin-replace';
-import terser from '@rollup/plugin-terser';
-import js_beautify from 'js-beautify';
-import { c as console, a as configLoader } from './lib/config.mjs';
 import * as glob from 'glob';
 import { glob as glob$1 } from 'glob';
+import js_beautify from 'js-beautify';
 import * as sass from 'sass';
+import { c as console, a as configLoader } from './lib/config.mjs';
+import { b as baseBuilder } from './lib/base.mjs';
+import * as fs from 'node:fs';
 import { URL } from 'node:url';
-import yaml from 'js-yaml';
-import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
+import yaml from 'js-yaml';
 import _ from 'lodash';
-import cpx from 'cpx2';
+import nunjucks from 'nunjucks';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import { rollup } from 'rollup';
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
-import yargs from 'yargs';
-import chalk from 'chalk';
+import 'node:child_process';
+import 'cosmiconfig';
+import 'duplexer3';
+import 'shell-quote';
+import 'dotenv';
+import 'node:console';
 import 'chokidar';
 import 'editorconfig';
-import 'node:child_process';
-import 'shell-quote';
-import 'duplexer3';
-import 'cosmiconfig';
-import 'node:console';
-import 'dotenv';
 import 'browser-sync';
 
-const beautify$2 = js_beautify.js;
-/**
- * ビルド処理の抽象クラス
- */
-class typescriptBuilder extends baseBuilder {
-    constructor() {
-        super(...arguments);
-        /**
-         * 出力先ディレクトリ
-         */
-        this.outputDir = 'public/assets/js';
-        /**
-         * エントリポイントとなるファイルの拡張子
-         */
-        this.fileExts = ['js', 'ts'];
-        /**
-         * エントリポイントではないが変更の監視対象となるファイルの拡張子
-         */
-        this.moduleExts = ['mjs', 'cjs', 'mts', 'cts'];
-        /**
-         * エントリポイントから除外するファイル名の接尾語
-         */
-        this.ignoreFileSuffix = '.d';
-        /**
-         * エントリポイントから除外するディレクトリ名
-         * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
-         */
-        this.ignoreDirNames = ['node_modules'];
-        /**
-         * 出力時の拡張子
-         */
-        this.outputExt = 'js';
-        /**
-         * -------------------------
-         * このクラス固有のメンバ変数/メソッド
-         * -------------------------
-         */
-        /**
-         * 上書きするTypeScriptのコンパイルオプション
-         */
-        this.typeScriptCompoleOption = {
-            allowJs: true,
-            checkJs: true,
-        };
-        /**
-         * ビルド時に設定するグローバルオブジェクトの内容
-         */
-        this.globals = {};
-        /**
-         * Roolup.jsに指定する出力形式
-         */
-        this.outputFortmat = 'esm';
-        /**
-         * 置換オプション
-         */
-        this.replace = {
-            'process.env.NODE_ENV': JSON.stringify('production'),
-        };
-        /**
-         * Minyfy化のオプション
-         * https://github.com/terser/terser#minify-options
-         */
-        this.minifyOption = {
-            compress: {},
-            mangle: {},
-        };
-    }
-    /**
-     * グルーバルオブジェクトを設定する
-     *
-     * @param globals
-     */
-    setGlobals(globals) {
-        this.globals = globals;
-    }
-    /**
-     * 出力形式を設定する
-     *
-     * @param format
-     */
-    setOutputFormat(format) {
-        this.outputFortmat = format;
-    }
-    /**
-     * 置換オプションを設定する
-     * @param replace
-     */
-    setReplace(replace) {
-        this.replace = replace;
-    }
-    /**
-     * SourceMapファイル出力の可否
-     *
-     * @param sourcemap
-     */
-    setSourceMap(sourcemap) {
-        this.sourcemap = sourcemap;
-    }
-    /**
-     * 出力時のminify化の可否を設定する
-     *
-     * @param minify
-     */
-    setMinfy(minify) {
-        this.minify = minify;
-    }
-    /**
-     * minify化のオプションを設定する
-     *
-     * @param minifyOption
-     */
-    setMinfyOption(minifyOption) {
-        this.minifyOption = minifyOption;
-    }
-    /**
-     * -------------------------
-     * 既存メソッドのオーバーライド
-     * -------------------------
-     */
-    /**
-     * ビルドオプションを設定する
-     *
-     * @param option
-     * @returns
-     */
-    setOption(option) {
-        super.setOption(option);
-        if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
-            this.setGlobals(option.globals);
-        }
-        if (option.format !== undefined && option.format !== null) {
-            this.setOutputFormat(option.format);
-        }
-        if (option.replace !== undefined && option.replace !== null) {
-            this.setReplace(option.replace);
-        }
-        if (option.sourcemap !== undefined && option.sourcemap !== null) {
-            this.setSourceMap(option.sourcemap);
-        }
-        if (option.minify !== undefined && option.minify !== null) {
-            this.setMinfy(option.minify);
-        }
-        if (option.minifyOption !== undefined && option.minifyOption !== null) {
-            this.setMinfyOption(option.minifyOption);
-        }
-    }
-    /**
-     * -------------------------
-     * 抽象化メソッドの実装
-     * -------------------------
-     */
-    /**
-     * コンパイルオプションを取得する
-     * @returns
-     */
-    getCompileOption() {
-        return Object.assign(this.typeScriptCompoleOption, this.compileOption);
-    }
-    /**
-     * 単一ファイルのビルド処理
-     * @param srcPath
-     * @param outputPath
-     */
-    async buildFile(srcPath, outputPath) {
-        let bundle;
-        try {
-            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-            const typescriptConfig = {
-                include: this.srcDir,
-                exclude: this.ignoreDirNames,
-                compilerOptions: this.getCompileOption(),
-            };
-            const replaceOption = {
-                preventAssignment: true,
-                values: this.replace,
-            };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
-            if (this.minify !== undefined && this.minify) {
-                rollupPlugins.push(terser(this.minifyOption));
-            }
-            bundle = await rollup({
-                external: Object.keys(this.globals),
-                input: srcPath,
-                plugins: rollupPlugins,
-            });
-            const { output } = await bundle.generate({
-                globals: this.globals,
-                format: this.outputFortmat,
-                sourcemap: this.sourcemap,
-            });
-            let outputDir = path.dirname(outputPath);
-            fs.mkdirSync(outputDir, { recursive: true });
-            for (const chunkOrAsset of output) {
-                if (chunkOrAsset.type === 'asset') {
-                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
-                }
-                else {
-                    let outputCode = chunkOrAsset.code;
-                    if ((this.minify === undefined || !this.minify) && this.beautify) {
-                        outputCode = beautify$2(outputCode, beautifyOption);
-                    }
-                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
-                }
-            }
-        }
-        catch (error) {
-            console.error(error);
-        }
-        if (bundle) {
-            await bundle.close();
-        }
-    }
-    /**
-     * 全ファイルのビルド処理
-     */
-    async buildAll() {
-        // console.group('Build entory point files');
-        const entries = this.getEntryPoint();
-        let bundle;
-        let buildFailed = false;
-        if (entries.size === 0) {
-            return;
-        }
-        try {
-            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-            const typescriptConfig = {
-                include: this.srcDir,
-                exclude: this.ignoreDirNames,
-                compilerOptions: this.getCompileOption(),
-            };
-            const replaceOption = {
-                preventAssignment: true,
-                values: this.replace,
-            };
-            const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
-            if (this.minify !== undefined && this.minify) {
-                rollupPlugins.push(terser(this.minifyOption));
-            }
-            bundle = await rollup({
-                external: Object.keys(this.globals),
-                input: Object.fromEntries(entries),
-                plugins: rollupPlugins,
-            });
-            const { output } = await bundle.generate({
-                globals: this.globals,
-                format: this.outputFortmat,
-                sourcemap: this.sourcemap,
-            });
-            let outputPath;
-            for (const chunkOrAsset of output) {
-                if (chunkOrAsset.type === 'asset') {
-                    outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
-                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-                    fs.writeFileSync(outputPath, chunkOrAsset.source);
-                }
-                else {
-                    outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
-                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-                    let outputCode = chunkOrAsset.code;
-                    if ((this.minify === undefined || !this.minify) && this.beautify) {
-                        outputCode = beautify$2(outputCode, beautifyOption);
-                    }
-                    fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-                    console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
-                }
-            }
-        }
-        catch (error) {
-            buildFailed = true;
-            console.error(error);
-        }
-        if (bundle) {
-            await bundle.close();
-        }
-        if (buildFailed) {
-            throw new Error('Build Failed');
-        }
-        // console.groupEnd();
-    }
-}
-
-const jsBuilder = new typescriptBuilder();
-
-const beautify$1 = js_beautify.css;
+const beautify$2 = js_beautify.css;
 /**
  * ビルド処理の抽象クラス
  */
@@ -409,7 +126,10 @@ class sassBuilder extends baseBuilder {
         if (!this.generateIndex) {
             return;
         }
-        const indexMatchPatterns = ['./_*.' + this.convertGlobPattern(this.fileExts), './*/' + this.indexFileName];
+        const indexMatchPatterns = [
+            './_*.' + this.convertGlobPattern(this.fileExts),
+            './*/' + this.indexFileName,
+        ];
         const partialMatchFiles = glob
             .sync(indexMatchPatterns, {
             cwd: targetDir,
@@ -460,7 +180,7 @@ class sassBuilder extends baseBuilder {
             const indexFileContent = indexFileContentLines.join('\n') + '\n';
             if (fs$1.existsSync(indexFilePath)) {
                 const indexFileContentBefore = fs$1.readFileSync(indexFilePath, 'utf-8');
-                if (indexFileContentBefore != indexFileContent) {
+                if (indexFileContentBefore !== indexFileContent) {
                     fs$1.writeFileSync(indexFilePath, indexFileContent);
                     console.log('Update index file: ' + indexFilePath);
                 }
@@ -511,7 +231,8 @@ class sassBuilder extends baseBuilder {
          * インデックスファイルの自動生成を行う場合は、
          * インデックスファイルをエントリポイントから除外する
          */
-        if (this.generateIndex && !this.ignoreFileNames.includes(this.indexFileName)) {
+        if (this.generateIndex &&
+            !this.ignoreFileNames.includes(this.indexFileName)) {
             this.ignoreFileNames.push(this.indexFileName);
         }
     }
@@ -525,10 +246,14 @@ class sassBuilder extends baseBuilder {
             compileOption = Object.assign(compileOption, { style: this.style });
         }
         if (this.sourcemap !== undefined) {
-            compileOption = Object.assign(compileOption, { sourceMap: this.sourcemap });
+            compileOption = Object.assign(compileOption, {
+                sourceMap: this.sourcemap,
+            });
         }
         if (this.loadPaths && this.loadPaths.length > 0) {
-            compileOption = Object.assign(compileOption, { loadPaths: this.loadPaths });
+            compileOption = Object.assign(compileOption, {
+                loadPaths: this.loadPaths,
+            });
         }
         return compileOption;
     }
@@ -629,7 +354,7 @@ class sassBuilder extends baseBuilder {
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         const result = sass.compile(srcPath, compileOption);
         if (compileOption.style !== 'compressed' && this.beautify) {
-            result.css = beautify$1(result.css, beautifyOption);
+            result.css = beautify$2(result.css, beautifyOption);
         }
         fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
@@ -653,7 +378,10 @@ class sassBuilder extends baseBuilder {
                     return path.dirname(partialFile);
                 })
                     .reduce((unique, item) => {
-                    return unique.includes(item) ? unique : [...unique, item];
+                    if (!unique.includes(item)) {
+                        unique.push(item);
+                    }
+                    return unique;
                 }, [])
                     .forEach((generateIndexDir) => {
                     this.generateIndexFile.bind(this)(generateIndexDir, false);
@@ -669,7 +397,7 @@ class sassBuilder extends baseBuilder {
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const result = sass.compile(srcFile, compileOption);
             if (compileOption.style !== 'compressed' && this.beautify) {
-                result.css = beautify$1(result.css, beautifyOption);
+                result.css = beautify$2(result.css, beautifyOption);
             }
             fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
             fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
@@ -684,7 +412,7 @@ class sassBuilder extends baseBuilder {
 
 const cssBuilder = new sassBuilder();
 
-const beautify = js_beautify.html;
+const beautify$1 = js_beautify.html;
 /**
  * ファイルシステムローダーの拡張クラス
  */
@@ -799,7 +527,10 @@ class nunjucksBuilder extends baseBuilder {
      * テンプレート変数をロードする
      */
     loadTemplateVars() {
-        const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
+        const globPatterns = [
+            this.varFileName,
+            this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName,
+        ];
         const varFiles = glob$1.sync(globPatterns);
         varFiles.forEach((varFilePath) => {
             const key = path.dirname(varFilePath);
@@ -842,7 +573,7 @@ class nunjucksBuilder extends baseBuilder {
         if (pageScope === '.') {
             pageScope = '';
         }
-        templateVars['_scope'] = pageScope;
+        templateVars._scope = pageScope;
         return templateVars;
     }
     /**
@@ -851,7 +582,7 @@ class nunjucksBuilder extends baseBuilder {
      * @param templateVars
      * @returns
      */
-    expandTemplateVars(expandTemplateVars, templateVars = {}) {
+    expandTemplateVars(expandTemplateVars) {
         const expandedTemplateVars = expandTemplateVars;
         return expandedTemplateVars;
     }
@@ -872,7 +603,8 @@ class nunjucksBuilder extends baseBuilder {
      */
     generateIndexFile() {
         const entries = this.getEntryPoint();
-        if (entries.size === 0 || (!this.generateSiteMap && !this.generatePageList)) {
+        if (entries.size === 0 ||
+            (!this.generateSiteMap && !this.generatePageList)) {
             return;
         }
         const pageList = [];
@@ -900,7 +632,9 @@ class nunjucksBuilder extends baseBuilder {
      * @param pageList
      */
     generateSitemapFile(pageList) {
-        const sitemapFileContent = nunjucks.renderString(this.sitemapTemplate, { pages: pageList });
+        const sitemapFileContent = nunjucks.renderString(this.sitemapTemplate, {
+            pages: pageList,
+        });
         const siteMapPath = path.join(this.outputDir, 'sitemap.xml');
         fs.mkdirSync(path.dirname(siteMapPath), { recursive: true });
         fs.writeFileSync(siteMapPath, sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n', 'utf-8');
@@ -950,7 +684,9 @@ class nunjucksBuilder extends baseBuilder {
         const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
         const watchFilePattern = [
             this.varFileName,
-            this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts),
+            this.convertGlobPattern(this.srcDir) +
+                '/**/*.' +
+                this.convertGlobPattern(watchFileExts),
             this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName,
         ];
         return watchFilePattern;
@@ -1060,7 +796,7 @@ class nunjucksBuilder extends baseBuilder {
         const templateVars = this.getTemplateVars(srcPath);
         let html = nunjucks.render(templatePath, templateVars);
         if (this.beautify) {
-            html = beautify(html, beautifyOption);
+            html = beautify$1(html, beautifyOption);
         }
         fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
@@ -1084,7 +820,7 @@ class nunjucksBuilder extends baseBuilder {
             const templateVars = this.getTemplateVars(srcFile);
             let html = nunjucks.render(templatePath, templateVars);
             if (this.beautify) {
-                html = beautify(html, beautifyOption);
+                html = beautify$1(html, beautifyOption);
             }
             fs.mkdirSync(path.dirname(outputPath), { recursive: true });
             fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
@@ -1100,27 +836,390 @@ class nunjucksBuilder extends baseBuilder {
 
 const htmlBuilder = new nunjucksBuilder();
 
+const beautify = js_beautify.js;
+/**
+ * ビルド処理の抽象クラス
+ */
+class typescriptBuilder extends baseBuilder {
+    constructor() {
+        super(...arguments);
+        /**
+         * 出力先ディレクトリ
+         */
+        this.outputDir = 'public/assets/js';
+        /**
+         * エントリポイントとなるファイルの拡張子
+         */
+        this.fileExts = ['js', 'ts'];
+        /**
+         * エントリポイントではないが変更の監視対象となるファイルの拡張子
+         */
+        this.moduleExts = ['mjs', 'cjs', 'mts', 'cts'];
+        /**
+         * エントリポイントから除外するファイル名の接尾語
+         */
+        this.ignoreFileSuffix = '.d';
+        /**
+         * エントリポイントから除外するディレクトリ名
+         * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
+         */
+        this.ignoreDirNames = ['node_modules'];
+        /**
+         * 出力時の拡張子
+         */
+        this.outputExt = 'js';
+        /**
+         * -------------------------
+         * このクラス固有のメンバ変数/メソッド
+         * -------------------------
+         */
+        /**
+         * 上書きするTypeScriptのコンパイルオプション
+         */
+        this.typeScriptCompoleOption = {
+            /* ------------------------ */
+            /* Language and Environment */
+            /* ------------------------ */
+            /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+            target: 'ES2020',
+            /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+            lib: ['ES2020', 'DOM', 'DOM.Iterable'],
+            /* Specify what module code is generated. */
+            module: 'ESNext',
+            /* Specify how TypeScript looks up a file from a given module specifier. */
+            moduleResolution: 'bundler',
+            /* Use the package.json 'exports' field when resolving package imports. */
+            resolvePackageJsonExports: true,
+            /* Use the package.json 'imports' field when resolving imports. */
+            resolvePackageJsonImports: true,
+            /* Enable importing .json files. */
+            resolveJsonModule: true,
+            /* ------------------ */
+            /* JavaScript Support */
+            /* ------------------ */
+            /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+            allowJs: true,
+            /* Enable error reporting in type-checked JavaScript files. */
+            checkJs: true,
+            /* ------------------- */
+            /* Interop Constraints */
+            /* ------------------- */
+            /* Ensure that each file can be safely transpiled without relying on other imports. */
+            // "isolatedModules": true,
+            /* Allow 'import x from y' when a module doesn't have a default export. */
+            allowSyntheticDefaultImports: true,
+            /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+            esModuleInterop: true,
+            /* Ensure that casing is correct in imports. */
+            forceConsistentCasingInFileNames: true,
+        };
+        /**
+         * ビルド時に設定するグローバルオブジェクトの内容
+         */
+        this.globals = {};
+        /**
+         * Roolup.jsに指定する出力形式
+         */
+        this.outputFortmat = 'esm';
+        /**
+         * 置換オプション
+         */
+        this.replace = {
+            'process.env.NODE_ENV': JSON.stringify('production'),
+        };
+        /**
+         * Minyfy化のオプション
+         * https://github.com/terser/terser#minify-options
+         */
+        this.minifyOption = {
+            compress: {},
+            mangle: {},
+        };
+    }
+    /**
+     * グルーバルオブジェクトを設定する
+     *
+     * @param globals
+     */
+    setGlobals(globals) {
+        this.globals = globals;
+    }
+    /**
+     * 出力形式を設定する
+     *
+     * @param format
+     */
+    setOutputFormat(format) {
+        this.outputFortmat = format;
+    }
+    /**
+     * 置換オプションを設定する
+     * @param replace
+     */
+    setReplace(replace) {
+        this.replace = replace;
+    }
+    /**
+     * SourceMapファイル出力の可否
+     *
+     * @param sourcemap
+     */
+    setSourceMap(sourcemap) {
+        this.sourcemap = sourcemap;
+    }
+    /**
+     * 出力時のminify化の可否を設定する
+     *
+     * @param minify
+     */
+    setMinfy(minify) {
+        this.minify = minify;
+    }
+    /**
+     * minify化のオプションを設定する
+     *
+     * @param minifyOption
+     */
+    setMinfyOption(minifyOption) {
+        this.minifyOption = minifyOption;
+    }
+    /**
+     * -------------------------
+     * 既存メソッドのオーバーライド
+     * -------------------------
+     */
+    /**
+     * ビルドオプションを設定する
+     *
+     * @param option
+     * @returns
+     */
+    setOption(option) {
+        super.setOption(option);
+        if (option.globals !== undefined &&
+            option.globals !== null &&
+            Object.keys(option.globals).length > 0) {
+            this.setGlobals(option.globals);
+        }
+        if (option.format !== undefined && option.format !== null) {
+            this.setOutputFormat(option.format);
+        }
+        if (option.replace !== undefined && option.replace !== null) {
+            this.setReplace(option.replace);
+        }
+        if (option.sourcemap !== undefined && option.sourcemap !== null) {
+            this.setSourceMap(option.sourcemap);
+        }
+        if (option.minify !== undefined && option.minify !== null) {
+            this.setMinfy(option.minify);
+        }
+        if (option.minifyOption !== undefined && option.minifyOption !== null) {
+            this.setMinfyOption(option.minifyOption);
+        }
+    }
+    /**
+     * -------------------------
+     * 抽象化メソッドの実装
+     * -------------------------
+     */
+    /**
+     * コンパイルオプションを取得する
+     * @returns
+     */
+    getCompileOption() {
+        return Object.assign(this.typeScriptCompoleOption, this.compileOption);
+    }
+    /**
+     * 単一ファイルのビルド処理
+     * @param srcPath
+     * @param outputPath
+     */
+    async buildFile(srcPath, outputPath) {
+        let bundle;
+        try {
+            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+            const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
+            const typescriptConfig = {
+                include: this.srcDir,
+                exclude: this.ignoreDirNames,
+                tsconfig: fs.existsSync(tsconfigPath) ? tsconfigPath : undefined,
+                compilerOptions: this.getCompileOption(),
+            };
+            const replaceOption = {
+                preventAssignment: true,
+                values: this.replace,
+            };
+            const rollupPlugins = [
+                nodeResolve(),
+                commonjs(),
+                typescript(typescriptConfig),
+                replace(replaceOption),
+            ];
+            if (this.minify !== undefined && this.minify) {
+                rollupPlugins.push(terser(this.minifyOption));
+            }
+            bundle = await rollup({
+                external: Object.keys(this.globals),
+                input: srcPath,
+                plugins: rollupPlugins,
+            });
+            const { output } = await bundle.generate({
+                globals: this.globals,
+                format: this.outputFortmat,
+                sourcemap: this.sourcemap,
+            });
+            const outputDir = path.dirname(outputPath);
+            fs.mkdirSync(outputDir, { recursive: true });
+            for (const chunkOrAsset of output) {
+                if (chunkOrAsset.type === 'asset') {
+                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
+                }
+                else {
+                    let outputCode = chunkOrAsset.code;
+                    if ((this.minify === undefined || !this.minify) && this.beautify) {
+                        outputCode = beautify(outputCode, beautifyOption);
+                    }
+                    fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
+                }
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+        if (bundle) {
+            await bundle.close();
+        }
+    }
+    /**
+     * 全ファイルのビルド処理
+     */
+    async buildAll() {
+        // console.group('Build entory point files');
+        const entries = this.getEntryPoint();
+        let bundle;
+        let buildFailed = false;
+        if (entries.size === 0) {
+            return;
+        }
+        try {
+            const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+            const typescriptConfig = {
+                include: this.srcDir,
+                exclude: this.ignoreDirNames,
+                compilerOptions: this.getCompileOption(),
+            };
+            const replaceOption = {
+                preventAssignment: true,
+                values: this.replace,
+            };
+            const rollupPlugins = [
+                nodeResolve(),
+                commonjs(),
+                typescript(typescriptConfig),
+                replace(replaceOption),
+            ];
+            if (this.minify !== undefined && this.minify) {
+                rollupPlugins.push(terser(this.minifyOption));
+            }
+            bundle = await rollup({
+                external: Object.keys(this.globals),
+                input: Object.fromEntries(entries),
+                plugins: rollupPlugins,
+            });
+            const { output } = await bundle.generate({
+                globals: this.globals,
+                format: this.outputFortmat,
+                sourcemap: this.sourcemap,
+            });
+            let outputPath;
+            for (const chunkOrAsset of output) {
+                if (chunkOrAsset.type === 'asset') {
+                    outputPath = path.join(this.outputDir, chunkOrAsset.fileName);
+                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+                    fs.writeFileSync(outputPath, chunkOrAsset.source);
+                }
+                else {
+                    outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
+                    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+                    let outputCode = chunkOrAsset.code;
+                    if ((this.minify === undefined || !this.minify) && this.beautify) {
+                        outputCode = beautify(outputCode, beautifyOption);
+                    }
+                    fs.writeFileSync(outputPath, outputCode.trim() + '\n');
+                    console.log('Compile: ' +
+                        path.join(this.srcDir, chunkOrAsset.fileName) +
+                        ' => ' +
+                        outputPath);
+                }
+            }
+        }
+        catch (error) {
+            buildFailed = true;
+            console.error(error);
+        }
+        if (bundle) {
+            await bundle.close();
+        }
+        if (buildFailed) {
+            throw new Error('Build Failed');
+        }
+        // console.groupEnd();
+    }
+}
+
+const jsBuilder = new typescriptBuilder();
+
 const argv = yargs(process.argv.slice(2))
     .options({
-    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモード' },
+    w: {
+        type: 'boolean',
+        default: false,
+        alias: 'watch',
+        description: 'watchモード',
+    },
     m: {
         type: 'string',
         choices: ['develop', 'production'],
         alias: 'mode',
         description: 'ビルド処理のモード指定',
     },
-    p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
-    d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
+    p: {
+        type: 'boolean',
+        alias: ['prod', 'production'],
+        description: '本番モード指定のショートハンド',
+    },
+    d: {
+        type: 'boolean',
+        alias: ['dev', 'develop'],
+        description: '開発モード指定のショートハンド',
+    },
     html: { type: 'boolean', description: 'HTMLのビルド機能を利用する' },
     css: { type: 'boolean', description: 'CSSのビルド機能をを利用する' },
     js: { type: 'boolean', description: 'JSのビルド機能を利用する' },
     copy: { type: 'boolean', description: 'コピー機能を利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    c: {
+        type: 'string',
+        alias: 'config',
+        description: '設定ファイルを指定する',
+    },
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
-    force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
-    configOnly: { type: 'boolean', default: false, description: '設定ファイルのみを出力する' },
-    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
+    force: {
+        type: 'boolean',
+        default: false,
+        alias: 'f',
+        description: '設定ファイルを強制的に上書きする',
+    },
+    configOnly: {
+        type: 'boolean',
+        default: false,
+        description: '設定ファイルのみを出力する',
+    },
+    clean: {
+        type: 'boolean',
+        default: false,
+        description: 'ビルド前に出力ディレクトリを空にする',
+    },
 })
     .parseSync();
 if (argv.init) {
@@ -1151,31 +1250,63 @@ if (argv.init) {
     }
     const createDirectories = [];
     const htmlBuilderOption = configLoader.getHtmlOption();
+    createDirectories.push(
+    // @ts-ignore
+    htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src');
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src');
-    //@ts-ignore
-    createDirectories.push(htmlBuilderOption.outputDir !== undefined ? htmlBuilderOption.outputDir : 'public');
+    htmlBuilderOption.outputDir !== undefined
+        ? //@ts-ignore
+            htmlBuilderOption.outputDir
+        : 'public');
     const jsBuilderOption = configLoader.getJsOption();
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src');
+    jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src');
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(jsBuilderOption.outputDir !== undefined ? jsBuilderOption.outputDir : 'public/assets/js');
+    jsBuilderOption.outputDir !== undefined
+        ? //@ts-ignore
+            jsBuilderOption.outputDir
+        : 'public/assets/js');
     const cssBuilderOption = configLoader.getCssOption();
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src');
+    cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src');
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(cssBuilderOption.outputDir !== undefined ? cssBuilderOption.outputDir : 'public/assets/css');
+    cssBuilderOption.outputDir !== undefined
+        ? //@ts-ignore
+            cssBuilderOption.outputDir
+        : 'public/assets/css');
     const snippetBuilderOption = configLoader.getSnippetOption();
     //@ts-ignore
-    createDirectories.push(snippetBuilderOption.srcDir !== undefined ? snippetBuilderOption.srcDir : 'docs/cheatsheet');
+    createDirectories.push(
     //@ts-ignore
-    createDirectories.push(snippetBuilderOption.outputDir !== undefined ? snippetBuilderOption.outputDir : '.vscode');
+    snippetBuilderOption.srcDir !== undefined
+        ? //@ts-ignore
+            snippetBuilderOption.srcDir
+        : 'docs/cheatsheet');
+    createDirectories.push(
+    //@ts-ignore
+    snippetBuilderOption.outputDir !== undefined
+        ? //@ts-ignore
+            snippetBuilderOption.outputDir
+        : '.vscode');
     const screenshotOption = configLoader.getScreenshotOption();
     //@ts-ignore
-    createDirectories.push(screenshotOption.outputDir !== undefined ? screenshotOption.outputDir : 'screenshots');
+    createDirectories.push(
+    //@ts-ignore
+    screenshotOption.outputDir !== undefined
+        ? //@ts-ignore
+            screenshotOption.outputDir
+        : 'screenshots');
     createDirectories
         .reduce((unique, item) => {
-        return unique.includes(item) ? unique : [...unique, item];
+        if (!unique.includes(item)) {
+            unique.push(item);
+        }
+        return unique;
     }, [])
         .sort()
         .forEach((dir) => {

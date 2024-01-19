@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import { Console } from 'node:console';
+import chalk from 'chalk';
 
 class ConsoleOverride extends Console {
   public constructor() {

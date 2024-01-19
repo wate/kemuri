@@ -1,39 +1,69 @@
 #!/usr/bin/env node
 
-import fs from 'fs-extra';
-import jsBuilder from './builder/js';
-import cssBuilder from './builder/css';
-import htmlBuilder from './builder/html';
+import chalk from 'chalk';
 // @ts-ignore
 import cpx from 'cpx2';
-import * as server from './server/browser-sync';
+import fs from 'fs-extra';
+import yargs from 'yargs';
+import cssBuilder from './builder/css';
+import htmlBuilder from './builder/html';
+import jsBuilder from './builder/js';
 import configLoader from './config';
 import type { settingType } from './config';
-import yargs from 'yargs';
-import chalk from 'chalk';
 import console from './console';
+import * as server from './server/browser-sync';
 
 const argv = yargs(process.argv.slice(2))
   .options({
-    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモード' },
+    w: {
+      type: 'boolean',
+      default: false,
+      alias: 'watch',
+      description: 'watchモード',
+    },
     m: {
       type: 'string',
       choices: ['develop', 'production'],
       alias: 'mode',
       description: 'ビルド処理のモード指定',
     },
-    p: { type: 'boolean', alias: ['prod', 'production'], description: '本番モード指定のショートハンド' },
-    d: { type: 'boolean', alias: ['dev', 'develop'], description: '開発モード指定のショートハンド' },
+    p: {
+      type: 'boolean',
+      alias: ['prod', 'production'],
+      description: '本番モード指定のショートハンド',
+    },
+    d: {
+      type: 'boolean',
+      alias: ['dev', 'develop'],
+      description: '開発モード指定のショートハンド',
+    },
     html: { type: 'boolean', description: 'HTMLのビルド機能を利用する' },
     css: { type: 'boolean', description: 'CSSのビルド機能をを利用する' },
     js: { type: 'boolean', description: 'JSのビルド機能を利用する' },
     copy: { type: 'boolean', description: 'コピー機能を利用する' },
     server: { type: 'boolean', description: 'browserSyncサーバーを起動する' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    c: {
+      type: 'string',
+      alias: 'config',
+      description: '設定ファイルを指定する',
+    },
     init: { type: 'boolean', description: 'プロジェクトの初期設定を行う' },
-    force: { type: 'boolean', default: false, alias: 'f', description: '設定ファイルを強制的に上書きする' },
-    configOnly: { type: 'boolean', default: false, description: '設定ファイルのみを出力する' },
-    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
+    force: {
+      type: 'boolean',
+      default: false,
+      alias: 'f',
+      description: '設定ファイルを強制的に上書きする',
+    },
+    configOnly: {
+      type: 'boolean',
+      default: false,
+      description: '設定ファイルのみを出力する',
+    },
+    clean: {
+      type: 'boolean',
+      default: false,
+      description: 'ビルド前に出力ディレクトリを空にする',
+    },
   })
   .parseSync();
 
@@ -41,18 +71,24 @@ if (argv.init) {
   if (fs.existsSync('.builderrc.yml')) {
     if (argv.force) {
       configLoader.copyDefaultConfig(argv.force);
-      console.log(chalk.green('Configuration file(.builderrc.yml) has been overwritten.'));
+      console.log(
+        chalk.green('Configuration file(.builderrc.yml) has been overwritten.'),
+      );
     } else {
       console.warn('Configuration file(.builderrc.yml) already exists.');
     }
   } else {
     configLoader.copyDefaultConfig(argv.force);
-    console.log(chalk.green('Configuration file(.builderrc.yml) has been generated.'));
+    console.log(
+      chalk.green('Configuration file(.builderrc.yml) has been generated.'),
+    );
   }
   if (fs.existsSync('tsconfig.json')) {
     if (argv.force) {
       configLoader.copyDefaultTSConfig(argv.force);
-      console.log(chalk.green('Configuration file(tsconfig.json) has been overwritten.'));
+      console.log(
+        chalk.green('Configuration file(tsconfig.json) has been overwritten.'),
+      );
     } else {
       console.warn('Configuration file(tsconfig.json) already exists.');
     }
@@ -63,31 +99,72 @@ if (argv.init) {
   }
   const createDirectories: string[] = [];
   const htmlBuilderOption = configLoader.getHtmlOption();
-  //@ts-ignore
-  createDirectories.push(htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src');
-  //@ts-ignore
-  createDirectories.push(htmlBuilderOption.outputDir !== undefined ? htmlBuilderOption.outputDir : 'public');
+  createDirectories.push(
+    // @ts-ignore
+    htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src',
+  );
+  createDirectories.push(
+    //@ts-ignore
+    htmlBuilderOption.outputDir !== undefined
+      ? //@ts-ignore
+        htmlBuilderOption.outputDir
+      : 'public',
+  );
   const jsBuilderOption = configLoader.getJsOption();
-  //@ts-ignore
-  createDirectories.push(jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src');
-  //@ts-ignore
-  createDirectories.push(jsBuilderOption.outputDir !== undefined ? jsBuilderOption.outputDir : 'public/assets/js');
+  createDirectories.push(
+    //@ts-ignore
+    jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src',
+  );
+  createDirectories.push(
+    //@ts-ignore
+    jsBuilderOption.outputDir !== undefined
+      ? //@ts-ignore
+        jsBuilderOption.outputDir
+      : 'public/assets/js',
+  );
   const cssBuilderOption = configLoader.getCssOption();
-  //@ts-ignore
-  createDirectories.push(cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src');
-  //@ts-ignore
-  createDirectories.push(cssBuilderOption.outputDir !== undefined ? cssBuilderOption.outputDir : 'public/assets/css');
+  createDirectories.push(
+    //@ts-ignore
+    cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src',
+  );
+  createDirectories.push(
+    //@ts-ignore
+    cssBuilderOption.outputDir !== undefined
+      ? //@ts-ignore
+        cssBuilderOption.outputDir
+      : 'public/assets/css',
+  );
   const snippetBuilderOption = configLoader.getSnippetOption();
   //@ts-ignore
-  createDirectories.push(snippetBuilderOption.srcDir !== undefined ? snippetBuilderOption.srcDir : 'docs/cheatsheet');
-  //@ts-ignore
-  createDirectories.push(snippetBuilderOption.outputDir !== undefined ? snippetBuilderOption.outputDir : '.vscode');
+  createDirectories.push(
+    //@ts-ignore
+    snippetBuilderOption.srcDir !== undefined
+      ? //@ts-ignore
+        snippetBuilderOption.srcDir
+      : 'docs/cheatsheet',
+  );
+  createDirectories.push(
+    //@ts-ignore
+    snippetBuilderOption.outputDir !== undefined
+      ? //@ts-ignore
+        snippetBuilderOption.outputDir
+      : '.vscode',
+  );
   const screenshotOption = configLoader.getScreenshotOption();
   //@ts-ignore
-  createDirectories.push(screenshotOption.outputDir !== undefined ? screenshotOption.outputDir : 'screenshots');
+  createDirectories.push(
+    //@ts-ignore
+    screenshotOption.outputDir !== undefined
+      ? //@ts-ignore
+        screenshotOption.outputDir
+      : 'screenshots',
+  );
   createDirectories
     .reduce((unique: string[], item: string) => {
-      return unique.includes(item) ? unique : [...unique, item];
+      if (!unique.includes(item)) {
+        unique.push(item);
+      }
+      return unique;
     }, [])
     .sort()
     .forEach((dir) => {
@@ -204,7 +281,11 @@ if (argv.watch) {
     console.log(copyFiles.map((copyOption: any) => copyOption.src));
     console.groupEnd();
     copyFiles.forEach((copyOption: any) => {
-      cpx.watch(copyOption.src, copyOption.dest, Object.assign(copyOption, { initialCopy: false }));
+      cpx.watch(
+        copyOption.src,
+        copyOption.dest,
+        Object.assign(copyOption, { initialCopy: false }),
+      );
     });
   }
 }

@@ -1,21 +1,33 @@
 #!/usr/bin/env node
 
-import { chromium, webkit, firefox, devices } from 'playwright';
-import fs from 'fs-extra';
 import * as path from 'node:path';
 import { URL } from 'node:url';
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import { JSDOM } from 'jsdom';
+import _ from 'lodash';
+import { chromium, devices, firefox, webkit } from 'playwright';
+import yargs from 'yargs';
 import configLoader from './config';
 import console from './console';
-import _ from 'lodash';
-import { JSDOM } from 'jsdom';
-import chalk from 'chalk';
-import yargs from 'yargs';
 
 const argv = yargs(process.argv.slice(2))
   .options({
-    l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
-    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
+    l: {
+      type: 'string',
+      description: 'サイトマップファイルのパスまたはURL',
+      alias: 'location',
+    },
+    c: {
+      type: 'string',
+      alias: 'config',
+      description: '設定ファイルを指定する',
+    },
+    clean: {
+      type: 'boolean',
+      default: false,
+      description: 'ビルド前に出力ディレクトリを空にする',
+    },
   })
   .parseSync();
 
@@ -59,7 +71,9 @@ if (argv.location) {
   } else {
     //@ts-ignore
     const htmlOption = configLoader.getHtmlOption();
-    const htmloutputDir: any = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
+    const htmloutputDir: any = _.has(htmlOption, 'outputDir')
+      ? _.get(htmlOption, 'outputDir')
+      : 'public';
     const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
     if (fs.existsSync('./pages.json')) {
       sitemapLocation = './pages.json';
@@ -76,14 +90,30 @@ if (/^https?:\/\//.test(sitemapLocation)) {
   /**
    * Basic認証の設定
    */
-  if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
-    const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
-    const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+  if (
+    _.has(screenshotOption, 'auth.basic.username') &&
+    _.has(screenshotOption, 'auth.basic.password')
+  ) {
+    const authBasicUsername = _.get(
+      screenshotOption,
+      'auth.basic.username',
+      null,
+    );
+    const authBasicPassword = _.get(
+      screenshotOption,
+      'auth.basic.password',
+      null,
+    );
     if (authBasicUsername && authBasicPassword) {
-      fetchOption.headers = { Authorization: 'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`) };
+      fetchOption.headers = {
+        Authorization:
+          'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`),
+      };
     }
   }
-  const dom = new JSDOM(await (await fetch(sitemapLocation, fetchOption)).text());
+  const dom = new JSDOM(
+    await (await fetch(sitemapLocation, fetchOption)).text(),
+  );
   const urls = dom.window.document.querySelectorAll('url');
   urls.forEach((url) => {
     const loc = url.querySelector('loc');
@@ -100,7 +130,7 @@ if (/^https?:\/\//.test(sitemapLocation)) {
       case '.json':
         pages = JSON.parse(fs.readFileSync(sitemapLocation, 'utf8')).pages;
         break;
-      case '.xml':
+      case '.xml': {
         const dom = new JSDOM(fs.readFileSync(sitemapLocation, 'utf8'));
         const urls = dom.window.document.querySelectorAll('url');
         urls.forEach((url) => {
@@ -112,6 +142,7 @@ if (/^https?:\/\//.test(sitemapLocation)) {
           }
         });
         break;
+      }
     }
   } else {
     console.error('sitemap not found.');
@@ -124,22 +155,28 @@ if (pages.length === 0) {
   process.exit(1);
 } else {
   let screenshotTargets: any = {};
-  let headless: boolean = true;
-  let fullPage: boolean = true;
-  let retryLimit: number = 3;
-  let screenshotBaseSaveDir: string = 'screenshots';
-  let saveFlatPath: boolean = false;
+  let headless = true;
+  let fullPage = true;
+  let retryLimit = 3;
+  let screenshotBaseSaveDir = 'screenshots';
+  let saveFlatPath = false;
 
   let defaultBrowser: Browser = {
     type: 'chromium',
     width: 1920,
     height: 1080,
   };
-  if (_.has(screenshotOption, 'outputDir') && _.get(screenshotOption, 'outputDir')) {
+  if (
+    _.has(screenshotOption, 'outputDir') &&
+    _.get(screenshotOption, 'outputDir')
+  ) {
     //@ts-ignore{
     screenshotBaseSaveDir = _.get(screenshotOption, 'outputDir');
   }
-  if (_.has(screenshotOption, 'default') && _.get(screenshotOption, 'default')) {
+  if (
+    _.has(screenshotOption, 'default') &&
+    _.get(screenshotOption, 'default')
+  ) {
     //@ts-ignore
     defaultBrowser = _.get(screenshotOption, 'default');
   }
@@ -151,7 +188,10 @@ if (pages.length === 0) {
     //@ts-ignore
     fullPage = _.get(screenshotOption, 'fullPage');
   }
-  if (_.has(screenshotOption, 'retryLimit') && _.get(screenshotOption, 'retryLimit')) {
+  if (
+    _.has(screenshotOption, 'retryLimit') &&
+    _.get(screenshotOption, 'retryLimit')
+  ) {
     //@ts-ignore
     retryLimit = _.get(screenshotOption, 'retryLimit');
   }
@@ -159,14 +199,21 @@ if (pages.length === 0) {
     //@ts-ignore
     saveFlatPath = _.get(screenshotOption, 'saveFlatPath');
   }
-  if (_.has(screenshotOption, 'targets') && _.get(screenshotOption, 'targets')) {
+  if (
+    _.has(screenshotOption, 'targets') &&
+    _.get(screenshotOption, 'targets')
+  ) {
     //@ts-ignore
     screenshotTargets = _.get(screenshotOption, 'targets');
   }
 
   if (argv.clean) {
     //スクリーンショット保存先ディレクトリを空にする
-    console.log(chalk.yellow('Clean up screenshot save directory: ' + screenshotBaseSaveDir));
+    console.log(
+      chalk.yellow(
+        'Clean up screenshot save directory: ' + screenshotBaseSaveDir,
+      ),
+    );
     fs.emptyDirSync(screenshotBaseSaveDir);
   }
   /**
@@ -188,9 +235,12 @@ if (pages.length === 0) {
       } else {
         if (screenshotTargets[groupName].type !== undefined) {
           if (devices[screenshotTargets[groupName].type] !== undefined) {
-            browser.type = devices[screenshotTargets[groupName].type].defaultBrowserType;
-            browser.width = devices[screenshotTargets[groupName].type].viewport.width;
-            browser.height = devices[screenshotTargets[groupName].type].viewport.height;
+            browser.type =
+              devices[screenshotTargets[groupName].type].defaultBrowserType;
+            browser.width =
+              devices[screenshotTargets[groupName].type].viewport.width;
+            browser.height =
+              devices[screenshotTargets[groupName].type].viewport.height;
           } else {
             browser.type = screenshotTargets[groupName].type;
           }
@@ -203,7 +253,9 @@ if (pages.length === 0) {
         }
       }
       pages.forEach((page: Page) => {
-        screenshotPages.push(_.merge(_.clone(browser), { group: groupName, url: page.url }));
+        screenshotPages.push(
+          _.merge(_.clone(browser), { group: groupName, url: page.url }),
+        );
       });
     });
   }
@@ -214,31 +266,57 @@ if (pages.length === 0) {
       if (!browsers[screenshotPage.type]) {
         switch (screenshotPage.type) {
           case 'firefox':
-            browsers[screenshotPage.type] = await firefox.launch({ headless: headless });
+            browsers[screenshotPage.type] = await firefox.launch({
+              headless: headless,
+            });
+            break;
           case 'webkit':
-            browsers[screenshotPage.type] = await webkit.launch({ headless: headless });
+            browsers[screenshotPage.type] = await webkit.launch({
+              headless: headless,
+            });
+            break;
           default:
-            browsers[screenshotPage.type] = await chromium.launch({ headless: headless });
+            browsers[screenshotPage.type] = await chromium.launch({
+              headless: headless,
+            });
         }
       }
       const browser = browsers[screenshotPage.type];
       let screenshotSaveDir = screenshotBaseSaveDir;
       let screenshotGroup = 'default';
-      const screenshotViewportSize = screenshotPage.width + 'x' + screenshotPage.height;
+      const screenshotViewportSize =
+        screenshotPage.width + 'x' + screenshotPage.height;
       if (screenshotPage.group) {
         screenshotGroup = screenshotPage.group;
-        screenshotSaveDir = path.join(screenshotBaseSaveDir, screenshotPage.group);
+        screenshotSaveDir = path.join(
+          screenshotBaseSaveDir,
+          screenshotPage.group,
+        );
       }
       if (!browserContexts[screenshotGroup]) {
         const browserContextOption: any = {
-          viewport: { width: screenshotPage.width, height: screenshotPage.height },
+          viewport: {
+            width: screenshotPage.width,
+            height: screenshotPage.height,
+          },
         };
         /**
          * Basic認証の設定
          */
-        if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
-          const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
-          const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
+        if (
+          _.has(screenshotOption, 'auth.basic.username') &&
+          _.has(screenshotOption, 'auth.basic.password')
+        ) {
+          const authBasicUsername = _.get(
+            screenshotOption,
+            'auth.basic.username',
+            null,
+          );
+          const authBasicPassword = _.get(
+            screenshotOption,
+            'auth.basic.password',
+            null,
+          );
           if (authBasicUsername && authBasicPassword) {
             browserContextOption.httpCredentials = {
               username: authBasicUsername,
@@ -250,10 +328,17 @@ if (pages.length === 0) {
         /**
          * フォーム認証の設定
          */
-        if (_.has(screenshotOption, 'auth.form.url') && _.has(screenshotOption, 'auth.form.actions')) {
+        if (
+          _.has(screenshotOption, 'auth.form.url') &&
+          _.has(screenshotOption, 'auth.form.actions')
+        ) {
           const authFormPage = await browserContext.newPage();
           const authFormURL = _.get(screenshotOption, 'auth.form.url', null);
-          const authFormActions = _.get(screenshotOption, 'auth.form.actions', null);
+          const authFormActions = _.get(
+            screenshotOption,
+            'auth.form.actions',
+            null,
+          );
           await authFormPage.goto(authFormURL);
           authFormActions.forEach(async (action: any) => {
             switch (action.action) {
@@ -277,28 +362,41 @@ if (pages.length === 0) {
       const context = browserContexts[screenshotGroup];
       const testUrl = new URL(screenshotPage.url);
       const page = await context.newPage();
-      let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-      let screenshotSaveDirName = path.dirname(testUrl.pathname).replace(/^\//, '');
+      let screenshotSaveFileName =
+        path.basename(testUrl.pathname, path.extname(testUrl.pathname)) +
+        '.png';
+      let screenshotSaveDirName = path
+        .dirname(testUrl.pathname)
+        .replace(/^\//, '');
       if (/\/$/.test(testUrl.pathname)) {
         screenshotSaveFileName = 'index.png';
         screenshotSaveDirName = testUrl.pathname.replace(/\/$/, '');
       }
       if (saveFlatPath) {
         // フラットなパスで保存する場合
-        screenshotSaveFileName = path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_');
+        screenshotSaveFileName = path
+          .join(screenshotSaveDirName, screenshotSaveFileName)
+          .replace(/\//g, '_');
         screenshotSaveDirName = '';
       }
-      const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);
+      const screenshotSavePath = path.join(
+        screenshotSaveDir,
+        screenshotSaveDirName,
+        screenshotSaveFileName,
+      );
       await page.goto(testUrl.toString());
       if (!fs.existsSync(path.dirname(screenshotSavePath))) {
         fs.mkdirSync(path.dirname(screenshotSavePath), { recursive: true });
       }
-      let retryCount: number = 0;
-      let retry: boolean = false;
+      let retryCount = 0;
+      let retry = false;
       let screenshotError: any | null = null;
       do {
         try {
-          await page.screenshot({ path: screenshotSavePath, fullPage: fullPage });
+          await page.screenshot({
+            path: screenshotSavePath,
+            fullPage: fullPage,
+          });
           screenshotError = null;
           retry = false;
         } catch (error) {
@@ -311,7 +409,14 @@ if (pages.length === 0) {
         }
       } while (retry && retryCount < retryLimit);
       await page.close();
-      console.group('[' + screenshotGroup + '(' + screenshotViewportSize + ')]: ' + screenshotPage.url);
+      console.group(
+        '[' +
+          screenshotGroup +
+          '(' +
+          screenshotViewportSize +
+          ')]: ' +
+          screenshotPage.url,
+      );
       if (screenshotError) {
         console.error(screenshotError);
       } else {

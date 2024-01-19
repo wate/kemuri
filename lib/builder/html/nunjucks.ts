@@ -1,14 +1,14 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { URL } from 'node:url';
-import { baseBuilder, builderOption } from '../base';
 import { glob } from 'glob';
-import yaml from 'js-yaml';
-import nunjucks from 'nunjucks';
 import matter from 'gray-matter';
-import _ from 'lodash';
 import js_beautify from 'js-beautify';
+import yaml from 'js-yaml';
+import _ from 'lodash';
+import nunjucks from 'nunjucks';
 import console from '../../console';
+import { baseBuilder, builderOption } from '../base';
 
 const beautify = js_beautify.html;
 
@@ -72,22 +72,22 @@ export class nunjucksBuilder extends baseBuilder {
   /**
    * 変数ファイルの名前
    */
-  protected varFileName: string = 'vars.yml';
+  protected varFileName = 'vars.yml';
 
   /**
    * サイトURL
    */
-  protected siteUrl: string = 'http://localhost:3000/';
+  protected siteUrl = 'http://localhost:3000/';
 
   /**
    * サイトマップファイルの生成の可否
    */
-  protected generateSiteMap: boolean = true;
+  protected generateSiteMap = true;
 
   /**
    * サイトマップファイルのテンプレート文字列
    */
-  protected sitemapTemplate: string = `<?xml version="1.0" encoding="UTF-8"?>
+  protected sitemapTemplate = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   {% for page in pages %}
   <url>
@@ -106,7 +106,7 @@ export class nunjucksBuilder extends baseBuilder {
   /**
    * ページリストの生成の可否
    */
-  protected generatePageList: boolean = true;
+  protected generatePageList = true;
 
   /**
    * テンプレート変数格納用メンバ変数
@@ -147,7 +147,10 @@ export class nunjucksBuilder extends baseBuilder {
    * テンプレート変数をロードする
    */
   protected loadTemplateVars() {
-    const globPatterns = [this.varFileName, this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName];
+    const globPatterns = [
+      this.varFileName,
+      this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName,
+    ];
     const varFiles = glob.sync(globPatterns);
     varFiles.forEach((varFilePath: string) => {
       const key = path.dirname(varFilePath);
@@ -173,7 +176,7 @@ export class nunjucksBuilder extends baseBuilder {
     let templateVars = this.templateVars['.'] ?? {
       siteUrl: this.siteUrl,
     };
-    let key: string = '';
+    let key = '';
     const srcFilePaths = path.dirname(srcFile).split(path.sep);
     srcFilePaths.forEach((dirName) => {
       key = path.join(key, dirName);
@@ -191,7 +194,7 @@ export class nunjucksBuilder extends baseBuilder {
     if (pageScope === '.') {
       pageScope = '';
     }
-    templateVars['_scope'] = pageScope;
+    templateVars._scope = pageScope;
     return templateVars;
   }
 
@@ -201,7 +204,7 @@ export class nunjucksBuilder extends baseBuilder {
    * @param templateVars
    * @returns
    */
-  protected expandTemplateVars(expandTemplateVars: object, templateVars: object = {}): object {
+  protected expandTemplateVars(expandTemplateVars: object): object {
     const expandedTemplateVars = expandTemplateVars;
     return expandedTemplateVars;
   }
@@ -214,7 +217,8 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected isRootVarFile(varFilePath: string): boolean {
     const isProjectRootVarFile: boolean = varFilePath === this.varFileName;
-    const isSrcRootVarFile: boolean = path.join(this.srcDir, this.varFileName) === varFilePath;
+    const isSrcRootVarFile: boolean =
+      path.join(this.srcDir, this.varFileName) === varFilePath;
     return isProjectRootVarFile || isSrcRootVarFile;
   }
 
@@ -224,13 +228,22 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected generateIndexFile() {
     const entries = this.getEntryPoint();
-    if (entries.size === 0 || (!this.generateSiteMap && !this.generatePageList)) {
+    if (
+      entries.size === 0 ||
+      (!this.generateSiteMap && !this.generatePageList)
+    ) {
       return;
     }
     const pageList: any[] = [];
     entries.forEach((srcFile, entryPoint) => {
-      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
-      const pageUrl = new URL('/' + path.relative(this.outputDir, outputPath), this.siteUrl).toString();
+      const outputPath = path.join(
+        this.outputDir,
+        entryPoint + '.' + this.outputExt,
+      );
+      const pageUrl = new URL(
+        '/' + path.relative(this.outputDir, outputPath),
+        this.siteUrl,
+      ).toString();
       const pagelastmod = fs.statSync(srcFile).mtime.toISOString();
       const pageInfo = {
         srcFile: srcFile,
@@ -252,10 +265,16 @@ export class nunjucksBuilder extends baseBuilder {
    * @param pageList
    */
   protected generateSitemapFile(pageList: any[]) {
-    const sitemapFileContent = nunjucks.renderString(this.sitemapTemplate, { pages: pageList });
+    const sitemapFileContent = nunjucks.renderString(this.sitemapTemplate, {
+      pages: pageList,
+    });
     const siteMapPath = path.join(this.outputDir, 'sitemap.xml');
     fs.mkdirSync(path.dirname(siteMapPath), { recursive: true });
-    fs.writeFileSync(siteMapPath, sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n', 'utf-8');
+    fs.writeFileSync(
+      siteMapPath,
+      sitemapFileContent.replace(/^\s*\r?\n/gm, '').trim() + '\n',
+      'utf-8',
+    );
     console.log('Generate sitemap file: ' + siteMapPath);
   }
   /**
@@ -265,7 +284,11 @@ export class nunjucksBuilder extends baseBuilder {
   protected generatePageListFile(pageList: any[]) {
     const pageListFilePath = 'pages.json';
     fs.mkdirSync(path.dirname(pageListFilePath), { recursive: true });
-    fs.writeFileSync(pageListFilePath, JSON.stringify({ pages: pageList }, null, 2), 'utf-8');
+    fs.writeFileSync(
+      pageListFilePath,
+      JSON.stringify({ pages: pageList }, null, 2),
+      'utf-8',
+    );
     console.log('Generate page list file: ' + pageListFilePath);
   }
 
@@ -301,10 +324,14 @@ export class nunjucksBuilder extends baseBuilder {
    * @returns
    */
   public getWatchFilePattern(): string | string[] {
-    const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
+    const watchFileExts = Array.from(
+      new Set([...this.fileExts, ...this.moduleExts]),
+    );
     const watchFilePattern = [
       this.varFileName,
-      this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts),
+      this.convertGlobPattern(this.srcDir) +
+        '/**/*.' +
+        this.convertGlobPattern(watchFileExts),
       this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName,
     ];
     return watchFilePattern;
@@ -429,7 +456,10 @@ export class nunjucksBuilder extends baseBuilder {
     nunjucks.Loader.extend(new ExpandLoader());
     entries.forEach((srcFile, entryPoint) => {
       const templatePath: string = path.relative(this.srcDir, srcFile);
-      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+      const outputPath = path.join(
+        this.outputDir,
+        entryPoint + '.' + this.outputExt,
+      );
       const templateVars = this.getTemplateVars(srcFile);
       let html = nunjucks.render(templatePath, templateVars);
       if (this.beautify) {

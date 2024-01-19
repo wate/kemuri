@@ -1,14 +1,14 @@
+import * as child_process from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as child_process from 'node:child_process';
-import shellQuote from 'shell-quote';
-import duplexer from 'duplexer3';
 import { fileURLToPath } from 'node:url';
-import { cosmiconfigSync, CosmiconfigResult } from 'cosmiconfig';
-import nunjucks from 'nunjucks';
+import { CosmiconfigResult, cosmiconfigSync } from 'cosmiconfig';
+import duplexer from 'duplexer3';
 import _ from 'lodash';
-import console from './console';
+import nunjucks from 'nunjucks';
+import shellQuote from 'shell-quote';
 import parseEnv from './config/env';
+import console from './console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,18 +17,21 @@ nunjucks.configure({ autoescape: false });
 
 export type settingType = 'js' | 'css' | 'html' | 'copy';
 
-class configLoader {
+class builderConfig {
   /**
    * 設定ファイルのパス
    */
-  static configFile?: string;
+  configFile: string = null;
 
   /**
    * 設定ファイルを生成する
    * @param force
    */
-  public static copyDefaultConfig(force?: boolean): void {
-    const srcConfigFilePath = path.resolve(__dirname, '../../.kemurirc.default.yml');
+  public copyDefaultConfig(force?: boolean): void {
+    const srcConfigFilePath = path.resolve(
+      __dirname,
+      '../../.kemurirc.default.yml',
+    );
     const destConfigFilePath = path.resolve(process.cwd(), '.kemurirc.yml');
     if (!fs.existsSync(destConfigFilePath) || force) {
       fs.copyFileSync(srcConfigFilePath, destConfigFilePath);
@@ -40,7 +43,7 @@ class configLoader {
    * TypeScriptの初期設定ファイルを生成する
    * @param force
    */
-  public static copyDefaultTSConfig(force?: boolean): void {
+  public copyDefaultTSConfig(force?: boolean): void {
     const srcConfigFilePath = path.resolve(__dirname, '../../tsconfig.json');
     const destConfigFilePath = path.resolve(process.cwd(), 'tsconfig.json');
     if (!fs.existsSync(destConfigFilePath) || force) {
@@ -54,11 +57,11 @@ class configLoader {
    * 設定ファイルをロードする
    * @returns
    */
-  public static load(): any {
-    let config = parseEnv();
+  public load(): any {
+    const config = parseEnv();
     const explorerSync = cosmiconfigSync('kemuri');
-    const result: CosmiconfigResult = configLoader.configFile
-      ? explorerSync.load(configLoader.configFile)
+    const result: CosmiconfigResult = this.configFile
+      ? explorerSync.load(this.configFile)
       : explorerSync.search();
     if (result) {
       return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
@@ -70,8 +73,8 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static isEnable(type: settingType): boolean {
-    const allConfig = configLoader.load();
+  public isEnable(type: settingType): boolean {
+    const allConfig = this.load();
     if (allConfig && _.has(allConfig, 'enable') && _.get(allConfig, 'enable')) {
       return _.get(allConfig, 'enable').includes(type);
     }
@@ -83,7 +86,7 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static isDisable(type: settingType): boolean {
+  public isDisable(type: settingType): boolean {
     return !this.isEnable(type);
   }
   /**
@@ -91,8 +94,8 @@ class configLoader {
    * @param key
    * @returns
    */
-  public static get(key: string, defaultValue?: any): any {
-    const allConfig = configLoader.load();
+  public get(key: string, defaultValue?: any): any {
+    const allConfig = this.load();
     return _.get(allConfig, key, defaultValue);
   }
   /**
@@ -100,23 +103,41 @@ class configLoader {
    * @param type
    * @returns
    */
-  public static getOption(type: settingType, overrideOption?: object): object {
-    const allConfig = configLoader.load();
+  public getOption(type: settingType, overrideOption?: object): object {
+    const allConfig = this.load();
     let builderConfig = {};
     if (allConfig) {
       builderConfig = allConfig;
       if (_.has(allConfig, type) && _.get(allConfig, type)) {
-        builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
+        builderConfig = _.merge(
+          _.cloneDeep(builderConfig),
+          _.cloneDeep(_.get(allConfig, type)),
+        );
       }
-      const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'copy', 'snippet', 'screenshot'];
+      const removeKeys = [
+        'enable',
+        'assetDir',
+        'server',
+        'html',
+        'css',
+        'js',
+        'copy',
+        'snippet',
+        'screenshot',
+      ];
       removeKeys.forEach((removeKey) => {
         _.unset(builderConfig, removeKey);
       });
     }
     if (overrideOption) {
-      builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(overrideOption));
+      builderConfig = _.merge(
+        _.cloneDeep(builderConfig),
+        _.cloneDeep(overrideOption),
+      );
     }
-    builderConfig = JSON.parse(nunjucks.renderString(JSON.stringify(builderConfig), allConfig));
+    builderConfig = JSON.parse(
+      nunjucks.renderString(JSON.stringify(builderConfig), allConfig),
+    );
     return builderConfig;
   }
   /**
@@ -124,14 +145,21 @@ class configLoader {
    * @param overrideOption
    * @returns
    */
-  public static getServerOption(overrideOption?: object): object {
-    const allConfig = configLoader.load();
+  public getServerOption(overrideOption?: object): object {
+    const allConfig = this.load();
     let serverOption =
-      _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
+      _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server'))
+        ? _.get(allConfig, 'server')
+        : {};
     if (overrideOption) {
-      serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
+      serverOption = _.merge(
+        _.cloneDeep(serverOption),
+        _.cloneDeep(overrideOption),
+      );
     }
-    serverOption = JSON.parse(nunjucks.renderString(JSON.stringify(serverOption), allConfig));
+    serverOption = JSON.parse(
+      nunjucks.renderString(JSON.stringify(serverOption), allConfig),
+    );
     return serverOption;
   }
 
@@ -139,33 +167,41 @@ class configLoader {
    * HTMLビルダーのオプションを取得する
    * @returns
    */
-  public static getHtmlOption(overrideOption?: any): object {
-    return configLoader.getOption('html', overrideOption);
+  public getHtmlOption(overrideOption?: any): object {
+    return this.getOption('html', overrideOption);
   }
   /**
    * CSSビルダーのオプションを取得する
    * @returns
    */
-  public static getCssOption(overrideOption?: any): object {
-    return configLoader.getOption('css', overrideOption);
+  public getCssOption(overrideOption?: any): object {
+    return this.getOption('css', overrideOption);
   }
   /**
    * JSビルダーのオプションを取得する
    * @returns
    */
-  public static getJsOption(overrideOption?: any): object {
-    return configLoader.getOption('js', overrideOption);
+  public getJsOption(overrideOption?: any): object {
+    return this.getOption('js', overrideOption);
   }
   /**
    * コピーのオプションを取得する
    * @returns
    */
-  public static getCopyOption(): Array<object> {
-    const allConfig = configLoader.load();
-    let copySettings = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
+  public getCopyOption(): Array<object> {
+    const allConfig = this.load();
+    const copySettings =
+      _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy'))
+        ? _.get(allConfig, 'copy')
+        : [];
     const copyOptions = copySettings
       .filter((copySetting: any) => {
-        return copySetting.src && copySetting.src.length > 0 && copySetting.dest && copySetting.dest.length > 0;
+        return (
+          copySetting.src &&
+          copySetting.src.length > 0 &&
+          copySetting.dest &&
+          copySetting.dest.length > 0
+        );
       })
       .map((copySetting: any) => {
         const copyOption: any = {
@@ -177,16 +213,20 @@ class configLoader {
           preserve: copySetting.preserve ?? false,
           update: copySetting.update ?? false,
         };
-        if (_.has(copySetting, 'commands') && _.isArray(_.get(copySetting, 'commands'))) {
-          const transforms = _.get(copySetting, 'commands').map((filter: any) => {
-            if (typeof filter === 'string') {
-              return configLoader.convertCpxCommandParam(filter);
-            } else {
-              if (_.has(filter, 'command')) {
-                return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
+        if (
+          _.has(copySetting, 'commands') &&
+          _.isArray(_.get(copySetting, 'commands'))
+        ) {
+          const transforms = _.get(copySetting, 'commands').map(
+            (filter: any) => {
+              if (typeof filter === 'string') {
+                return this.convertCpxCommandParam(filter);
               }
-            }
-          });
+              if (_.has(filter, 'command')) {
+                return this.convertCpxCommandParam(_.get(filter, 'command'));
+              }
+            },
+          );
           if (transforms.length > 0) {
             copyOption.transform = transforms;
           }
@@ -203,7 +243,7 @@ class configLoader {
    * ※以下のコードを元に実装
    * @see https://github.com/bcomnes/cpx2/blob/master/bin/main.js#L50-L68
    */
-  protected static convertCpxCommandParam(command: string): any {
+  protected convertCpxCommandParam(command: string): any {
     return (file: string) => {
       const env = Object.create(process.env, {
         FILE: { value: file },
@@ -231,14 +271,21 @@ class configLoader {
    * @param overrideOption
    * @returns
    */
-  public static getSnippetOption(overrideOption?: object): object {
-    const allConfig = configLoader.load();
+  public getSnippetOption(overrideOption?: object): object {
+    const allConfig = this.load();
     let snippetOption =
-      _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+      _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet'))
+        ? _.get(allConfig, 'snippet')
+        : {};
     if (overrideOption) {
-      snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
+      snippetOption = _.merge(
+        _.cloneDeep(snippetOption),
+        _.cloneDeep(overrideOption),
+      );
     }
-    snippetOption = JSON.parse(nunjucks.renderString(JSON.stringify(snippetOption), allConfig));
+    snippetOption = JSON.parse(
+      nunjucks.renderString(JSON.stringify(snippetOption), allConfig),
+    );
     return snippetOption;
   }
   /**
@@ -246,16 +293,24 @@ class configLoader {
    * @param overrideOption
    * @returns
    */
-  public static getScreenshotOption(overrideOption?: object): object {
-    const allConfig = configLoader.load();
+  public getScreenshotOption(overrideOption?: object): object {
+    const allConfig = this.load();
     let screenshotOption =
-      _.has(allConfig, 'screenshot') && !_.isNull(_.get(allConfig, 'screenshot')) ? _.get(allConfig, 'screenshot') : {};
+      _.has(allConfig, 'screenshot') &&
+      !_.isNull(_.get(allConfig, 'screenshot'))
+        ? _.get(allConfig, 'screenshot')
+        : {};
     if (overrideOption) {
-      screenshotOption = _.merge(_.cloneDeep(screenshotOption), _.cloneDeep(screenshotOption));
+      screenshotOption = _.merge(
+        _.cloneDeep(screenshotOption),
+        _.cloneDeep(screenshotOption),
+      );
     }
-    screenshotOption = JSON.parse(nunjucks.renderString(JSON.stringify(screenshotOption), allConfig));
+    screenshotOption = JSON.parse(
+      nunjucks.renderString(JSON.stringify(screenshotOption), allConfig),
+    );
     return screenshotOption;
   }
 }
-
+const configLoader = new builderConfig();
 export default configLoader;

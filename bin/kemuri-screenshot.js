@@ -1,27 +1,39 @@
 #!/usr/bin/env node
-import { devices, chromium, webkit, firefox } from 'playwright';
-import fs from 'fs-extra';
 import * as path from 'node:path';
 import { URL } from 'node:url';
-import { a as configLoader, c as console } from './lib/config.mjs';
-import _ from 'lodash';
-import { JSDOM } from 'jsdom';
 import chalk from 'chalk';
+import fs from 'fs-extra';
+import { JSDOM } from 'jsdom';
+import _ from 'lodash';
+import { devices, chromium, webkit, firefox } from 'playwright';
 import yargs from 'yargs';
-import 'node:fs';
+import { a as configLoader, c as console } from './lib/config.mjs';
 import 'node:child_process';
-import 'shell-quote';
-import 'duplexer3';
+import 'node:fs';
 import 'cosmiconfig';
+import 'duplexer3';
 import 'nunjucks';
-import 'node:console';
+import 'shell-quote';
 import 'dotenv';
+import 'node:console';
 
 const argv = yargs(process.argv.slice(2))
     .options({
-    l: { type: 'string', description: 'サイトマップファイルのパスまたはURL', alias: 'location' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
-    clean: { type: 'boolean', default: false, description: 'ビルド前に出力ディレクトリを空にする' },
+    l: {
+        type: 'string',
+        description: 'サイトマップファイルのパスまたはURL',
+        alias: 'location',
+    },
+    c: {
+        type: 'string',
+        alias: 'config',
+        description: '設定ファイルを指定する',
+    },
+    clean: {
+        type: 'boolean',
+        default: false,
+        description: 'ビルド前に出力ディレクトリを空にする',
+    },
 })
     .parseSync();
 if (argv.config !== undefined) {
@@ -41,7 +53,9 @@ else {
     else {
         //@ts-ignore
         const htmlOption = configLoader.getHtmlOption();
-        const htmloutputDir = _.has(htmlOption, 'outputDir') ? _.get(htmlOption, 'outputDir') : 'public';
+        const htmloutputDir = _.has(htmlOption, 'outputDir')
+            ? _.get(htmlOption, 'outputDir')
+            : 'public';
         const sitemapFilePath = path.join(htmloutputDir, 'sitemap.xml');
         if (fs.existsSync('./pages.json')) {
             sitemapLocation = './pages.json';
@@ -57,11 +71,14 @@ if (/^https?:\/\//.test(sitemapLocation)) {
     /**
      * Basic認証の設定
      */
-    if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+    if (_.has(screenshotOption, 'auth.basic.username') &&
+        _.has(screenshotOption, 'auth.basic.password')) {
         const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
         const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
         if (authBasicUsername && authBasicPassword) {
-            fetchOption.headers = { Authorization: 'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`) };
+            fetchOption.headers = {
+                Authorization: 'Basic ' + btoa(`${authBasicUsername}:${authBasicPassword}`),
+            };
         }
     }
     const dom = new JSDOM(await (await fetch(sitemapLocation, fetchOption)).text());
@@ -82,7 +99,7 @@ else {
             case '.json':
                 pages = JSON.parse(fs.readFileSync(sitemapLocation, 'utf8')).pages;
                 break;
-            case '.xml':
+            case '.xml': {
                 const dom = new JSDOM(fs.readFileSync(sitemapLocation, 'utf8'));
                 const urls = dom.window.document.querySelectorAll('url');
                 urls.forEach((url) => {
@@ -94,6 +111,7 @@ else {
                     }
                 });
                 break;
+            }
         }
     }
     else {
@@ -117,11 +135,13 @@ else {
         width: 1920,
         height: 1080,
     };
-    if (_.has(screenshotOption, 'outputDir') && _.get(screenshotOption, 'outputDir')) {
+    if (_.has(screenshotOption, 'outputDir') &&
+        _.get(screenshotOption, 'outputDir')) {
         //@ts-ignore{
         screenshotBaseSaveDir = _.get(screenshotOption, 'outputDir');
     }
-    if (_.has(screenshotOption, 'default') && _.get(screenshotOption, 'default')) {
+    if (_.has(screenshotOption, 'default') &&
+        _.get(screenshotOption, 'default')) {
         //@ts-ignore
         defaultBrowser = _.get(screenshotOption, 'default');
     }
@@ -133,7 +153,8 @@ else {
         //@ts-ignore
         fullPage = _.get(screenshotOption, 'fullPage');
     }
-    if (_.has(screenshotOption, 'retryLimit') && _.get(screenshotOption, 'retryLimit')) {
+    if (_.has(screenshotOption, 'retryLimit') &&
+        _.get(screenshotOption, 'retryLimit')) {
         //@ts-ignore
         retryLimit = _.get(screenshotOption, 'retryLimit');
     }
@@ -141,7 +162,8 @@ else {
         //@ts-ignore
         saveFlatPath = _.get(screenshotOption, 'saveFlatPath');
     }
-    if (_.has(screenshotOption, 'targets') && _.get(screenshotOption, 'targets')) {
+    if (_.has(screenshotOption, 'targets') &&
+        _.get(screenshotOption, 'targets')) {
         //@ts-ignore
         screenshotTargets = _.get(screenshotOption, 'targets');
     }
@@ -171,9 +193,12 @@ else {
             else {
                 if (screenshotTargets[groupName].type !== undefined) {
                     if (devices[screenshotTargets[groupName].type] !== undefined) {
-                        browser.type = devices[screenshotTargets[groupName].type].defaultBrowserType;
-                        browser.width = devices[screenshotTargets[groupName].type].viewport.width;
-                        browser.height = devices[screenshotTargets[groupName].type].viewport.height;
+                        browser.type =
+                            devices[screenshotTargets[groupName].type].defaultBrowserType;
+                        browser.width =
+                            devices[screenshotTargets[groupName].type].viewport.width;
+                        browser.height =
+                            devices[screenshotTargets[groupName].type].viewport.height;
                     }
                     else {
                         browser.type = screenshotTargets[groupName].type;
@@ -197,11 +222,19 @@ else {
         if (!browsers[screenshotPage.type]) {
             switch (screenshotPage.type) {
                 case 'firefox':
-                    browsers[screenshotPage.type] = await firefox.launch({ headless: headless });
+                    browsers[screenshotPage.type] = await firefox.launch({
+                        headless: headless,
+                    });
+                    break;
                 case 'webkit':
-                    browsers[screenshotPage.type] = await webkit.launch({ headless: headless });
+                    browsers[screenshotPage.type] = await webkit.launch({
+                        headless: headless,
+                    });
+                    break;
                 default:
-                    browsers[screenshotPage.type] = await chromium.launch({ headless: headless });
+                    browsers[screenshotPage.type] = await chromium.launch({
+                        headless: headless,
+                    });
             }
         }
         const browser = browsers[screenshotPage.type];
@@ -214,12 +247,16 @@ else {
         }
         if (!browserContexts[screenshotGroup]) {
             const browserContextOption = {
-                viewport: { width: screenshotPage.width, height: screenshotPage.height },
+                viewport: {
+                    width: screenshotPage.width,
+                    height: screenshotPage.height,
+                },
             };
             /**
              * Basic認証の設定
              */
-            if (_.has(screenshotOption, 'auth.basic.username') && _.has(screenshotOption, 'auth.basic.password')) {
+            if (_.has(screenshotOption, 'auth.basic.username') &&
+                _.has(screenshotOption, 'auth.basic.password')) {
                 const authBasicUsername = _.get(screenshotOption, 'auth.basic.username', null);
                 const authBasicPassword = _.get(screenshotOption, 'auth.basic.password', null);
                 if (authBasicUsername && authBasicPassword) {
@@ -233,7 +270,8 @@ else {
             /**
              * フォーム認証の設定
              */
-            if (_.has(screenshotOption, 'auth.form.url') && _.has(screenshotOption, 'auth.form.actions')) {
+            if (_.has(screenshotOption, 'auth.form.url') &&
+                _.has(screenshotOption, 'auth.form.actions')) {
                 const authFormPage = await browserContext.newPage();
                 const authFormURL = _.get(screenshotOption, 'auth.form.url', null);
                 const authFormActions = _.get(screenshotOption, 'auth.form.actions', null);
@@ -260,15 +298,20 @@ else {
         const context = browserContexts[screenshotGroup];
         const testUrl = new URL(screenshotPage.url);
         const page = await context.newPage();
-        let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) + '.png';
-        let screenshotSaveDirName = path.dirname(testUrl.pathname).replace(/^\//, '');
+        let screenshotSaveFileName = path.basename(testUrl.pathname, path.extname(testUrl.pathname)) +
+            '.png';
+        let screenshotSaveDirName = path
+            .dirname(testUrl.pathname)
+            .replace(/^\//, '');
         if (/\/$/.test(testUrl.pathname)) {
             screenshotSaveFileName = 'index.png';
             screenshotSaveDirName = testUrl.pathname.replace(/\/$/, '');
         }
         if (saveFlatPath) {
             // フラットなパスで保存する場合
-            screenshotSaveFileName = path.join(screenshotSaveDirName, screenshotSaveFileName).replace(/\//g, '_');
+            screenshotSaveFileName = path
+                .join(screenshotSaveDirName, screenshotSaveFileName)
+                .replace(/\//g, '_');
             screenshotSaveDirName = '';
         }
         const screenshotSavePath = path.join(screenshotSaveDir, screenshotSaveDirName, screenshotSaveFileName);
@@ -281,7 +324,10 @@ else {
         let screenshotError = null;
         do {
             try {
-                await page.screenshot({ path: screenshotSavePath, fullPage: fullPage });
+                await page.screenshot({
+                    path: screenshotSavePath,
+                    fullPage: fullPage,
+                });
                 screenshotError = null;
                 retry = false;
             }
@@ -295,7 +341,12 @@ else {
             }
         } while (retry && retryCount < retryLimit);
         await page.close();
-        console.group('[' + screenshotGroup + '(' + screenshotViewportSize + ')]: ' + screenshotPage.url);
+        console.group('[' +
+            screenshotGroup +
+            '(' +
+            screenshotViewportSize +
+            ')]: ' +
+            screenshotPage.url);
         if (screenshotError) {
             console.error(screenshotError);
         }

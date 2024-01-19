@@ -1,8 +1,8 @@
-import fs from 'fs-extra';
 import * as path from 'node:path';
-import { glob, Path } from 'glob';
 import * as chokidar from 'chokidar';
 import editorconfig from 'editorconfig';
+import fs from 'fs-extra';
+import { Path, glob } from 'glob';
 import _ from 'lodash';
 import console from '../console';
 
@@ -65,11 +65,11 @@ export abstract class baseBuilder {
   /**
    * ソースコードのディレクトリ
    */
-  protected srcDir: string = 'src';
+  protected srcDir = 'src';
   /**
    * 出力先ディレクトリ
    */
-  protected outputDir: string = 'public';
+  protected outputDir = 'public';
 
   /**
    * エントリポイントとなるファイルの拡張子
@@ -116,7 +116,7 @@ export abstract class baseBuilder {
   /**
    * 出力時の拡張子
    */
-  protected outputExt: string = 'txt';
+  protected outputExt = 'txt';
 
   /**
    * コンパイラーのオプション
@@ -126,7 +126,7 @@ export abstract class baseBuilder {
   /**
    * 整形のオプション
    */
-  protected beautify: boolean = false;
+  protected beautify = false;
 
   /**
    * js-beautifyのオプション
@@ -370,7 +370,11 @@ export abstract class baseBuilder {
    * @returns
    */
   public getEntryPointPattern(): string {
-    return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
+    return (
+      this.convertGlobPattern(this.srcDir) +
+      '/**/*.' +
+      this.convertGlobPattern(this.fileExts)
+    );
   }
 
   /**
@@ -410,7 +414,12 @@ export abstract class baseBuilder {
    */
   public getIgnoreFileNamePattern(): string {
     if (this.ignoreFileNames.length > 0) {
-      return this.convertGlobPattern(this.srcDir) + '/**/{' + this.ignoreFileNames.join(',') + '}';
+      return (
+        this.convertGlobPattern(this.srcDir) +
+        '/**/{' +
+        this.ignoreFileNames.join(',') +
+        '}'
+      );
     }
     return '';
   }
@@ -493,7 +502,9 @@ export abstract class baseBuilder {
     const suffixCheck = this.ignoreFileSuffix
       ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
       : false;
-    return prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName);
+    return (
+      prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName)
+    );
   }
 
   /**
@@ -504,8 +515,12 @@ export abstract class baseBuilder {
    */
   protected globChildrenIgnoredFunc(p: Path): boolean {
     const dirName = p.name;
-    const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + _.escapeRegExp(this.ignoreDirPrefix)).test(dirName) : false;
-    const suffixCheck = this.ignoreDirSuffix ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName) : false;
+    const prefixCheck = this.ignoreDirPrefix
+      ? RegExp('^' + _.escapeRegExp(this.ignoreDirPrefix)).test(dirName)
+      : false;
+    const suffixCheck = this.ignoreDirSuffix
+      ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName)
+      : false;
     return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
   }
 
@@ -521,7 +536,10 @@ export abstract class baseBuilder {
         childrenIgnored: this.globChildrenIgnoredFunc.bind(this),
       },
     };
-    const entryPointFiles: string[] = glob.sync(entryPointGlobPatetrn, globOption);
+    const entryPointFiles: string[] = glob.sync(
+      entryPointGlobPatetrn,
+      globOption,
+    );
     return entryPointFiles;
   }
 
@@ -535,7 +553,10 @@ export abstract class baseBuilder {
     const entries: Map<string, string> = new Map();
     entryPointFiles.forEach((file: string) => {
       const targetFile = path.relative(this.srcDir, file);
-      const key: string = path.join(path.dirname(targetFile), path.basename(targetFile, path.extname(targetFile)));
+      const key: string = path.join(
+        path.dirname(targetFile),
+        path.basename(targetFile, path.extname(targetFile)),
+      );
       entries.set(key, file);
     });
     return entries;
@@ -566,10 +587,11 @@ export abstract class baseBuilder {
    * @param isDir
    * @returns
    */
-  protected convertOutputPath(srcPath: string, isDir: boolean = false) {
+  protected convertOutputPath(srcPath: string, isDir = false) {
     let outputName = path.basename(srcPath);
     if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
-      outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
+      outputName =
+        path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
     }
     const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
     const outputPath = path.join(this.outputDir, outputDir, outputName);
@@ -581,8 +603,13 @@ export abstract class baseBuilder {
    * @returns
    */
   public getWatchFilePattern(): string | string[] {
-    const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
-    const watchFilePattern = this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts);
+    const watchFileExts = Array.from(
+      new Set([...this.fileExts, ...this.moduleExts]),
+    );
+    const watchFilePattern =
+      this.convertGlobPattern(this.srcDir) +
+      '/**/*.' +
+      this.convertGlobPattern(watchFileExts);
     return watchFilePattern;
   }
 
@@ -609,7 +636,10 @@ export abstract class baseBuilder {
     this.getEntryPoint();
     const watchFilePattern = this.getWatchFilePattern.bind(this)();
     console.log(watchFilePattern);
-    this.watcher = chokidar.watch(watchFilePattern, this.getWatchOpton.bind(this)());
+    this.watcher = chokidar.watch(
+      watchFilePattern,
+      this.getWatchOpton.bind(this)(),
+    );
     this.watcher
       .on('add', this.watchAddCallBack.bind(this))
       .on('change', this.watchChangeCallBack.bind(this))
@@ -728,7 +758,7 @@ export abstract class baseBuilder {
    */
   protected getBeautifyOption(targetFile: string) {
     const eConfigs = editorconfig.parseSync(targetFile);
-    let beautifyOption: any = {};
+    const beautifyOption: any = {};
     if (eConfigs.indent_style === 'tab') {
       beautifyOption.indent_with_tabs = true;
     } else if (eConfigs.indent_style === 'space') {
@@ -744,7 +774,11 @@ export abstract class baseBuilder {
         beautifyOption.wrap_line_length = 0;
       } else {
         // @ts-ignore
-        beautifyOption.wrap_line_length = parseInt(eConfigs.max_line_length, 10);
+        beautifyOption.wrap_line_length = parseInt(
+          // @ts-ignore
+          eConfigs.max_line_length,
+          10,
+        );
       }
     }
 

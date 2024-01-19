@@ -1,8 +1,8 @@
 import browserSync from 'browser-sync';
 import type { ProxyOptions } from 'browser-sync';
+import _ from 'lodash';
 import configLoader from '../config';
 import type { settingType } from '../config';
-import _ from 'lodash';
 
 export interface browserSyncServerOption {
   baseDir?: string;
@@ -118,7 +118,10 @@ export function getBrowserSyncOption(
  * @param orverrideOption
  * @param orverrideEnable
  */
-export function run(orverrideOption?: browserSyncServerOption, orverrideEnable?: settingType[]) {
-  let serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
+export function run(
+  orverrideOption?: browserSyncServerOption,
+  orverrideEnable?: settingType[],
+) {
+  const serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
   browserSync(serverOption);
 }
