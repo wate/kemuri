@@ -1,10 +1,10 @@
-import fs from 'fs-extra';
 import * as path from 'node:path';
-import { baseBuilder, builderOption } from '../base';
+import fs from 'fs-extra';
 import * as glob from 'glob';
-import * as sass from 'sass';
 import js_beautify from 'js-beautify';
+import * as sass from 'sass';
 import console from '../../console';
+import { baseBuilder, builderOption } from '../base';
 
 const beautify = js_beautify.css;
 
@@ -69,12 +69,12 @@ export class sassBuilder extends baseBuilder {
   /**
    * インデックスファイルの自動生成の可否
    */
-  private generateIndex: boolean = false;
+  private generateIndex = false;
 
   /**
    * インデックスファイルの名前
    */
-  private indexFileName: string = '_all.scss';
+  private indexFileName = '_all.scss';
 
   /**
    * インデックスファイルにインポートする際の方法
@@ -127,7 +127,9 @@ export class sassBuilder extends baseBuilder {
    *
    * @param importType
    */
-  public setIndexImportType(importType: sassBuilderIndexImportTypeOption): void {
+  public setIndexImportType(
+    importType: sassBuilderIndexImportTypeOption,
+  ): void {
     this.indexImportType = importType;
   }
 
@@ -136,11 +138,14 @@ export class sassBuilder extends baseBuilder {
    *
    * @param filePath
    */
-  protected generateIndexFile(targetDir: string, recursive: boolean = true) {
+  protected generateIndexFile(targetDir: string, recursive = true) {
     if (!this.generateIndex) {
       return;
     }
-    const indexMatchPatterns = ['./_*.' + this.convertGlobPattern(this.fileExts), './*/' + this.indexFileName];
+    const indexMatchPatterns = [
+      './_*.' + this.convertGlobPattern(this.fileExts),
+      './*/' + this.indexFileName,
+    ];
     const partialMatchFiles = glob
       .sync(indexMatchPatterns, {
         cwd: targetDir,
@@ -193,7 +198,7 @@ export class sassBuilder extends baseBuilder {
       const indexFileContent = indexFileContentLines.join('\n') + '\n';
       if (fs.existsSync(indexFilePath)) {
         const indexFileContentBefore = fs.readFileSync(indexFilePath, 'utf-8');
-        if (indexFileContentBefore != indexFileContent) {
+        if (indexFileContentBefore !== indexFileContent) {
           fs.writeFileSync(indexFilePath, indexFileContent);
           console.log('Update index file: ' + indexFilePath);
         }
@@ -244,7 +249,10 @@ export class sassBuilder extends baseBuilder {
      * インデックスファイルの自動生成を行う場合は、
      * インデックスファイルをエントリポイントから除外する
      */
-    if (this.generateIndex && !this.ignoreFileNames.includes(this.indexFileName)) {
+    if (
+      this.generateIndex &&
+      !this.ignoreFileNames.includes(this.indexFileName)
+    ) {
       this.ignoreFileNames.push(this.indexFileName);
     }
   }
@@ -259,10 +267,14 @@ export class sassBuilder extends baseBuilder {
       compileOption = Object.assign(compileOption, { style: this.style });
     }
     if (this.sourcemap !== undefined) {
-      compileOption = Object.assign(compileOption, { sourceMap: this.sourcemap });
+      compileOption = Object.assign(compileOption, {
+        sourceMap: this.sourcemap,
+      });
     }
     if (this.loadPaths && this.loadPaths.length > 0) {
-      compileOption = Object.assign(compileOption, { loadPaths: this.loadPaths });
+      compileOption = Object.assign(compileOption, {
+        loadPaths: this.loadPaths,
+      });
     }
     return compileOption;
   }
@@ -379,7 +391,10 @@ export class sassBuilder extends baseBuilder {
     const entries = this.getEntryPoint();
     if (this.generateIndex) {
       //インデックスファイルの生成/更新
-      const partialFilePattern = path.join(this.srcDir, '**/_*.' + this.convertGlobPattern(this.fileExts));
+      const partialFilePattern = path.join(
+        this.srcDir,
+        '**/_*.' + this.convertGlobPattern(this.fileExts),
+      );
       const partialFiles = glob.sync(partialFilePattern);
       if (partialFiles.length > 0) {
         partialFiles
@@ -387,7 +402,10 @@ export class sassBuilder extends baseBuilder {
             return path.dirname(partialFile);
           })
           .reduce((unique: string[], item: string) => {
-            return unique.includes(item) ? unique : [...unique, item];
+            if (!unique.includes(item)) {
+              unique.push(item);
+            }
+            return unique;
           }, [])
           .forEach((generateIndexDir: string) => {
             this.generateIndexFile.bind(this)(generateIndexDir, false);
@@ -400,7 +418,10 @@ export class sassBuilder extends baseBuilder {
     const compileOption = this.getCompileOption();
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     entries.forEach((srcFile, entryPoint) => {
-      const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
+      const outputPath = path.join(
+        this.outputDir,
+        entryPoint + '.' + this.outputExt,
+      );
       const result = sass.compile(srcFile, compileOption);
       if (compileOption.style !== 'compressed' && this.beautify) {
         result.css = beautify(result.css, beautifyOption);

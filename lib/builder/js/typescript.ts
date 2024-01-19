@@ -1,16 +1,21 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { baseBuilder, builderOption } from '../base';
-import { rollup, ModuleFormat as moduleFormat } from 'rollup';
-import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import type { RollupTypescriptOptions, PartialCompilerOptions } from '@rollup/plugin-typescript';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import type { RollupReplaceOptions } from '@rollup/plugin-replace';
+// import nodePolyfills from 'rollup-plugin-polyfill-node';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import type {
+  PartialCompilerOptions,
+  RollupTypescriptOptions,
+} from '@rollup/plugin-typescript';
 import js_beautify from 'js-beautify';
+import { ModuleFormat as moduleFormat, rollup } from 'rollup';
+import type { RollupBuild } from 'rollup';
 import console from '../../console';
+import { baseBuilder, builderOption } from '../base';
 
 const beautify = js_beautify.js;
 
@@ -77,8 +82,41 @@ export class typescriptBuilder extends baseBuilder {
    * 上書きするTypeScriptのコンパイルオプション
    */
   protected typeScriptCompoleOption: PartialCompilerOptions = {
+    /* ------------------------ */
+    /* Language and Environment */
+    /* ------------------------ */
+    /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    target: 'ES2020',
+    /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    lib: ['ES2020', 'DOM', 'DOM.Iterable'],
+    /* Specify what module code is generated. */
+    module: 'ESNext',
+    /* Specify how TypeScript looks up a file from a given module specifier. */
+    moduleResolution: 'bundler',
+    /* Use the package.json 'exports' field when resolving package imports. */
+    resolvePackageJsonExports: true,
+    /* Use the package.json 'imports' field when resolving imports. */
+    resolvePackageJsonImports: true,
+    /* Enable importing .json files. */
+    resolveJsonModule: true,
+    /* ------------------ */
+    /* JavaScript Support */
+    /* ------------------ */
+    /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     allowJs: true,
+    /* Enable error reporting in type-checked JavaScript files. */
     checkJs: true,
+    /* ------------------- */
+    /* Interop Constraints */
+    /* ------------------- */
+    /* Ensure that each file can be safely transpiled without relying on other imports. */
+    // "isolatedModules": true,
+    /* Allow 'import x from y' when a module doesn't have a default export. */
+    allowSyntheticDefaultImports: true,
+    /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    esModuleInterop: true,
+    /* Ensure that casing is correct in imports. */
+    forceConsistentCasingInFileNames: true,
   };
 
   /**
@@ -182,7 +220,11 @@ export class typescriptBuilder extends baseBuilder {
    */
   public setOption(option: typescriptBuilderOption) {
     super.setOption(option);
-    if (option.globals !== undefined && option.globals !== null && Object.keys(option.globals).length > 0) {
+    if (
+      option.globals !== undefined &&
+      option.globals !== null &&
+      Object.keys(option.globals).length > 0
+    ) {
       this.setGlobals(option.globals);
     }
     if (option.format !== undefined && option.format !== null) {
@@ -221,19 +263,26 @@ export class typescriptBuilder extends baseBuilder {
    * @param outputPath
    */
   public async buildFile(srcPath: string, outputPath: string) {
-    let bundle;
+    let bundle: RollupBuild;
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+      const tsconfigPath = path.join(process.cwd(),'tsconfig.json');
       const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
+        tsconfig: fs.existsSync(tsconfigPath) ? tsconfigPath : undefined,
         compilerOptions: this.getCompileOption(),
       };
       const replaceOption: RollupReplaceOptions = {
         preventAssignment: true,
         values: this.replace,
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
+      const rollupPlugins = [
+        nodeResolve(),
+        commonjs(),
+        typescript(typescriptConfig),
+        replace(replaceOption),
+      ];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -247,17 +296,23 @@ export class typescriptBuilder extends baseBuilder {
         format: this.outputFortmat,
         sourcemap: this.sourcemap,
       });
-      let outputDir: string = path.dirname(outputPath);
+      const outputDir: string = path.dirname(outputPath);
       fs.mkdirSync(outputDir, { recursive: true });
       for (const chunkOrAsset of output) {
         if (chunkOrAsset.type === 'asset') {
-          fs.writeFileSync(path.join(outputDir, chunkOrAsset.fileName), chunkOrAsset.source);
+          fs.writeFileSync(
+            path.join(outputDir, chunkOrAsset.fileName),
+            chunkOrAsset.source,
+          );
         } else {
           let outputCode: string = chunkOrAsset.code;
           if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
-          fs.writeFileSync(path.join(outputDir, chunkOrAsset.preliminaryFileName), outputCode.trim() + '\n');
+          fs.writeFileSync(
+            path.join(outputDir, chunkOrAsset.preliminaryFileName),
+            outputCode.trim() + '\n',
+          );
         }
       }
     } catch (error) {
@@ -274,7 +329,7 @@ export class typescriptBuilder extends baseBuilder {
   public async buildAll() {
     // console.group('Build entory point files');
     const entries = this.getEntryPoint();
-    let bundle;
+    let bundle: RollupBuild;
     let buildFailed = false;
     if (entries.size === 0) {
       return;
@@ -290,7 +345,13 @@ export class typescriptBuilder extends baseBuilder {
         preventAssignment: true,
         values: this.replace,
       };
-      const rollupPlugins = [nodeResolve(), commonjs(), typescript(typescriptConfig), replace(replaceOption)];
+      const rollupPlugins = [
+        // nodePolyfills(),
+        nodeResolve(),
+        commonjs(),
+        typescript(typescriptConfig),
+        replace(replaceOption),
+      ];
       if (this.minify !== undefined && this.minify) {
         rollupPlugins.push(terser(this.minifyOption));
       }
@@ -311,14 +372,22 @@ export class typescriptBuilder extends baseBuilder {
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           fs.writeFileSync(outputPath, chunkOrAsset.source);
         } else {
-          outputPath = path.join(this.outputDir, chunkOrAsset.preliminaryFileName);
+          outputPath = path.join(
+            this.outputDir,
+            chunkOrAsset.preliminaryFileName,
+          );
           fs.mkdirSync(path.dirname(outputPath), { recursive: true });
           let outputCode = chunkOrAsset.code;
           if ((this.minify === undefined || !this.minify) && this.beautify) {
             outputCode = beautify(outputCode, beautifyOption);
           }
           fs.writeFileSync(outputPath, outputCode.trim() + '\n');
-          console.log('Compile: ' + path.join(this.srcDir, chunkOrAsset.fileName) + ' => ' + outputPath);
+          console.log(
+            'Compile: ' +
+              path.join(this.srcDir, chunkOrAsset.fileName) +
+              ' => ' +
+              outputPath,
+          );
         }
       }
     } catch (error) {

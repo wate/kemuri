@@ -1,17 +1,17 @@
-import { baseBuilder, builderOption } from '../base';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import yaml from 'js-yaml';
+import _ from 'lodash';
 import { fromMarkdown } from 'mdast-util-from-markdown';
-import { frontmatter } from 'micromark-extension-frontmatter';
 import { frontmatterFromMarkdown } from 'mdast-util-frontmatter';
+import { frontmatter } from 'micromark-extension-frontmatter';
 import { find } from 'unist-util-find';
 import { findAfter } from 'unist-util-find-after';
-import { visit } from 'unist-util-visit';
 import { findAllAfter } from 'unist-util-find-all-after';
 import findAllBetween from 'unist-util-find-all-between';
-import _ from 'lodash';
-import yaml from 'js-yaml';
+import { visit } from 'unist-util-visit';
 import console from '../../console';
+import { baseBuilder, builderOption } from '../base';
 
 /**
  * スニペットビルダーの設定オプション
@@ -62,12 +62,12 @@ export class vscodeSnippetBuilder extends baseBuilder {
   /**
    * スニペットのヘッダーの深さ
    */
-  protected snippetHeaderDeps: number = 2;
+  protected snippetHeaderDeps = 2;
 
   /**
    * スニペット拡張設定のヘッダーの深さ
    */
-  protected extraSettingHeaderDeps: number = 3;
+  protected extraSettingHeaderDeps = 3;
 
   /**
    * スニペット拡張設定のヘッダーテキスト
@@ -80,15 +80,6 @@ export class vscodeSnippetBuilder extends baseBuilder {
     'VSCode Snippet Setting',
     'VSCode Snippet Settings',
   ];
-
-  /**
-   * コンストラクタ
-   *
-   * @param option
-   */
-  constructor(option?: vscodeSnippetBuilderOption) {
-    super(option);
-  }
 
   /**
    * -------------------------
@@ -113,9 +104,8 @@ export class vscodeSnippetBuilder extends baseBuilder {
     const srcPath = path.relative(this.srcDir, filePath);
     if (srcPath.includes(path.sep)) {
       return srcPath.split(path.sep)[0];
-    } else {
-      return 'default';
     }
+    return 'default';
   }
 
   /**
@@ -140,7 +130,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
    *
    * @param extraSettingHeaderTexts
    */
-  public setExtraSettingHeaderTexts(extraSettingHeaderTexts: string | string[]): void {
+  public setExtraSettingHeaderTexts(
+    extraSettingHeaderTexts: string | string[],
+  ): void {
     if (typeof extraSettingHeaderTexts === 'string') {
       this.extraSettingHeaderTexts = [extraSettingHeaderTexts];
     } else {
@@ -156,7 +148,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
   protected extraSettingTestFunc(node: any): any {
     if (node.type === 'heading' && node.depth === this.extraSettingHeaderDeps) {
       const textNode = find(node, { type: 'text' });
-      const extraSettingHeaderTexts = this.extraSettingHeaderTexts.map((text: string) => text.toLowerCase());
+      const extraSettingHeaderTexts = this.extraSettingHeaderTexts.map(
+        (text: string) => text.toLowerCase(),
+      );
       // @ts-ignore
       if (extraSettingHeaderTexts.includes(textNode.value.toLowerCase())) {
         return node;
@@ -170,7 +164,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @returns
    */
   protected getSnippetEndPosition(startPosition: any): any {
-    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    const nextSnippetPosition = findAfter(this.tree, startPosition, {
+      type: 'heading',
+      depth: this.snippetHeaderDeps,
+    });
     let endPosition: any = nextSnippetPosition;
     let extraSettingStartNode: any = null;
     if (nextSnippetPosition) {
@@ -185,7 +182,11 @@ export class vscodeSnippetBuilder extends baseBuilder {
         extraSettingStartNode = extraSettingHeaders.pop();
       }
     } else {
-      extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+      extraSettingStartNode = findAfter(
+        this.tree,
+        startPosition,
+        this.extraSettingTestFunc.bind(this),
+      );
     }
     if (extraSettingStartNode) {
       endPosition = extraSettingStartNode;
@@ -199,15 +200,25 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   protected getSnippetDescription(startPosition: any): string | null {
     let description = null;
-    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    const nextSnippetPosition = findAfter(this.tree, startPosition, {
+      type: 'heading',
+      depth: this.snippetHeaderDeps,
+    });
     let descriptionNode = null;
     if (nextSnippetPosition) {
-      const paragraphs = findAllBetween(this.tree, startPosition, nextSnippetPosition, { type: 'paragraph' });
+      const paragraphs = findAllBetween(
+        this.tree,
+        startPosition,
+        nextSnippetPosition,
+        { type: 'paragraph' },
+      );
       if (paragraphs.length > 0) {
         descriptionNode = paragraphs[0];
       }
     } else {
-      descriptionNode = findAfter(this.tree, startPosition, { type: 'paragraph' });
+      descriptionNode = findAfter(this.tree, startPosition, {
+        type: 'paragraph',
+      });
     }
     if (descriptionNode) {
       // @ts-ignore
@@ -227,7 +238,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
   protected getSnippetExtraSetting(startPosition: any): any {
     let extraSetting: any = {};
     let extraSettingStartNode: any = null;
-    const nextSnippetPosition = findAfter(this.tree, startPosition, { type: 'heading', depth: this.snippetHeaderDeps });
+    const nextSnippetPosition = findAfter(this.tree, startPosition, {
+      type: 'heading',
+      depth: this.snippetHeaderDeps,
+    });
     if (nextSnippetPosition) {
       const extraSettingHeaders = findAllBetween(
         this.tree,
@@ -240,20 +254,32 @@ export class vscodeSnippetBuilder extends baseBuilder {
         extraSettingStartNode = extraSettingHeaders.pop();
       }
     } else {
-      extraSettingStartNode = findAfter(this.tree, startPosition, this.extraSettingTestFunc.bind(this));
+      extraSettingStartNode = findAfter(
+        this.tree,
+        startPosition,
+        this.extraSettingTestFunc.bind(this),
+      );
     }
     if (extraSettingStartNode) {
-      const extraSettingNode = findAfter(this.tree, extraSettingStartNode, { type: 'code' });
+      const extraSettingNode = findAfter(this.tree, extraSettingStartNode, {
+        type: 'code',
+      });
       if (extraSettingNode) {
         // @ts-ignore
         const tmpExtraSetting = yaml.load(extraSettingNode.value);
         if (tmpExtraSetting) {
           extraSetting = tmpExtraSetting;
           if (extraSetting.prefix !== undefined && extraSetting.prefix) {
-            extraSetting.prefix = typeof extraSetting.prefix === 'string' ? [extraSetting.prefix] : extraSetting.prefix;
+            extraSetting.prefix =
+              typeof extraSetting.prefix === 'string'
+                ? [extraSetting.prefix]
+                : extraSetting.prefix;
           }
           if (extraSetting.scope === undefined && extraSetting.scope) {
-            extraSetting.scope = typeof extraSetting.scope === 'string' ? [extraSetting.scope] : extraSetting.scope;
+            extraSetting.scope =
+              typeof extraSetting.scope === 'string'
+                ? [extraSetting.scope]
+                : extraSetting.scope;
           }
         }
       }
@@ -294,69 +320,93 @@ export class vscodeSnippetBuilder extends baseBuilder {
       } else {
         const namePrefix = meta?.prefix ? meta.prefix : '';
         const nameSuffix = meta?.suffix ? meta.suffix : '';
-        let snippetCount: number = 0;
-        visit(this.tree, { type: 'heading', depth: this.snippetHeaderDeps }, (node, index) => {
-          let snippetNameNode = find(node, { type: 'text' });
-          if (snippetNameNode) {
-            snippetCount++;
-            // @ts-ignore
-            const snippetName = namePrefix + snippetNameNode.value + nameSuffix;
-            console.info('Snippet: ' + snippetName);
-            //スニペットの開始位置を取得する
-            const startPosition = node;
-            //スニペットの説明を取得する
-            let snippetDescription: string | null = this.getSnippetDescription(startPosition);
-            let snippets = null;
-
-            //スニペットのコードを取得する
-            const endPosition: any = this.getSnippetEndPosition(startPosition);
-            if (endPosition) {
-              snippets = findAllBetween(this.tree, startPosition, endPosition, { type: 'code' });
-            } else {
-              snippets = findAllAfter(this.tree, startPosition, { type: 'code' });
-            }
-            const extraSetting = this.getSnippetExtraSetting(startPosition);
-            if (extraSetting.scope === undefined && meta.scope) {
-              extraSetting.scope = typeof meta.scope === 'string' ? [meta.scope] : meta.scope;
-            }
-            if (snippets) {
-              // メンバー変数に格納する
-              snippets.forEach((snippet: any) => {
-                let snippetLang: string = 'global';
-                // スニペットの言語を取得する
-                if (snippet.lang) {
-                  snippet.lang = snippet.lang.toLowerCase();
-                  snippetLang = this.languageMaps.get(snippet.lang) || snippet.lang;
-                }
-                if (this.snipptes[snippetName] === undefined) {
-                  this.snipptes[snippetName] = {
-                    name: snippetName,
-                    group: groupName,
-                    code: {},
-                    prefix: [snippetName],
-                    description: snippetDescription,
-                  };
-                }
-                if (this.snipptes[snippetName]['code'][snippetLang] !== undefined) {
-                  console.warn('Duplicate snippet code: ' + snippetName + ' / ' + snippetLang);
-                  console.log(snippet);
-                }
+        let snippetCount = 0;
+        visit(
+          this.tree,
+          { type: 'heading', depth: this.snippetHeaderDeps },
+          (node, index) => {
+            const snippetNameNode = find(node, { type: 'text' });
+            if (snippetNameNode) {
+              snippetCount++;
+              const snippetName =
                 // @ts-ignore
-                this.snipptes[snippetName]['code'][snippetLang] = snippet.value;
-                /**
-                 * スニペットの拡張設定を設定する
-                 */
-                if (this.snipptes[snippetName].extraSetting === undefined) {
-                  this.snipptes[snippetName].extraSetting = extraSetting;
-                } else if (_.keys(extraSetting).length > 0) {
-                  this.snipptes[snippetName].extraSetting[snippetLang] = extraSetting;
-                }
-              });
-            } else {
-              console.warn('Not found snippet code: ' + snippetName);
+                namePrefix + snippetNameNode.value + nameSuffix;
+              console.info('Snippet: ' + snippetName);
+              //スニペットの開始位置を取得する
+              const startPosition = node;
+              //スニペットの説明を取得する
+              const snippetDescription: string | null =
+                this.getSnippetDescription(startPosition);
+              let snippets = null;
+
+              //スニペットのコードを取得する
+              const endPosition: any =
+                this.getSnippetEndPosition(startPosition);
+              if (endPosition) {
+                snippets = findAllBetween(
+                  this.tree,
+                  startPosition,
+                  endPosition,
+                  { type: 'code' },
+                );
+              } else {
+                snippets = findAllAfter(this.tree, startPosition, {
+                  type: 'code',
+                });
+              }
+              const extraSetting = this.getSnippetExtraSetting(startPosition);
+              if (extraSetting.scope === undefined && meta.scope) {
+                extraSetting.scope =
+                  typeof meta.scope === 'string' ? [meta.scope] : meta.scope;
+              }
+              if (snippets) {
+                // メンバー変数に格納する
+                snippets.forEach((snippet: any) => {
+                  let snippetLang = 'global';
+                  // スニペットの言語を取得する
+                  if (snippet.lang) {
+                    snippet.lang = snippet.lang.toLowerCase();
+                    snippetLang =
+                      this.languageMaps.get(snippet.lang) || snippet.lang;
+                  }
+                  if (this.snipptes[snippetName] === undefined) {
+                    this.snipptes[snippetName] = {
+                      name: snippetName,
+                      group: groupName,
+                      code: {},
+                      prefix: [snippetName],
+                      description: snippetDescription,
+                    };
+                  }
+                  if (
+                    this.snipptes[snippetName].code[snippetLang] !== undefined
+                  ) {
+                    console.warn(
+                      'Duplicate snippet code: ' +
+                        snippetName +
+                        ' / ' +
+                        snippetLang,
+                    );
+                    console.log(snippet);
+                  }
+                  // @ts-ignore
+                  this.snipptes[snippetName].code[snippetLang] = snippet.value;
+                  /**
+                   * スニペットの拡張設定を設定する
+                   */
+                  if (this.snipptes[snippetName].extraSetting === undefined) {
+                    this.snipptes[snippetName].extraSetting = extraSetting;
+                  } else if (_.keys(extraSetting).length > 0) {
+                    this.snipptes[snippetName].extraSetting[snippetLang] =
+                      extraSetting;
+                  }
+                });
+              } else {
+                console.warn('Not found snippet code: ' + snippetName);
+              }
             }
-          }
-        });
+          },
+        );
         if (snippetCount === 0) {
           console.warn('Not found snippets.');
         }
@@ -373,7 +423,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
     const groupdSnippets: any = _.groupBy(this.snipptes, 'group');
     Object.keys(groupdSnippets).forEach((groupName) => {
       //出力先ファイルパス
-      const outputPath = path.join(this.outputDir, groupName + '.' + this.outputExt);
+      const outputPath = path.join(
+        this.outputDir,
+        groupName + '.' + this.outputExt,
+      );
       const snippetData: any = {};
       groupdSnippets[groupName].forEach((snippet: any) => {
         let snippetPrefix: string[] = snippet.prefix;
@@ -401,15 +454,21 @@ export class vscodeSnippetBuilder extends baseBuilder {
           /**
            * 言語別のプレフィックス設定
            */
-          if (extraSetting[lang] && extraSetting[lang].prefix) {
-            let isPrefixOrverwrite = extraSetting.orverwrite !== undefined ? extraSetting.orverwrite : false;
+          if (extraSetting[lang]?.prefix) {
+            let isPrefixOrverwrite =
+              extraSetting.orverwrite !== undefined
+                ? extraSetting.orverwrite
+                : false;
             if (extraSetting[lang].orverwrite !== undefined) {
               isPrefixOrverwrite = extraSetting[lang].orverwrite;
             }
             if (isPrefixOrverwrite) {
               langSnippetPrefix = extraSetting[lang].prefix;
             } else {
-              langSnippetPrefix = [...langSnippetPrefix, ...extraSetting[lang].prefix];
+              langSnippetPrefix = [
+                ...langSnippetPrefix,
+                ...extraSetting[lang].prefix,
+              ];
             }
             langSnippetPrefix = _.uniq(langSnippetPrefix);
           }
@@ -419,7 +478,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
           if (extraSetting.scope) {
             snippetScope = [...snippetScope, ...extraSetting.scope];
             snippetScope = _.uniq(snippetScope);
-          } else if (extraSetting[lang] && extraSetting[lang].scope) {
+          } else if (extraSetting[lang]?.scope) {
             snippetScope = [...snippetScope, ...extraSetting[lang].scope];
             snippetScope = _.uniq(snippetScope);
           }
@@ -429,7 +488,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
           if (extraSetting.description !== undefined) {
             snippet.description = extraSetting.description;
           }
-          if (extraSetting[lang] !== undefined && extraSetting[lang].description !== undefined) {
+          if (
+            extraSetting[lang] !== undefined &&
+            extraSetting[lang].description !== undefined
+          ) {
             snippet.description = extraSetting[lang].description;
           }
           snippetData[snippetName] = {
@@ -437,10 +499,10 @@ export class vscodeSnippetBuilder extends baseBuilder {
             body: snippetBody,
           };
           if (snippetScope.length > 0) {
-            snippetData[snippetName]['scope'] = snippetScope.join(',');
+            snippetData[snippetName].scope = snippetScope.join(',');
           }
           if (snippet.description) {
-            snippetData[snippetName]['description'] = snippet.description;
+            snippetData[snippetName].description = snippet.description;
           }
         });
       });
@@ -472,13 +534,22 @@ export class vscodeSnippetBuilder extends baseBuilder {
    */
   public setOption(option: vscodeSnippetBuilderOption) {
     super.setOption(option);
-    if (option.snippetHeaderLevel !== undefined && option.snippetHeaderLevel !== null) {
+    if (
+      option.snippetHeaderLevel !== undefined &&
+      option.snippetHeaderLevel !== null
+    ) {
       this.setSnippetHeaderDeps(option.snippetHeaderLevel);
     }
-    if (option.extraSettingHeaderLevel !== undefined && option.extraSettingHeaderLevel !== null) {
+    if (
+      option.extraSettingHeaderLevel !== undefined &&
+      option.extraSettingHeaderLevel !== null
+    ) {
       this.setExtraSettingHeaderDeps(option.extraSettingHeaderLevel);
     }
-    if (option.extraSettingHeaderTexts !== undefined && option.extraSettingHeaderTexts !== null) {
+    if (
+      option.extraSettingHeaderTexts !== undefined &&
+      option.extraSettingHeaderTexts !== null
+    ) {
       this.setExtraSettingHeaderTexts(option.extraSettingHeaderTexts);
     }
   }

@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const calendar = new Calendar(calendarEl, {
       initialDate: new Date(),
       locale: jaLocale,
+      editable: true,
+      selectable: true,
       plugins: [
         dayGridPlugin,
         timeGridPlugin,
@@ -54,6 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     calendar.render();
   } else {
-    console.log('calendar element not found');
+    console.error('calendar element not found');
   }
 });

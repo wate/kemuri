@@ -1,0 +1,231 @@
+// Customize
+// ================================
+
+// Initial variables
+// --------------------------------
+// ### Colors
+// $black: hsl(0, 0%, 4%);
+// $black-bis: hsl(0, 0%, 7%);
+// $black-ter: hsl(0, 0%, 14%);
+
+// $grey-darker: hsl(0, 0%, 21%);
+// $grey-dark: hsl(0, 0%, 29%);
+// $grey: hsl(0, 0%, 48%);
+// $grey-light: hsl(0, 0%, 71%);
+// $grey-lighter: hsl(0, 0%, 86%);
+// $grey-lightest: hsl(0, 0%, 93%);
+
+// $white-ter: hsl(0, 0%, 96%);
+// $white-bis: hsl(0, 0%, 98%);
+// $white: hsl(0, 0%, 100%);
+
+// $orange: hsl(14, 100%, 53%);
+// $yellow: hsl(44, 100%, 77%);
+// $green: hsl(153, 53%, 53%);
+// $turquoise: hsl(171, 100%, 41%);
+// $cyan: hsl(207, 61%, 53%);
+// $blue: hsl(229, 53%, 53%);
+// $purple: hsl(271, 100%, 71%);
+// $red: hsl(348, 86%, 61%);
+
+// ### Typography
+// $family-sans-serif: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+// $family-monospace: monospace;
+// $render-mode: optimizeLegibility;
+
+// $size-1: 3rem;
+// $size-2: 2.5rem;
+// $size-3: 2rem;
+// $size-4: 1.5rem;
+// $size-5: 1.25rem;
+// $size-6: 1rem;
+// $size-7: 0.75rem;
+
+// $weight-light: 300;
+// $weight-normal: 400;
+// $weight-medium: 500;
+// $weight-semibold: 600;
+// $weight-bold: 700;
+
+// ### Spacing
+// $block-spacing: 1.5rem;
+
+// ### Responsiveness
+// // The container horizontal gap, which acts as the offset for breakpoints
+// $gap: 32px;
+// // 960, 1152, and 1344 have been chosen because they are divisible by both 12 and 16
+// $tablet: 769px;
+// // 960px container + 4rem
+// $desktop: 960px + (2 * $gap);
+// // 1152px container + 4rem
+// $widescreen: 1152px + (2 * $gap);
+// $widescreen-enabled: true;
+// // 1344px container + 4rem
+// $fullhd: 1344px + (2 * $gap);
+// $fullhd-enabled: true;
+// $breakpoints: (
+//   "mobile": ("until": $tablet),
+//   "tablet": ("from": $tablet),
+//   "tablet-only": ("from": $tablet, "until": $desktop),
+//   "touch": ("from": $desktop),
+//   "desktop": ("from": $desktop),
+//   "desktop-only": ("from": $desktop, "until": $widescreen),
+//   "until-widescreen": ("until": $widescreen),
+//   "widescreen": ("from": $widescreen),
+//   "widescreen-only": ("from": $widescreen, "until": $fullhd),
+//   "until-fullhd": ("until": $fullhd),
+//   "fullhd": ("from": $fullhd)
+// );
+
+// ### Miscellaneous
+// $easing: ease-out;
+// $radius-small: 2px;
+// $radius: 4px;
+// $radius-large: 6px;
+// $radius-rounded: 9999px;
+// $speed: 86ms;
+
+// ### Flags
+// $variable-columns: true;
+// $rtl: false;
+
+
+// Derived variables
+// --------------------------------
+// $primary: $turquoise;
+
+// $info: $cyan;
+// $success: $green;
+// $warning: $yellow;
+// $danger: $red;
+
+// $light: $white-ter;
+// $dark: $grey-darker;
+
+// ### Invert colors
+// $orange-invert: findColorInvert($orange);
+// $yellow-invert: findColorInvert($yellow);
+// $green-invert: findColorInvert($green);
+// $turquoise-invert: findColorInvert($turquoise);
+// $cyan-invert: findColorInvert($cyan);
+// $blue-invert: findColorInvert($blue);
+// $purple-invert: findColorInvert($purple);
+// $red-invert: findColorInvert($red);
+
+// $primary-invert: findColorInvert($primary);
+// $primary-light: findLightColor($primary);
+// $primary-dark: findDarkColor($primary);
+// $info-invert: findColorInvert($info);
+// $info-light: findLightColor($info);
+// $info-dark: findDarkColor($info);
+// $success-invert: findColorInvert($success);
+// $success-light: findLightColor($success);
+// $success-dark: findDarkColor($success);
+// $warning-invert: findColorInvert($warning);
+// $warning-light: findLightColor($warning);
+// $warning-dark: findDarkColor($warning);
+// $danger-invert: findColorInvert($danger);
+// $danger-light: findLightColor($danger);
+// $danger-dark: findDarkColor($danger);
+// $light-invert: findColorInvert($light);
+// $dark-invert: findColorInvert($dark);
+
+// ### General colors
+// $scheme-main: $white;
+// $scheme-main-bis: $white-bis;
+// $scheme-main-ter: $white-ter;
+// $scheme-invert: $black;
+// $scheme-invert-bis: $black-bis;
+// $scheme-invert-ter: $black-ter;
+
+// $background: $white-ter;
+
+// $border: $grey-lighter;
+// $border-hover: $grey-light;
+// $border-light: $grey-lightest;
+// $border-light-hover: $grey-light;
+
+// ### Text colors
+// $text: $grey-dark;
+// $text-invert: findColorInvert($text);
+// $text-light: $grey;
+// $text-strong: $grey-darker;
+
+// ### Code colors
+// $code: darken($red, 15%);
+// $code-background: $background;
+
+// $pre: $text;
+// $pre-background: $background;
+
+// ### Link colors
+// $link: $blue;
+// $link-invert: findColorInvert($link);
+// $link-light: findLightColor($link);
+// $link-dark: findDarkColor($link);
+// $link-visited: $purple;
+
+// $link-hover: $grey-darker;
+// $link-hover-border: $grey-light;
+
+// $link-focus: $grey-darker;
+// $link-focus-border: $blue;
+
+// $link-active: $grey-darker;
+// $link-active-border: $grey-dark;
+
+// ### Typography
+// $family-primary: $family-sans-serif;
+// $family-secondary: $family-sans-serif;
+// $family-code: $family-monospace;
+
+// $size-small: $size-7;
+// $size-normal: $size-6;
+// $size-medium: $size-5;
+// $size-large: $size-4;
+
+// ### Effects
+// $shadow: 0 0.5em 1em -0.125em rgba($scheme-invert, 0.1), 0 0px 0 1px rgba($scheme-invert, 0.02);
+
+// ### Lists and maps
+// $custom-colors: null;
+// $custom-shades: null;
+
+// $colors: mergeColorMaps(("white": ($white, $black), "black": ($black, $white), "light": ($light, $light-invert), "dark": ($dark, $dark-invert), "primary": ($primary, $primary-invert, $primary-light, $primary-dark), "link": ($link, $link-invert, $link-light, $link-dark), "info": ($info, $info-invert, $info-light, $info-dark), "success": ($success, $success-invert, $success-light, $success-dark), "warning": ($warning, $warning-invert, $warning-light, $warning-dark), "danger": ($danger, $danger-invert, $danger-light, $danger-dark)), $custom-colors);
+
+// $shades: mergeColorMaps(("black-bis": $black-bis, "black-ter": $black-ter, "grey-darker": $grey-darker, "grey-dark": $grey-dark, "grey": $grey, "grey-light": $grey-light, "grey-lighter": $grey-lighter, "white-ter": $white-ter, "white-bis": $white-bis), $custom-shades);
+
+// $sizes: $size-1 $size-2 $size-3 $size-4 $size-5 $size-6 $size-7;
+
+// Generic variables
+// --------------------------------
+// $body-background-color: $scheme-main;
+// $body-size: 16px;
+// $body-min-width: 300px;
+// $body-rendering: optimizeLegibility;
+// $body-family: $family-primary;
+// $body-overflow-x: hidden;
+// $body-overflow-y: scroll;
+
+// $body-color: $text;
+// $body-font-size: 1em;
+// $body-weight: $weight-normal;
+// $body-line-height: 1.5;
+
+// $code-family: $family-code;
+// $code-padding: 0.25em 0.5em 0.25em;
+// $code-weight: normal;
+// $code-size: 0.875em;
+
+// $small-font-size: 0.875em;
+
+// $hr-background-color: $background;
+// $hr-height: 2px;
+// $hr-margin: 1.5rem 0;
+
+// $strong-color: $text-strong;
+// $strong-weight: $weight-bold;
+
+// $pre-font-size: 0.875em;
+// $pre-padding: 1.25rem 1.5rem;
+// $pre-code-font-size: 1em;

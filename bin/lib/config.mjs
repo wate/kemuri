@@ -1,15 +1,15 @@
+import * as child_process from 'node:child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import * as child_process from 'node:child_process';
-import shellQuote from 'shell-quote';
-import duplexer from 'duplexer3';
 import { fileURLToPath } from 'node:url';
 import { cosmiconfigSync } from 'cosmiconfig';
-import nunjucks from 'nunjucks';
+import duplexer from 'duplexer3';
 import _ from 'lodash';
-import chalk from 'chalk';
-import { Console } from 'node:console';
+import nunjucks from 'nunjucks';
+import shellQuote from 'shell-quote';
 import * as dotenv from 'dotenv';
+import { Console } from 'node:console';
+import chalk from 'chalk';
 
 class ConsoleOverride extends Console {
     constructor() {
@@ -56,13 +56,14 @@ function convertEnvValueToArray(envValue, toLowerCase = false) {
         if (toLowerCase) {
             return item.toLowerCase().trim();
         }
-        else {
-            return item.trim();
-        }
+        return item.trim();
     })
         .filter((item) => item.length > 0)
         .reduce((unique, current) => {
-        return unique.includes(current) ? unique : [...unique, current];
+        if (!unique.includes(current)) {
+            unique.push(current);
+        }
+        return unique;
     }, []);
 }
 /**
@@ -87,7 +88,9 @@ function convertEnvValueToInt(envValue) {
  */
 function parseEnableEnv() {
     //@ts-ignore
-    return _.has(process.env, 'KEMURI_ENABLE') ? convertEnvValueToArray(process.env.KEMURI_ENABLE) : [];
+    return _.has(process.env, 'KEMURI_ENABLE')
+        ? convertEnvValueToArray(process.env.KEMURI_ENABLE)
+        : [];
 }
 /**
  * 環境変数に設定されたサーバーの設定を取得する
@@ -423,12 +426,18 @@ function parseEnv() {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 nunjucks.configure({ autoescape: false });
-class configLoader {
+class builderConfig {
+    constructor() {
+        /**
+         * 設定ファイルのパス
+         */
+        this.configFile = null;
+    }
     /**
      * 設定ファイルを生成する
      * @param force
      */
-    static copyDefaultConfig(force) {
+    copyDefaultConfig(force) {
         const srcConfigFilePath = path.resolve(__dirname, '../../.kemurirc.default.yml');
         const destConfigFilePath = path.resolve(process.cwd(), '.kemurirc.yml');
         if (!fs.existsSync(destConfigFilePath) || force) {
@@ -442,7 +451,7 @@ class configLoader {
      * TypeScriptの初期設定ファイルを生成する
      * @param force
      */
-    static copyDefaultTSConfig(force) {
+    copyDefaultTSConfig(force) {
         const srcConfigFilePath = path.resolve(__dirname, '../../tsconfig.json');
         const destConfigFilePath = path.resolve(process.cwd(), 'tsconfig.json');
         if (!fs.existsSync(destConfigFilePath) || force) {
@@ -456,11 +465,11 @@ class configLoader {
      * 設定ファイルをロードする
      * @returns
      */
-    static load() {
-        let config = parseEnv();
+    load() {
+        const config = parseEnv();
         const explorerSync = cosmiconfigSync('kemuri');
-        const result = configLoader.configFile
-            ? explorerSync.load(configLoader.configFile)
+        const result = this.configFile
+            ? explorerSync.load(this.configFile)
             : explorerSync.search();
         if (result) {
             return _.merge(_.cloneDeep(config), _.cloneDeep(result.config));
@@ -472,8 +481,8 @@ class configLoader {
      * @param type
      * @returns
      */
-    static isEnable(type) {
-        const allConfig = configLoader.load();
+    isEnable(type) {
+        const allConfig = this.load();
         if (allConfig && _.has(allConfig, 'enable') && _.get(allConfig, 'enable')) {
             return _.get(allConfig, 'enable').includes(type);
         }
@@ -485,7 +494,7 @@ class configLoader {
      * @param type
      * @returns
      */
-    static isDisable(type) {
+    isDisable(type) {
         return !this.isEnable(type);
     }
     /**
@@ -493,8 +502,8 @@ class configLoader {
      * @param key
      * @returns
      */
-    static get(key, defaultValue) {
-        const allConfig = configLoader.load();
+    get(key, defaultValue) {
+        const allConfig = this.load();
         return _.get(allConfig, key, defaultValue);
     }
     /**
@@ -502,15 +511,25 @@ class configLoader {
      * @param type
      * @returns
      */
-    static getOption(type, overrideOption) {
-        const allConfig = configLoader.load();
+    getOption(type, overrideOption) {
+        const allConfig = this.load();
         let builderConfig = {};
         if (allConfig) {
             builderConfig = allConfig;
             if (_.has(allConfig, type) && _.get(allConfig, type)) {
                 builderConfig = _.merge(_.cloneDeep(builderConfig), _.cloneDeep(_.get(allConfig, type)));
             }
-            const removeKeys = ['enable', 'assetDir', 'server', 'html', 'css', 'js', 'copy', 'snippet', 'screenshot'];
+            const removeKeys = [
+                'enable',
+                'assetDir',
+                'server',
+                'html',
+                'css',
+                'js',
+                'copy',
+                'snippet',
+                'screenshot',
+            ];
             removeKeys.forEach((removeKey) => {
                 _.unset(builderConfig, removeKey);
             });
@@ -526,9 +545,11 @@ class configLoader {
      * @param overrideOption
      * @returns
      */
-    static getServerOption(overrideOption) {
-        const allConfig = configLoader.load();
-        let serverOption = _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server')) ? _.get(allConfig, 'server') : {};
+    getServerOption(overrideOption) {
+        const allConfig = this.load();
+        let serverOption = _.has(allConfig, 'server') && !_.isNull(_.get(allConfig, 'server'))
+            ? _.get(allConfig, 'server')
+            : {};
         if (overrideOption) {
             serverOption = _.merge(_.cloneDeep(serverOption), _.cloneDeep(overrideOption));
         }
@@ -539,33 +560,38 @@ class configLoader {
      * HTMLビルダーのオプションを取得する
      * @returns
      */
-    static getHtmlOption(overrideOption) {
-        return configLoader.getOption('html', overrideOption);
+    getHtmlOption(overrideOption) {
+        return this.getOption('html', overrideOption);
     }
     /**
      * CSSビルダーのオプションを取得する
      * @returns
      */
-    static getCssOption(overrideOption) {
-        return configLoader.getOption('css', overrideOption);
+    getCssOption(overrideOption) {
+        return this.getOption('css', overrideOption);
     }
     /**
      * JSビルダーのオプションを取得する
      * @returns
      */
-    static getJsOption(overrideOption) {
-        return configLoader.getOption('js', overrideOption);
+    getJsOption(overrideOption) {
+        return this.getOption('js', overrideOption);
     }
     /**
      * コピーのオプションを取得する
      * @returns
      */
-    static getCopyOption() {
-        const allConfig = configLoader.load();
-        let copySettings = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy')) ? _.get(allConfig, 'copy') : [];
+    getCopyOption() {
+        const allConfig = this.load();
+        const copySettings = _.has(allConfig, 'copy') && _.isArray(_.get(allConfig, 'copy'))
+            ? _.get(allConfig, 'copy')
+            : [];
         const copyOptions = copySettings
             .filter((copySetting) => {
-            return copySetting.src && copySetting.src.length > 0 && copySetting.dest && copySetting.dest.length > 0;
+            return (copySetting.src &&
+                copySetting.src.length > 0 &&
+                copySetting.dest &&
+                copySetting.dest.length > 0);
         })
             .map((copySetting) => {
             const copyOption = {
@@ -577,15 +603,14 @@ class configLoader {
                 preserve: copySetting.preserve ?? false,
                 update: copySetting.update ?? false,
             };
-            if (_.has(copySetting, 'commands') && _.isArray(_.get(copySetting, 'commands'))) {
+            if (_.has(copySetting, 'commands') &&
+                _.isArray(_.get(copySetting, 'commands'))) {
                 const transforms = _.get(copySetting, 'commands').map((filter) => {
                     if (typeof filter === 'string') {
-                        return configLoader.convertCpxCommandParam(filter);
+                        return this.convertCpxCommandParam(filter);
                     }
-                    else {
-                        if (_.has(filter, 'command')) {
-                            return configLoader.convertCpxCommandParam(_.get(filter, 'command'));
-                        }
+                    if (_.has(filter, 'command')) {
+                        return this.convertCpxCommandParam(_.get(filter, 'command'));
                     }
                 });
                 if (transforms.length > 0) {
@@ -603,7 +628,7 @@ class configLoader {
      * ※以下のコードを元に実装
      * @see https://github.com/bcomnes/cpx2/blob/master/bin/main.js#L50-L68
      */
-    static convertCpxCommandParam(command) {
+    convertCpxCommandParam(command) {
         return (file) => {
             const env = Object.create(process.env, {
                 FILE: { value: file },
@@ -630,9 +655,11 @@ class configLoader {
      * @param overrideOption
      * @returns
      */
-    static getSnippetOption(overrideOption) {
-        const allConfig = configLoader.load();
-        let snippetOption = _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet')) ? _.get(allConfig, 'snippet') : {};
+    getSnippetOption(overrideOption) {
+        const allConfig = this.load();
+        let snippetOption = _.has(allConfig, 'snippet') && !_.isNull(_.get(allConfig, 'snippet'))
+            ? _.get(allConfig, 'snippet')
+            : {};
         if (overrideOption) {
             snippetOption = _.merge(_.cloneDeep(snippetOption), _.cloneDeep(overrideOption));
         }
@@ -644,9 +671,12 @@ class configLoader {
      * @param overrideOption
      * @returns
      */
-    static getScreenshotOption(overrideOption) {
-        const allConfig = configLoader.load();
-        let screenshotOption = _.has(allConfig, 'screenshot') && !_.isNull(_.get(allConfig, 'screenshot')) ? _.get(allConfig, 'screenshot') : {};
+    getScreenshotOption(overrideOption) {
+        const allConfig = this.load();
+        let screenshotOption = _.has(allConfig, 'screenshot') &&
+            !_.isNull(_.get(allConfig, 'screenshot'))
+            ? _.get(allConfig, 'screenshot')
+            : {};
         if (overrideOption) {
             screenshotOption = _.merge(_.cloneDeep(screenshotOption), _.cloneDeep(screenshotOption));
         }
@@ -654,5 +684,6 @@ class configLoader {
         return screenshotOption;
     }
 }
+const configLoader = new builderConfig();
 
 export { configLoader as a, console as c };

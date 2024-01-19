@@ -1,6 +1,6 @@
 import browserSync from 'browser-sync';
-import { a as configLoader } from './config.mjs';
 import _ from 'lodash';
+import { a as configLoader } from './config.mjs';
 
 /**
  * browserSyncのオプションを取得する
@@ -99,7 +99,7 @@ function getBrowserSyncOption(orverrideOption, orverrideEnable) {
  * @param orverrideEnable
  */
 function run(orverrideOption, orverrideEnable) {
-    let serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
+    const serverOption = getBrowserSyncOption(orverrideOption, orverrideEnable);
     browserSync(serverOption);
 }
 

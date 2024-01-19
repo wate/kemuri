@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import * as dotenv from 'dotenv';
+import _ from 'lodash';
 dotenv.config();
 
 /**
@@ -17,19 +17,24 @@ function getEnvKeys(envNamePrefix: string): Array<string> {
  * @param envValue
  * @returns
  */
-function convertEnvValueToArray(envValue: string, toLowerCase: boolean = false): Array<string> {
+function convertEnvValueToArray(
+  envValue: string,
+  toLowerCase = false,
+): Array<string> {
   return envValue
     .split(',')
     .map((item) => {
       if (toLowerCase) {
         return item.toLowerCase().trim();
-      } else {
-        return item.trim();
       }
+      return item.trim();
     })
     .filter((item) => item.length > 0)
     .reduce((unique: string[], current: string) => {
-      return unique.includes(current) ? unique : [...unique, current];
+      if (!unique.includes(current)) {
+        unique.push(current);
+      }
+      return unique;
     }, []);
 }
 
@@ -46,7 +51,7 @@ function convertEnvValueToBool(envValue: string): boolean {
  * @param envValue
  * @returns
  */
-function convertEnvValueToInt(envValue: string): Number | null {
+function convertEnvValueToInt(envValue: string): number | null {
   return envValue.length > 0 ? parseInt(envValue, 10) : null;
 }
 /**
@@ -55,7 +60,9 @@ function convertEnvValueToInt(envValue: string): Number | null {
  */
 function parseEnableEnv(): Array<string> {
   //@ts-ignore
-  return _.has(process.env, 'KEMURI_ENABLE') ? convertEnvValueToArray(process.env.KEMURI_ENABLE) : [];
+  return _.has(process.env, 'KEMURI_ENABLE')
+    ? convertEnvValueToArray(process.env.KEMURI_ENABLE)
+    : [];
 }
 
 /**
@@ -67,7 +74,9 @@ function parseServerEnv(): object {
   const settingKeys = getEnvKeys('KEMURI_SERVER_');
   if (settingKeys.includes('BASE_DIR')) {
     //@ts-ignore
-    settings.baseDir = convertEnvValueToArray(process.env.KEMURI_SERVER_BASE_DIR);
+    settings.baseDir = convertEnvValueToArray(
+      process.env.KEMURI_SERVER_BASE_DIR,
+    );
   }
   if (settingKeys.includes('PORT')) {
     //@ts-ignore
@@ -79,7 +88,9 @@ function parseServerEnv(): object {
   }
   if (settingKeys.includes('WATCH_FILES')) {
     //@ts-ignore
-    settings.watchFiles = convertEnvValueToArray(process.env.KEMURI_SERVER_WATCH_FILES);
+    settings.watchFiles = convertEnvValueToArray(
+      process.env.KEMURI_SERVER_WATCH_FILES,
+    );
   }
   if (settingKeys.includes('PROXY')) {
     //@ts-ignore
@@ -140,16 +151,28 @@ function parseEnvCommon(envKeyPrefix: string, settingKeys: string[]): object {
     settings.ignore.suffix = _.get(process.env, envKeyPrefix + 'IGNORE_SUFFIX');
   }
   if (settingKeys.includes('IGNORE_FILE_PREFIX')) {
-    settings.ignore.filePrefix = _.get(process.env, envKeyPrefix + 'IGNORE_FILE_PREFIX');
+    settings.ignore.filePrefix = _.get(
+      process.env,
+      envKeyPrefix + 'IGNORE_FILE_PREFIX',
+    );
   }
   if (settingKeys.includes('IGNORE_DIR_PREFIX')) {
-    settings.ignore.dirPrefix = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_PREFIX');
+    settings.ignore.dirPrefix = _.get(
+      process.env,
+      envKeyPrefix + 'IGNORE_DIR_PREFIX',
+    );
   }
   if (settingKeys.includes('IGNORE_FILE_SUFFIX')) {
-    settings.ignore.fileSuffix = _.get(process.env, envKeyPrefix + 'IGNORE_FILE_SUFFIX');
+    settings.ignore.fileSuffix = _.get(
+      process.env,
+      envKeyPrefix + 'IGNORE_FILE_SUFFIX',
+    );
   }
   if (settingKeys.includes('IGNORE_DIR_SUFFIX')) {
-    settings.ignore.dirSuffix = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_SUFFIX');
+    settings.ignore.dirSuffix = _.get(
+      process.env,
+      envKeyPrefix + 'IGNORE_DIR_SUFFIX',
+    );
   }
   if (settingKeys.includes('IGNORE_DIR_NAMES')) {
     const envValue = _.get(process.env, envKeyPrefix + 'IGNORE_DIR_NAMES');
@@ -175,11 +198,15 @@ function parseHtmlEnv(): object {
   }
   if (settingKeys.includes('GENERATE_SITEMAP')) {
     //@ts-ignore
-    settings.generateSiteMap = convertEnvValueToBool(process.env.KEMURI_HTML_GENERATE_SITEMAP);
+    settings.generateSiteMap = convertEnvValueToBool(
+      process.env.KEMURI_HTML_GENERATE_SITEMAP,
+    );
   }
   if (settingKeys.includes('GENERATE_PAGE_LIST')) {
     //@ts-ignore
-    settings.generatePageList = convertEnvValueToBool(process.env.KEMURI_HTML_GENERATE_PAGE_LIST);
+    settings.generatePageList = convertEnvValueToBool(
+      process.env.KEMURI_HTML_GENERATE_PAGE_LIST,
+    );
   }
   return settings;
 }
@@ -195,7 +222,9 @@ function parseCssEnv(): object {
   }
   if (settingKeys.includes('SASS_GENERATE_INDEX')) {
     //@ts-ignore
-    settings.generateIndex = convertEnvValueToBool(process.env.KEMURI_CSS_SASS_GENERATE_INDEX);
+    settings.generateIndex = convertEnvValueToBool(
+      process.env.KEMURI_CSS_SASS_GENERATE_INDEX,
+    );
   }
   if (settingKeys.includes('SASS_INDEX_FILE_NAME')) {
     settings.indexFileName = process.env.KEMURI_CSS_SASS_INDEX_FILE_NAME;
@@ -205,7 +234,9 @@ function parseCssEnv(): object {
   }
   if (settingKeys.includes('SASS_SOURCE_MAP')) {
     //@ts-ignore
-    settings.sourceMap = convertEnvValueToBool(process.env.KEMURI_CSS_SASS_SOURCE_MAP);
+    settings.sourceMap = convertEnvValueToBool(
+      process.env.KEMURI_CSS_SASS_SOURCE_MAP,
+    );
   }
   if (settingKeys.includes('SASS_LOAD_PATHS')) {
     const envValue = _.get(process.env, 'KEMURI_CSS_SASS_LOAD_PATHS');
@@ -226,7 +257,9 @@ function parseJsEnv(): object {
   }
   if (settingKeys.includes('GLOBALS')) {
     //@ts-ignore
-    const envValues = convertEnvValueToArray(_.get(process.env, 'KEMURI_JS_GLOBALS'));
+    const envValues = convertEnvValueToArray(
+      _.get(process.env, 'KEMURI_JS_GLOBALS'),
+    );
     envValues.forEach((envValue) => {
       const [key, value] = envValue.split(':');
       if (key && value) {
@@ -236,11 +269,15 @@ function parseJsEnv(): object {
   }
   if (settingKeys.includes('SOURCE_MAP')) {
     //@ts-ignore
-    settings.generateIndex = convertEnvValueToBool(process.env.KEMURI_JS_SOURCE_MAP);
+    settings.generateIndex = convertEnvValueToBool(
+      process.env.KEMURI_JS_SOURCE_MAP,
+    );
   }
   if (settingKeys.includes('MINIFY')) {
     //@ts-ignore
-    settings.generateIndex = convertEnvValueToBool(process.env.KEMURI_JS_MINIFY);
+    settings.generateIndex = convertEnvValueToBool(
+      process.env.KEMURI_JS_MINIFY,
+    );
   }
   return settings;
 }
@@ -258,12 +295,18 @@ function parseSnippetEnv(): object {
     settings.snippetHeaderLevel = convertEnvValueToInt(envValue);
   }
   if (settingKeys.includes('EXTRA_SETTING_HAEDER_LEVEL')) {
-    const envValue = _.get(process.env, 'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_LEVEL');
+    const envValue = _.get(
+      process.env,
+      'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_LEVEL',
+    );
     //@ts-ignore
     settings.extraSettingHeaderLevel = convertEnvValueToInt(envValue);
   }
   if (settingKeys.includes('EXTRA_SETTING_HAEDER_TEXT')) {
-    const envValue = _.get(process.env, 'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_TEXT');
+    const envValue = _.get(
+      process.env,
+      'KEMURI_SNIPPET_EXTRA_SETTING_HAEDER_TEXT',
+    );
     //@ts-ignore
     settings.extraSettingHeaderTexts = convertEnvValueToArray(envValue);
   }
@@ -288,7 +331,10 @@ function parseScreenshotEnv(): object {
     settings.default = {};
   }
   if (settingKeys.includes('DEFAULT_TYPE')) {
-    settings.default.type = _.get(process.env, 'KEMURI_SCREENSHOT_DEFAULT_TYPE');
+    settings.default.type = _.get(
+      process.env,
+      'KEMURI_SCREENSHOT_DEFAULT_TYPE',
+    );
   }
   if (settingKeys.includes('DEFAULT_WIDTH')) {
     const envValue = _.get(process.env, 'KEMURI_SCREENSHOT_DEFAULT_WIDTH');
@@ -316,7 +362,10 @@ function parseScreenshotEnv(): object {
     settings.retryLimit = convertEnvValueToInt(envValue);
   }
   if (settingKeys.includes('SITEMAP_LOCATION')) {
-    settings.sitemapLocation = _.get(process.env, 'KEMURI_SCREENSHOT_SITEMAP_LOCATION');
+    settings.sitemapLocation = _.get(
+      process.env,
+      'KEMURI_SCREENSHOT_SITEMAP_LOCATION',
+    );
   }
   if (_.filter(settingKeys, (key) => key.startsWith('TARGET_')).length > 0) {
     settings.targets = parseScreenshotTargetEnv(settingKeys);

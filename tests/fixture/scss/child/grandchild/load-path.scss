@@ -1,0 +1,20 @@
+//node_modules内にあるBootstrapの関数のみを読み込み
+// --------
+@import "bootstrap/scss/functions";
+
+//プロジェクト内のルートパスからファイル指定
+// --------
+// loadPathsを自動設定していない場合、以下のように呼び出す必要がある
+// ```
+// @import "../../utils/mixins";
+// ```
+
+@import "utils/mixins";
+
+
+.test-load-path {
+  content: str-replace('bootstrap-function', 'bootstrap-', 'kemuri-');
+  @include reset;
+  @include placeholder;
+}
+

@@ -1,8 +1,8 @@
-import fs from 'fs-extra';
 import * as path from 'node:path';
-import { glob } from 'glob';
 import * as chokidar from 'chokidar';
 import editorconfig from 'editorconfig';
+import fs from 'fs-extra';
+import { glob } from 'glob';
 import _ from 'lodash';
 import { c as console } from './config.mjs';
 
@@ -310,7 +310,9 @@ class baseBuilder {
      * @returns
      */
     getEntryPointPattern() {
-        return this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(this.fileExts);
+        return (this.convertGlobPattern(this.srcDir) +
+            '/**/*.' +
+            this.convertGlobPattern(this.fileExts));
     }
     /**
      * ファイル名の接頭語による除外パターンを取得する
@@ -345,7 +347,10 @@ class baseBuilder {
      */
     getIgnoreFileNamePattern() {
         if (this.ignoreFileNames.length > 0) {
-            return this.convertGlobPattern(this.srcDir) + '/**/{' + this.ignoreFileNames.join(',') + '}';
+            return (this.convertGlobPattern(this.srcDir) +
+                '/**/{' +
+                this.ignoreFileNames.join(',') +
+                '}');
         }
         return '';
     }
@@ -421,7 +426,7 @@ class baseBuilder {
         const suffixCheck = this.ignoreFileSuffix
             ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
             : false;
-        return prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName);
+        return (prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName));
     }
     /**
      * エントリポイントからの除外ディレクトリ判定処理
@@ -431,8 +436,12 @@ class baseBuilder {
      */
     globChildrenIgnoredFunc(p) {
         const dirName = p.name;
-        const prefixCheck = this.ignoreDirPrefix ? RegExp('^' + _.escapeRegExp(this.ignoreDirPrefix)).test(dirName) : false;
-        const suffixCheck = this.ignoreDirSuffix ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName) : false;
+        const prefixCheck = this.ignoreDirPrefix
+            ? RegExp('^' + _.escapeRegExp(this.ignoreDirPrefix)).test(dirName)
+            : false;
+        const suffixCheck = this.ignoreDirSuffix
+            ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName)
+            : false;
         return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
     }
     /**
@@ -488,7 +497,8 @@ class baseBuilder {
     convertOutputPath(srcPath, isDir = false) {
         let outputName = path.basename(srcPath);
         if (!isDir && /\.[a-zA-Z0-9]{1,4}$/.test(srcPath)) {
-            outputName = path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
+            outputName =
+                path.basename(srcPath, path.extname(srcPath)) + '.' + this.outputExt;
         }
         const outputDir = path.dirname(path.relative(this.srcDir, srcPath));
         const outputPath = path.join(this.outputDir, outputDir, outputName);
@@ -500,7 +510,9 @@ class baseBuilder {
      */
     getWatchFilePattern() {
         const watchFileExts = Array.from(new Set([...this.fileExts, ...this.moduleExts]));
-        const watchFilePattern = this.convertGlobPattern(this.srcDir) + '/**/*.' + this.convertGlobPattern(watchFileExts);
+        const watchFilePattern = this.convertGlobPattern(this.srcDir) +
+            '/**/*.' +
+            this.convertGlobPattern(watchFileExts);
         return watchFilePattern;
     }
     /**
@@ -642,7 +654,7 @@ class baseBuilder {
      */
     getBeautifyOption(targetFile) {
         const eConfigs = editorconfig.parseSync(targetFile);
-        let beautifyOption = {};
+        const beautifyOption = {};
         if (eConfigs.indent_style === 'tab') {
             beautifyOption.indent_with_tabs = true;
         }
@@ -658,7 +670,9 @@ class baseBuilder {
             }
             else {
                 // @ts-ignore
-                beautifyOption.wrap_line_length = parseInt(eConfigs.max_line_length, 10);
+                beautifyOption.wrap_line_length = parseInt(
+                // @ts-ignore
+                eConfigs.max_line_length, 10);
             }
         }
         if (eConfigs.insert_final_newline === true) {
