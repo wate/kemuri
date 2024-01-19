@@ -1113,6 +1113,7 @@ class typescriptBuilder extends baseBuilder {
                 values: this.replace,
             };
             const rollupPlugins = [
+                // nodePolyfills(),
                 nodeResolve(),
                 commonjs(),
                 typescript(typescriptConfig),
