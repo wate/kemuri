@@ -328,8 +328,8 @@ export class vscodeSnippetBuilder extends baseBuilder {
             const snippetNameNode = find(node, { type: 'text' });
             if (snippetNameNode) {
               snippetCount++;
-              // @ts-ignore
               const snippetName =
+                // @ts-ignore
                 namePrefix + snippetNameNode.value + nameSuffix;
               console.info('Snippet: ' + snippetName);
               //スニペットの開始位置を取得する

@@ -2,7 +2,7 @@
 
 import chalk from 'chalk';
 import yargs from 'yargs';
-import * as configLoader from './config';
+import configLoader from './config';
 import console from './console';
 import * as server from './server/browser-sync';
 

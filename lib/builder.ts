@@ -8,7 +8,7 @@ import yargs from 'yargs';
 import cssBuilder from './builder/css';
 import htmlBuilder from './builder/html';
 import jsBuilder from './builder/js';
-import * as configLoader from './config';
+import configLoader from './config';
 import type { settingType } from './config';
 import console from './console';
 import * as server from './server/browser-sync';
@@ -99,56 +99,64 @@ if (argv.init) {
   }
   const createDirectories: string[] = [];
   const htmlBuilderOption = configLoader.getHtmlOption();
-  //@ts-ignore
   createDirectories.push(
+    // @ts-ignore
     htmlBuilderOption.srcDir !== undefined ? htmlBuilderOption.srcDir : 'src',
   );
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     htmlBuilderOption.outputDir !== undefined
-      ? htmlBuilderOption.outputDir
+      ? //@ts-ignore
+        htmlBuilderOption.outputDir
       : 'public',
   );
   const jsBuilderOption = configLoader.getJsOption();
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     jsBuilderOption.srcDir !== undefined ? jsBuilderOption.srcDir : 'src',
   );
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     jsBuilderOption.outputDir !== undefined
-      ? jsBuilderOption.outputDir
+      ? //@ts-ignore
+        jsBuilderOption.outputDir
       : 'public/assets/js',
   );
   const cssBuilderOption = configLoader.getCssOption();
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     cssBuilderOption.srcDir !== undefined ? cssBuilderOption.srcDir : 'src',
   );
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     cssBuilderOption.outputDir !== undefined
-      ? cssBuilderOption.outputDir
+      ? //@ts-ignore
+        cssBuilderOption.outputDir
       : 'public/assets/css',
   );
   const snippetBuilderOption = configLoader.getSnippetOption();
   //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     snippetBuilderOption.srcDir !== undefined
-      ? snippetBuilderOption.srcDir
+      ? //@ts-ignore
+        snippetBuilderOption.srcDir
       : 'docs/cheatsheet',
   );
-  //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     snippetBuilderOption.outputDir !== undefined
-      ? snippetBuilderOption.outputDir
+      ? //@ts-ignore
+        snippetBuilderOption.outputDir
       : '.vscode',
   );
   const screenshotOption = configLoader.getScreenshotOption();
   //@ts-ignore
   createDirectories.push(
+    //@ts-ignore
     screenshotOption.outputDir !== undefined
-      ? screenshotOption.outputDir
+      ? //@ts-ignore
+        screenshotOption.outputDir
       : 'screenshots',
   );
   createDirectories

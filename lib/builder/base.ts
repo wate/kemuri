@@ -775,6 +775,7 @@ export abstract class baseBuilder {
       } else {
         // @ts-ignore
         beautifyOption.wrap_line_length = parseInt(
+          // @ts-ignore
           eConfigs.max_line_length,
           10,
         );

@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 import _ from 'lodash';
 import { chromium, devices, firefox, webkit } from 'playwright';
 import yargs from 'yargs';
-import * as configLoader from './config';
+import configLoader from './config';
 import console from './console';
 
 const argv = yargs(process.argv.slice(2))

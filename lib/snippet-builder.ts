@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import * as glob from 'glob';
 import yargs from 'yargs';
 import snippetBuilder from './builder/snippet';
-import * as configLoader from './config';
+import configLoader from './config';
 
 const argv = yargs(process.argv.slice(2))
   .options({

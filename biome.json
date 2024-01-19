@@ -3,7 +3,8 @@
   "organizeImports": {
     "enabled": true,
     "ignore": [
-      "bin/**/*.{js,mjs}"
+      "bin/*.js",
+      "bin/lib/*.mjs"
     ]
   },
   "formatter": {
@@ -11,12 +12,14 @@
     "indentStyle": "space",
     "indentWidth": 2,
     "ignore": [
-      "bin/**/*.{js,mjs}"
+      "bin/*.js",
+      "bin/lib/*.mjs"
     ]
   },
   "linter": {
     "ignore": [
-      "bin/**/*.{js,mjs}"
+      "bin/*.js",
+      "bin/lib/*.mjs"
     ],
     "enabled": true,
     "rules": {

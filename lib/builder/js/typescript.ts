@@ -81,8 +81,41 @@ export class typescriptBuilder extends baseBuilder {
    * 上書きするTypeScriptのコンパイルオプション
    */
   protected typeScriptCompoleOption: PartialCompilerOptions = {
+    /* ------------------------ */
+    /* Language and Environment */
+    /* ------------------------ */
+    /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    target: 'ES2020',
+    /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    lib: ['ES2020', 'DOM', 'DOM.Iterable'],
+    /* Specify what module code is generated. */
+    module: 'ESNext',
+    /* Specify how TypeScript looks up a file from a given module specifier. */
+    moduleResolution: 'bundler',
+    /* Use the package.json 'exports' field when resolving package imports. */
+    resolvePackageJsonExports: true,
+    /* Use the package.json 'imports' field when resolving imports. */
+    resolvePackageJsonImports: true,
+    /* Enable importing .json files. */
+    resolveJsonModule: true,
+    /* ------------------ */
+    /* JavaScript Support */
+    /* ------------------ */
+    /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     allowJs: true,
+    /* Enable error reporting in type-checked JavaScript files. */
     checkJs: true,
+    /* ------------------- */
+    /* Interop Constraints */
+    /* ------------------- */
+    /* Ensure that each file can be safely transpiled without relying on other imports. */
+    // "isolatedModules": true,
+    /* Allow 'import x from y' when a module doesn't have a default export. */
+    allowSyntheticDefaultImports: true,
+    /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    esModuleInterop: true,
+    /* Ensure that casing is correct in imports. */
+    forceConsistentCasingInFileNames: true,
   };
 
   /**
