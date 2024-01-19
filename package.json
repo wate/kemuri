@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
