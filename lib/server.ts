@@ -1,21 +1,30 @@
 #!/usr/bin/env node
 
-import * as server from './server/browser-sync';
-import configLoader from './config';
-import yargs from 'yargs';
 import chalk from 'chalk';
+import yargs from 'yargs';
+import * as configLoader from './config';
 import console from './console';
+import * as server from './server/browser-sync';
 
 const argv = yargs(process.argv.slice(2))
   .options({
     baseDir: { type: 'string', description: 'ベースディレクトリを設定する' },
     p: { type: 'number', alias: 'port', description: 'プロキシを設定する' },
-    w: { type: 'boolean', default: false, alias: 'watch', description: 'watchモードの指定' },
+    w: {
+      type: 'boolean',
+      default: false,
+      alias: 'watch',
+      description: 'watchモードの指定',
+    },
     proxy: { type: 'string', description: 'プロキシを設定する' },
     open: { type: 'boolean', description: 'UIオプションを設定する' },
     browser: { type: 'string', description: 'ブラウザオプションを設定する' },
     notify: { type: 'boolean', description: '更新通知オプションを設定する' },
-    c: { type: 'string', alias: 'config', description: '設定ファイルを指定する' },
+    c: {
+      type: 'string',
+      alias: 'config',
+      description: '設定ファイルを指定する',
+    },
   })
   .parseSync();
 

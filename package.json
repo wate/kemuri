@@ -53,6 +53,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.2",
     "@fortawesome/fontawesome-free": "^6",
     "@fullcalendar/bootstrap": "^6.1.10",
     "@fullcalendar/core": "^6.1.10",
@@ -92,6 +93,9 @@
     "vue": "^3.4.13"
   },
   "scripts": {
+    "lint": "biome lint --apply lib",
+    "format": "biome format lib --write",
+    "check": "biome check --apply lib",
     "builder": "run-s builder:build",
     "builder:watch": "tsx lib/builder.ts --html --css --js --copy --watch --server",
     "builder:build": "tsx lib/builder.ts --html --css --js --copy",
