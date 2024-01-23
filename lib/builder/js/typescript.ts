@@ -266,7 +266,7 @@ export class typescriptBuilder extends baseBuilder {
     let bundle: RollupBuild;
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const tsconfigPath = path.join(process.cwd(),'tsconfig.json');
+      const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
       const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
