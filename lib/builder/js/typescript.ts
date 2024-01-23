@@ -4,7 +4,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import type { RollupReplaceOptions } from '@rollup/plugin-replace';
-// import nodePolyfills from 'rollup-plugin-polyfill-node';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import type {
@@ -31,7 +30,7 @@ export interface typescriptBuilderOption extends builderOption {
   // https://github.com/rollup/plugins/tree/master/packages/replace
   replace?: Record<string, string>;
   // https://rollupjs.org/configuration-options/#output-sourcemap
-  sourcemap?: boolean;
+  sourcemap?: boolean | 'inline' | 'hidden';
   compileOption?: PartialCompilerOptions;
   minify?: boolean;
   // https://github.com/terser/terser#minify-options
@@ -139,7 +138,7 @@ export class typescriptBuilder extends baseBuilder {
   /**
    * SourceMapファイル出力の可否
    */
-  private sourcemap?: boolean;
+  private sourcemap?: boolean | 'inline' | 'hidden';
 
   /**
    * minifyの可否
@@ -182,11 +181,11 @@ export class typescriptBuilder extends baseBuilder {
   }
 
   /**
-   * SourceMapファイル出力の可否
+   * SourceMap出力の可否
    *
    * @param sourcemap
    */
-  public setSourceMap(sourcemap: boolean): void {
+  public setSourceMap(sourcemap: boolean | 'inline' | 'hidden'): void {
     this.sourcemap = sourcemap;
   }
 
@@ -266,7 +265,7 @@ export class typescriptBuilder extends baseBuilder {
     let bundle: RollupBuild;
     try {
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-      const tsconfigPath = path.join(process.cwd(),'tsconfig.json');
+      const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
       const typescriptConfig: RollupTypescriptOptions = {
         include: this.srcDir,
         exclude: this.ignoreDirNames,
@@ -346,7 +345,6 @@ export class typescriptBuilder extends baseBuilder {
         values: this.replace,
       };
       const rollupPlugins = [
-        // nodePolyfills(),
         nodeResolve(),
         commonjs(),
         typescript(typescriptConfig),

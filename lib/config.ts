@@ -135,9 +135,12 @@ class builderConfig {
         _.cloneDeep(overrideOption),
       );
     }
-    builderConfig = JSON.parse(
-      nunjucks.renderString(JSON.stringify(builderConfig), allConfig),
+    const configVars = _.merge(allConfig, { rootDir: process.cwd() });
+    const configString = nunjucks.renderString(
+      JSON.stringify(builderConfig),
+      configVars,
     );
+    builderConfig = JSON.parse(configString);
     return builderConfig;
   }
   /**

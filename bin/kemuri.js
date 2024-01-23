@@ -569,11 +569,12 @@ class nunjucksBuilder extends baseBuilder {
         //テンプレート変数を展開
         templateVars = this.expandTemplateVars(templateVars);
         //ページスコープ用の変数を設定
-        let pageScope = path.dirname(path.relative(this.srcDir, srcFile));
-        if (pageScope === '.') {
-            pageScope = '';
+        let _scope = path.dirname(path.relative(this.srcDir, srcFile));
+        if (_scope === '.') {
+            _scope = '';
         }
-        templateVars._scope = pageScope;
+        templateVars._scope = _scope;
+        templateVars._page = path.join(_scope, path.basename(srcFile, path.extname(srcFile)));
         return templateVars;
     }
     /**
@@ -960,7 +961,7 @@ class typescriptBuilder extends baseBuilder {
         this.replace = replace;
     }
     /**
-     * SourceMapファイル出力の可否
+     * SourceMap出力の可否
      *
      * @param sourcemap
      */
@@ -1113,7 +1114,6 @@ class typescriptBuilder extends baseBuilder {
                 values: this.replace,
             };
             const rollupPlugins = [
-                // nodePolyfills(),
                 nodeResolve(),
                 commonjs(),
                 typescript(typescriptConfig),
