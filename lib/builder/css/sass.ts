@@ -1,8 +1,10 @@
 import * as path from 'node:path';
 import fs from 'fs-extra';
 import * as glob from 'glob';
-import js_beautify from 'js-beautify';
 import * as sass from 'sass';
+import postcss from 'postcss';
+import autoprefixer from 'autoprefixer';
+import js_beautify from 'js-beautify';
 import console from '../../console';
 import { baseBuilder, builderOption } from '../base';
 
@@ -373,11 +375,20 @@ export class sassBuilder extends baseBuilder {
     const compileOption = this.getCompileOption();
     const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
     const result = sass.compile(srcPath, compileOption);
-    if (compileOption.style !== 'compressed' && this.beautify) {
-      result.css = beautify(result.css, beautifyOption);
-    }
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, result.css.trim() + '\n');
+
+    postcss([autoprefixer])
+      .process(result.css, { from: srcPath })
+      .then((result) => {
+        result.warnings().forEach((warn) => {
+          console.warn(warn.toString());
+        });
+        let css = result.css.toString();
+        if (compileOption.style !== 'compressed' && this.beautify) {
+          css = beautify(css, beautifyOption);
+        }
+        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+        fs.writeFileSync(outputPath, css.trim() + '\n');
+      });
     if (result.sourceMap) {
       fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
     }
@@ -423,12 +434,20 @@ export class sassBuilder extends baseBuilder {
         entryPoint + '.' + this.outputExt,
       );
       const result = sass.compile(srcFile, compileOption);
-      if (compileOption.style !== 'compressed' && this.beautify) {
-        result.css = beautify(result.css, beautifyOption);
-      }
-      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, result.css.trim() + '\n');
-      console.log('Compile: ' + srcFile + ' => ' + outputPath);
+      postcss([autoprefixer])
+        .process(result.css, { from: srcFile })
+        .then((result) => {
+          result.warnings().forEach((warn) => {
+            console.warn(warn.toString());
+          });
+          let css = result.css.toString();
+          if (compileOption.style !== 'compressed' && this.beautify) {
+            css = beautify(css, beautifyOption);
+          }
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, css.trim() + '\n');
+          console.log('Compile: ' + srcFile + ' => ' + outputPath);
+        });
       if (result.sourceMap) {
         fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
       }

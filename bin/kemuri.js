@@ -6,8 +6,10 @@ import yargs from 'yargs';
 import * as path from 'node:path';
 import * as glob from 'glob';
 import { glob as glob$1 } from 'glob';
-import js_beautify from 'js-beautify';
 import * as sass from 'sass';
+import postcss from 'postcss';
+import autoprefixer from 'autoprefixer';
+import js_beautify from 'js-beautify';
 import { c as console, a as configLoader } from './lib/config.mjs';
 import { b as baseBuilder } from './lib/base.mjs';
 import * as fs from 'node:fs';
@@ -18,9 +20,9 @@ import _ from 'lodash';
 import nunjucks from 'nunjucks';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
-import typescript from '@rollup/plugin-typescript';
 import { rollup } from 'rollup';
 import { g as getBrowserSyncOption, r as run } from './lib/browser-sync.mjs';
 import 'node:child_process';
@@ -353,11 +355,19 @@ class sassBuilder extends baseBuilder {
         const compileOption = this.getCompileOption();
         const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
         const result = sass.compile(srcPath, compileOption);
-        if (compileOption.style !== 'compressed' && this.beautify) {
-            result.css = beautify$2(result.css, beautifyOption);
-        }
-        fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
+        postcss([autoprefixer])
+            .process(result.css, { from: srcPath })
+            .then((result) => {
+            result.warnings().forEach((warn) => {
+                console.warn(warn.toString());
+            });
+            let css = result.css.toString();
+            if (compileOption.style !== 'compressed' && this.beautify) {
+                css = beautify$2(css, beautifyOption);
+            }
+            fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+            fs$1.writeFileSync(outputPath, css.trim() + '\n');
+        });
         if (result.sourceMap) {
             fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
         }
@@ -396,12 +406,20 @@ class sassBuilder extends baseBuilder {
         entries.forEach((srcFile, entryPoint) => {
             const outputPath = path.join(this.outputDir, entryPoint + '.' + this.outputExt);
             const result = sass.compile(srcFile, compileOption);
-            if (compileOption.style !== 'compressed' && this.beautify) {
-                result.css = beautify$2(result.css, beautifyOption);
-            }
-            fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
-            fs$1.writeFileSync(outputPath, result.css.trim() + '\n');
-            console.log('Compile: ' + srcFile + ' => ' + outputPath);
+            postcss([autoprefixer])
+                .process(result.css, { from: srcFile })
+                .then((result) => {
+                result.warnings().forEach((warn) => {
+                    console.warn(warn.toString());
+                });
+                let css = result.css.toString();
+                if (compileOption.style !== 'compressed' && this.beautify) {
+                    css = beautify$2(css, beautifyOption);
+                }
+                fs$1.mkdirSync(path.dirname(outputPath), { recursive: true });
+                fs$1.writeFileSync(outputPath, css.trim() + '\n');
+                console.log('Compile: ' + srcFile + ' => ' + outputPath);
+            });
             if (result.sourceMap) {
                 fs$1.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
             }
