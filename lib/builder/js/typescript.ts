@@ -2,10 +2,10 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import type { RollupReplaceOptions } from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
-import typescript from '@rollup/plugin-typescript';
 import type {
   PartialCompilerOptions,
   RollupTypescriptOptions,
@@ -19,10 +19,14 @@ import { baseBuilder, builderOption } from '../base';
 const beautify = js_beautify.js;
 
 type outputFormat = moduleFormat;
+
 /**
  * JSビルドの設定オプション
  */
 export interface typescriptBuilderOption extends builderOption {
+  minify?: boolean;
+  // https://github.com/terser/terser#minify-options
+  minifyOption?: object;
   // https://rollupjs.org/configuration-options/#output-globals
   globals?: object;
   // https://rollupjs.org/configuration-options/#output-format
@@ -32,9 +36,6 @@ export interface typescriptBuilderOption extends builderOption {
   // https://rollupjs.org/configuration-options/#output-sourcemap
   sourcemap?: boolean | 'inline' | 'hidden';
   compileOption?: PartialCompilerOptions;
-  minify?: boolean;
-  // https://github.com/terser/terser#minify-options
-  minifyOption?: object;
 }
 
 /**

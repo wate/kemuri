@@ -1,6 +1,6 @@
 {
   "name": "kemuri",
-  "version": "0.5.9",
+  "version": "0.6.0",
   "description": "Mockup builder",
   "private": true,
   "type": "module",
@@ -19,6 +19,7 @@
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "autoprefixer": "^10.4.17",
     "browser-sync": "^3.0.2",
     "chalk": "^5.3.0",
     "chokidar": "^3.5.3",
@@ -40,6 +41,7 @@
     "micromatch": "^4.0.5",
     "nunjucks": "^3.2.4",
     "playwright": "^1.41.0",
+    "postcss": "^8.4.33",
     "rollup": "^4.9.5",
     "sass": "^1.70.0",
     "shell-quote": "^1.8.1",
