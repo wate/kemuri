@@ -55,7 +55,6 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.5.2",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@fullcalendar/bootstrap": "^6.1.10",
     "@fullcalendar/core": "^6.1.10",
@@ -89,7 +88,6 @@
     "npm-check-updates": "^16.14.12",
     "npm-run-all2": "^6.1.1",
     "prettier": "^3.2.4",
-    "remixicon": "^4.1.0",
     "rimraf": "^5.0.5",
     "tsx": "^4.7.0",
     "vue": "^3.4.15"
@@ -116,7 +114,7 @@
     "test:js:minify": "tsx lib/builder.ts --config=tests/js_test_minify.yml --js",
     "test:js:beautify_minify": "tsx lib/builder.ts --config=tests/js_test_beautify_minify.yml --js",
     "test:css": "run-s cleanup:test-output:css test:css:*",
-    "test:css:default": "tsx lib/builder.ts --config=tests/css_test_default.yml --css",
+    "test:css:default": "tsx lib/builder.ts --config=tests/css_test_default.yml --css --copy",
     "test:css:beautify": "tsx lib/builder.ts --config=tests/css_test_beautify.yml  --css",
     "test:css:beautify_compressed": "tsx lib/builder.ts --config=tests/css_test_beautify_compressed.yml  --css",
     "test:css:style-expanded": "tsx lib/builder.ts --config=tests/css_test_style_expanded.yml --css",
