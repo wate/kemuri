@@ -1,4 +1,6 @@
 ---
+enable:
+  - copy
 copy:
   - src: node_modules/@fortawesome/fontawesome-free/webfonts/*.{ttf,woff,woff2}
     dest: tests/output/copy/default/fontawesome-free

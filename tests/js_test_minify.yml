@@ -1,4 +1,6 @@
 ---
+enable:
+  - js
 js:
   srcDir: tests/fixture/js
   outputDir: tests/output/js/minify
