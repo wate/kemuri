@@ -144,15 +144,8 @@
 #   ## -----------------
 #   ## Example Setting
 #   ## -----------------
-#   # - src: node_modules/remixicon/font/remixicon.{eot,svg,ttf,woff,woff2,css}
-#   #   dest: public/assets/font
-#   # - src: node_modules/remixicon/font/remixicon.css
-#   #   dest: public/assets/css
-#   #   commands:
-#   #     - sed -r "s/remixicon\.(eot|svg|ttf|woff|woff2)/..\/fonts\/remixicon.\1/"
-#   #     # OR
-#   #     - name: フォントファイルの書き換え
-#   #       command: sed -r "s/remixicon\.(eot|svg|ttf|woff|woff2)/..\/fonts\/remixicon.\1/"
+#   # - src: node_modules/@fortawesome/fontawesome-free/webfonts/*.{ttf,woff,woff2}
+#   #   dest: public/assets/webfont
 ## ---------------
 ## スニペットのビルド設定
 ## ---------------
