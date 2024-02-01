@@ -60,9 +60,9 @@ pnpm exec kemuri --init
 # npm
 npx kemuri
 # yarn
-yarn dlx kemuri
+yarn exec kemuri
 # pnpm
-pnpm dlx kemuri
+pnpm exec kemuri
 ```
 
 #### サーバーも同時に起動する
@@ -82,9 +82,9 @@ pnpm exec kemuri --server
 # npm
 npx kemuri --watch
 # yarn
-yarn dlx kemuri --watch
+yarn exec kemuri --watch
 # pnpm
-pnpm dlx kemuri --watch
+pnpm exec kemuri --watch
 ```
 
 #### サーバーも同時に起動する
