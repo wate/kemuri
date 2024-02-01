@@ -18,6 +18,7 @@ html:
       - layout
   beautifyOption:
     indent_size: 4
+  generatePageList: false
 css:
   srcDir: tests/fixture/html
   outputDir: tests/output/html/default/assets/css

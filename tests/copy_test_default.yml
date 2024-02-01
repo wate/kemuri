@@ -1,15 +1,6 @@
 ---
+enable:
+  - copy
 copy:
   - src: node_modules/@fortawesome/fontawesome-free/webfonts/*.{ttf,woff,woff2}
     dest: tests/output/copy/default/fontawesome-free
-  - src: node_modules/remixicon/fonts/remixicon.{eot,svg,ttf,woff,woff2}
-    dest: tests/output/copy/default/remixicon/fonts
-  - src: node_modules/remixicon/fonts/remixicon.css
-    dest: tests/output/copy/default/remixicon/css1
-    commands:
-      - name: フォントのパスを書き換え
-        command: sed -r "s/remixicon\.(eot|svg|ttf|woff|woff2)/..\/fonts\/remixicon.\1/"
-  - src: node_modules/remixicon/fonts/remixicon.css
-    dest: tests/output/copy/default/remixicon/css2
-    commands:
-      - sed -r "s/remixicon\.(eot|svg|ttf|woff|woff2)/..\/fonts\/remixicon.\1/"

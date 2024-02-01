@@ -1,4 +1,10 @@
 ---
+enable:
+  - css
+  - copy
 css:
   srcDir: tests/fixture/scss
   outputDir: tests/output/css/default
+copy:
+  - src: node_modules/@fortawesome/fontawesome-free/webfonts/*.{ttf,woff,woff2}
+    dest: tests/output/css/default/webfonts

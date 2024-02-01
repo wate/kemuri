@@ -1,5 +1,7 @@
 ---
 ## minifyが有効な場合、beautifyは評価されない
+enable:
+  - js
 js:
   srcDir: tests/fixture/js
   outputDir: tests/output/js/beautify_minify

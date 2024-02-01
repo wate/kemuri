@@ -13,3 +13,4 @@ html:
   beautify: false
   beautifyOption:
     indent_size: 4
+  generatePageList: false

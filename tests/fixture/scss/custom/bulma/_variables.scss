@@ -1,7 +1,7 @@
 // Customize
 // ================================
 
-// Initial variables
+// Initial variables(utilities/initial-variables)
 // --------------------------------
 // ### Colors
 // $black: hsl(0, 0%, 4%);
@@ -89,8 +89,7 @@
 // $variable-columns: true;
 // $rtl: false;
 
-
-// Derived variables
+// Derived variables(utilities/derived-variables)
 // --------------------------------
 // $primary: $turquoise;
 
@@ -197,7 +196,16 @@
 
 // $sizes: $size-1 $size-2 $size-3 $size-4 $size-5 $size-6 $size-7;
 
-// Generic variables
+// ### utilities/controls
+// $control-radius: $radius;
+// $control-radius-small: $radius-small;
+// $control-border-width: 1px;
+// $control-height: 2.5em;
+// $control-line-height: 1.5;
+// $control-padding-vertical: calc(0.5em - #{$control-border-width});
+// $control-padding-horizontal: calc(0.75em - #{$control-border-width});
+
+// Generic variables(base/generic)
 // --------------------------------
 // $body-background-color: $scheme-main;
 // $body-size: 16px;
@@ -229,3 +237,476 @@
 // $pre-font-size: 0.875em;
 // $pre-padding: 1.25rem 1.5rem;
 // $pre-code-font-size: 1em;
+
+// Element variables
+// --------------------------------
+// ### elements/button
+// $button-color: $text-strong;
+// $button-background-color: $scheme-main;
+// $button-family: false;
+// $button-border-color: $border;
+// $button-border-width: $control-border-width;
+// $button-padding-vertical: calc(0.5em - #{$button-border-width});
+// $button-padding-horizontal: 1em;
+// $button-hover-color: $link-hover;
+// $button-hover-border-color: $link-hover-border;
+// $button-focus-color: $link-focus;
+// $button-focus-border-color: $link-focus-border;
+// $button-focus-box-shadow-size: 0 0 0 0.125em;
+// $button-focus-box-shadow-color: bulmaRgba($link, 0.25);
+// $button-active-color: $link-active;
+// $button-active-border-color: $link-active-border;
+// $button-text-color: $text;
+// $button-text-decoration: underline;
+// $button-text-hover-background-color: $background;
+// $button-text-hover-color: $text-strong;
+// $button-ghost-background: none;
+// $button-ghost-border-color: transparent;
+// $button-ghost-color: $link;
+// $button-ghost-decoration: none;
+// $button-ghost-hover-color: $link;
+// $button-ghost-hover-decoration: underline;
+// $button-disabled-background-color: $scheme-main;
+// $button-disabled-border-color: $border;
+// $button-disabled-shadow: none;
+// $button-disabled-opacity: 0.5;
+// $button-static-color: $text-light;
+// $button-static-background-color: $scheme-main-ter;
+// $button-static-border-color: $border;
+// $button-colors: $colors;
+// $button-responsive-sizes: (
+//   "mobile": ("small": ($size-small * 0.75), "normal": ($size-small * 0.875), "medium": $size-small, "large": $size-normal),
+//   "tablet-only": ("small": ($size-small * 0.875), "normal": ($size-small), "medium": $size-normal, "large": $size-medium)
+// );
+
+// ### elements/content
+// $content-heading-color: $text-strong;
+// $content-heading-weight: $weight-semibold;
+// $content-heading-line-height: 1.125;
+// $content-block-margin-bottom: 1em;
+// $content-blockquote-background-color: $background;
+// $content-blockquote-border-left: 5px solid $border;
+// $content-blockquote-padding: 1.25em 1.5em;
+// $content-pre-padding: 1.25em 1.5em;
+// $content-table-cell-border: 1px solid $border;
+// $content-table-cell-border-width: 0 0 1px;
+// $content-table-cell-padding: 0.5em 0.75em;
+// $content-table-cell-heading-color: $text-strong;
+// $content-table-head-cell-border-width: 0 0 2px;
+// $content-table-head-cell-color: $text-strong;
+// $content-table-body-last-row-cell-border-bottom-width: 0;
+// $content-table-foot-cell-border-width: 2px 0 0;
+// $content-table-foot-cell-color: $text-strong;
+
+// ### elements/tag
+// $tag-background-color: $background;
+// $tag-color: $text;
+// $tag-radius: $radius;
+// $tag-delete-margin: 1px;
+// $tag-colors: $colors;
+
+// ### elements/box
+// $box-color: $text;
+// $box-background-color: $scheme-main;
+// $box-radius: $radius-large;
+// $box-shadow: $shadow;
+// $box-padding: 1.25rem;
+// $box-link-hover-shadow: 0 0.5em 1em -0.125em rgba($scheme-invert, 0.1), 0 0 0 1px $link;
+// $box-link-active-shadow: inset 0 1px 2px rgba($scheme-invert, 0.2), 0 0 0 1px $link;
+
+// ### elements/image
+// $dimensions: 16 24 32 48 64 96 128;
+
+// ### elements/icon
+// $icon-dimensions: 1.5rem;
+// $icon-dimensions-small: 1rem;
+// $icon-dimensions-medium: 2rem;
+// $icon-dimensions-large: 3rem;
+// $icon-text-spacing: 0.25em;
+
+// ### elements/container
+// $container-offset: (2 * $gap);
+// $container-max-width: $fullhd;
+
+// ### elements/notification
+// $notification-background-color: $background;
+// $notification-code-background-color: $scheme-main;
+// $notification-radius: $radius;
+// $notification-padding: 1.25rem 2.5rem 1.25rem 1.5rem;
+// $notification-padding-ltr: 1.25rem 2.5rem 1.25rem 1.5rem;
+// $notification-padding-rtl: 1.25rem 1.5rem 1.25rem 2.5rem;
+// $notification-colors: $colors;
+
+// ### elements/table
+// $table-color: $text-strong;
+// $table-background-color: $scheme-main;
+// $table-cell-border: 1px solid $border;
+// $table-cell-border-width: 0 0 1px;
+// $table-cell-padding: 0.5em 0.75em;
+// $table-cell-heading-color: $text-strong;
+// $table-cell-text-align: left;
+// $table-head-cell-border-width: 0 0 2px;
+// $table-head-cell-color: $text-strong;
+// $table-foot-cell-border-width: 2px 0 0;
+// $table-foot-cell-color: $text-strong;
+// $table-head-background-color: transparent;
+// $table-body-background-color: transparent;
+// $table-foot-background-color: transparent;
+// $table-row-hover-background-color: $scheme-main-bis;
+// $table-row-active-background-color: $primary;
+// $table-row-active-color: $primary-invert;
+// $table-striped-row-even-background-color: $scheme-main-bis;
+// $table-striped-row-even-hover-background-color: $scheme-main-ter;
+// $table-colors: $colors;
+
+// ### elements/title
+// $title-color: $text-strong;
+// $title-family: false;
+// $title-size: $size-3;
+// $title-weight: $weight-semibold;
+// $title-line-height: 1.125;
+// $title-strong-color: inherit;
+// $title-strong-weight: inherit;
+// $title-sub-size: 0.75em;
+// $title-sup-size: 0.75em;
+// $subtitle-color: $text;
+// $subtitle-family: false;
+// $subtitle-size: $size-5;
+// $subtitle-weight: $weight-normal;
+// $subtitle-line-height: 1.25;
+// $subtitle-strong-color: $text-strong;
+// $subtitle-strong-weight: $weight-semibold;
+// $subtitle-negative-margin: -1.25rem;
+
+// ### elements/progress
+// $progress-bar-background-color: $border-light;
+// $progress-value-background-color: $text;
+// $progress-border-radius: $radius-rounded;
+// $progress-indeterminate-duration: 1.5s;
+// $progress-colors: $colors;
+
+// Component variables
+// --------------------------------
+// ### components/dropdown
+// $dropdown-menu-min-width: 12rem;
+// $dropdown-content-background-color: $scheme-main;
+// $dropdown-content-arrow: $link;
+// $dropdown-content-offset: 4px;
+// $dropdown-content-padding-bottom: 0.5rem;
+// $dropdown-content-padding-top: 0.5rem;
+// $dropdown-content-radius: $radius;
+// $dropdown-content-shadow: $shadow;
+// $dropdown-content-z: 20;
+// $dropdown-item-color: $text;
+// $dropdown-item-hover-color: $scheme-invert;
+// $dropdown-item-hover-background-color: $background;
+// $dropdown-item-active-color: $link-invert;
+// $dropdown-item-active-background-color: $link;
+// $dropdown-divider-background-color: $border-light;
+
+// ### components/breadcrumb
+// $breadcrumb-item-color: $link;
+// $breadcrumb-item-hover-color: $link-hover;
+// $breadcrumb-item-active-color: $text-strong;
+// $breadcrumb-item-padding-vertical: 0;
+// $breadcrumb-item-padding-horizontal: 0.75em;
+// $breadcrumb-item-separator-color: $border-hover;
+
+// ### components/panel
+// $panel-margin: $block-spacing;
+// $panel-item-border: 1px solid $border-light;
+// $panel-radius: $radius-large;
+// $panel-shadow: $shadow;
+// $panel-heading-background-color: $border-light;
+// $panel-heading-color: $text-strong;
+// $panel-heading-line-height: 1.25;
+// $panel-heading-padding: 0.75em 1em;
+// $panel-heading-radius: $radius;
+// $panel-heading-size: 1.25em;
+// $panel-heading-weight: $weight-bold;
+// $panel-tabs-font-size: 0.875em;
+// $panel-tab-border-bottom: 1px solid $border;
+// $panel-tab-active-border-bottom-color: $link-active-border;
+// $panel-tab-active-color: $link-active;
+// $panel-list-item-color: $text;
+// $panel-list-item-hover-color: $link;
+// $panel-block-color: $text-strong;
+// $panel-block-hover-background-color: $background;
+// $panel-block-active-border-left-color: $link;
+// $panel-block-active-color: $link-active;
+// $panel-block-active-icon-color: $link;
+// $panel-icon-color: $text-light;
+// $panel-colors: $colors;
+
+// ### components/level
+// $level-item-spacing: ($block-spacing * 0.5);
+
+// ### components/modal
+// $modal-z: 40;
+// $modal-background-background-color: bulmaRgba($scheme-invert, 0.86);
+// $modal-content-width: 640px;
+// $modal-content-margin-mobile: 20px;
+// $modal-content-spacing-mobile: 160px;
+// $modal-content-spacing-tablet: 40px;
+// $modal-close-dimensions: 40px;
+// $modal-close-right: 20px;
+// $modal-close-top: 20px;
+// $modal-card-spacing: 40px;
+// $modal-card-head-background-color: $background;
+// $modal-card-head-border-bottom: 1px solid $border;
+// $modal-card-head-padding: 20px;
+// $modal-card-head-radius: $radius-large;
+// $modal-card-title-color: $text-strong;
+// $modal-card-title-line-height: 1;
+// $modal-card-title-size: $size-4;
+// $modal-card-foot-radius: $radius-large;
+// $modal-card-foot-border-top: 1px solid $border;
+// $modal-card-body-background-color: $scheme-main;
+// $modal-card-body-padding: 20px;
+// $modal-breakpoint: $tablet;
+
+// ### components/pagination
+// $pagination-color: $text-strong;
+// $pagination-border-color: $border;
+// $pagination-margin: -0.25rem;
+// $pagination-min-width: $control-height;
+// $pagination-item-font-size: 1em;
+// $pagination-item-margin: 0.25rem;
+// $pagination-item-padding-left: 0.5em;
+// $pagination-item-padding-right: 0.5em;
+// $pagination-nav-padding-left: 0.75em;
+// $pagination-nav-padding-right: 0.75em;
+// $pagination-hover-color: $link-hover;
+// $pagination-hover-border-color: $link-hover-border;
+// $pagination-focus-color: $link-focus;
+// $pagination-focus-border-color: $link-focus-border;
+// $pagination-active-color: $link-active;
+// $pagination-active-border-color: $link-active-border;
+// $pagination-disabled-color: $text-light;
+// $pagination-disabled-background-color: $border;
+// $pagination-disabled-border-color: $border;
+// $pagination-current-color: $link-invert;
+// $pagination-current-background-color: $link;
+// $pagination-current-border-color: $link;
+// $pagination-ellipsis-color: $grey-light;
+// $pagination-shadow-inset: inset 0 1px 2px rgba($scheme-invert, 0.2);
+
+// ### components/tabs
+// $tabs-border-bottom-color: $border;
+// $tabs-border-bottom-style: solid;
+// $tabs-border-bottom-width: 1px;
+// $tabs-link-color: $text;
+// $tabs-link-hover-border-bottom-color: $text-strong;
+// $tabs-link-hover-color: $text-strong;
+// $tabs-link-active-border-bottom-color: $link;
+// $tabs-link-active-color: $link;
+// $tabs-link-padding: 0.5em 1em;
+// $tabs-boxed-link-radius: $radius;
+// $tabs-boxed-link-hover-background-color: $background;
+// $tabs-boxed-link-hover-border-bottom-color: $border;
+// $tabs-boxed-link-active-background-color: $scheme-main;
+// $tabs-boxed-link-active-border-color: $border;
+// $tabs-boxed-link-active-border-bottom-color: transparent;
+// $tabs-toggle-link-border-color: $border;
+// $tabs-toggle-link-border-style: solid;
+// $tabs-toggle-link-border-width: 1px;
+// $tabs-toggle-link-hover-background-color: $background;
+// $tabs-toggle-link-hover-border-color: $border-hover;
+// $tabs-toggle-link-radius: $radius;
+// $tabs-toggle-link-active-background-color: $link;
+// $tabs-toggle-link-active-border-color: $link;
+// $tabs-toggle-link-active-color: $link-invert;
+
+// ### components/message
+// $message-background-color: $background;
+// $message-radius: $radius;
+// $message-header-background-color: $text;
+// $message-header-color: $text-invert;
+// $message-header-weight: $weight-bold;
+// $message-header-padding: 0.75em 1em;
+// $message-header-radius: $radius;
+// $message-body-border-color: $border;
+// $message-body-border-width: 0 0 0 4px;
+// $message-body-color: $text;
+// $message-body-padding: 1.25em 1.5em;
+// $message-body-radius: $radius;
+// $message-body-pre-background-color: $scheme-main;
+// $message-body-pre-code-background-color: transparent;
+// $message-header-body-border-width: 0;
+// $message-colors: $colors;
+
+// ### components/card
+// $card-color: $text;
+// $card-background-color: $scheme-main;
+// $card-shadow: $shadow;
+// $card-radius: 0.25rem;
+// $card-header-background-color: transparent;
+// $card-header-color: $text-strong;
+// $card-header-padding: 0.75rem 1rem;
+// $card-header-shadow: 0 0.125em 0.25em rgba($scheme-invert, 0.1);
+// $card-header-weight: $weight-bold;
+// $card-content-background-color: transparent;
+// $card-content-padding: 1.5rem;
+// $card-footer-background-color: transparent;
+// $card-footer-border-top: 1px solid $border-light;
+// $card-footer-padding: 0.75rem;
+// $card-media-margin: $block-spacing;
+
+// ### components/media
+// $media-border-color: bulmaRgba($border, 0.5);
+// $media-border-size: 1px;
+// $media-spacing: 1rem;
+// $media-spacing-large: 1.5rem;
+// $media-content-spacing: 0.75rem;
+// $media-level-1-spacing: 0.75rem;
+// $media-level-1-content-spacing: 0.5rem;
+// $media-level-2-spacing: 0.5rem;
+
+// ### components/menu
+// $menu-item-color: $text;
+// $menu-item-radius: $radius-small;
+// $menu-item-hover-color: $text-strong;
+// $menu-item-hover-background-color: $background;
+// $menu-item-active-color: $link-invert;
+// $menu-item-active-background-color: $link;
+// $menu-list-border-left: 1px solid $border;
+// $menu-list-line-height: 1.25;
+// $menu-list-link-padding: 0.5em 0.75em;
+// $menu-nested-list-margin: 0.75em;
+// $menu-nested-list-padding-left: 0.75em;
+// $menu-label-color: $text-light;
+// $menu-label-font-size: 0.75em;
+// $menu-label-letter-spacing: 0.1em;
+// $menu-label-spacing: 1em;
+
+// ### components/navbar
+// $navbar-background-color: $scheme-main;
+// $navbar-box-shadow-size: 0 2px 0 0;
+// $navbar-box-shadow-color: $background;
+// $navbar-height: 3.25rem;
+// $navbar-padding-vertical: 1rem;
+// $navbar-padding-horizontal: 2rem;
+// $navbar-z: 30;
+// $navbar-fixed-z: 30;
+// $navbar-item-color: $text;
+// $navbar-item-hover-color: $link;
+// $navbar-item-hover-background-color: $scheme-main-bis;
+// $navbar-item-active-color: $scheme-invert;
+// $navbar-item-active-background-color: transparent;
+// $navbar-item-img-max-height: 1.75rem;
+// $navbar-burger-color: $navbar-item-color;
+// $navbar-tab-hover-background-color: transparent;
+// $navbar-tab-hover-border-bottom-color: $link;
+// $navbar-tab-active-color: $link;
+// $navbar-tab-active-background-color: transparent;
+// $navbar-tab-active-border-bottom-color: $link;
+// $navbar-tab-active-border-bottom-style: solid;
+// $navbar-tab-active-border-bottom-width: 3px;
+// $navbar-dropdown-background-color: $scheme-main;
+// $navbar-dropdown-border-top: 2px solid $border;
+// $navbar-dropdown-offset: -4px;
+// $navbar-dropdown-arrow: $link;
+// $navbar-dropdown-radius: $radius-large;
+// $navbar-dropdown-z: 20;
+// $navbar-dropdown-boxed-radius: $radius-large;
+// $navbar-dropdown-boxed-shadow: 0 8px 8px bulmaRgba($scheme-invert, 0.1), 0 0 0 1px bulmaRgba($scheme-invert, 0.1);
+// $navbar-dropdown-item-hover-color: $scheme-invert;
+// $navbar-dropdown-item-hover-background-color: $background;
+// $navbar-dropdown-item-active-color: $link;
+// $navbar-dropdown-item-active-background-color: $background;
+// $navbar-divider-background-color: $background;
+// $navbar-divider-height: 2px;
+// $navbar-bottom-box-shadow-size: 0 -2px 0 0;
+// $navbar-breakpoint: $desktop;
+// $navbar-colors: $colors;
+
+// Layout variables
+// --------------------------------
+// ### layout/section
+// $section-padding: 3rem 1.5rem;
+// $section-padding-desktop: 3rem 3rem;
+// $section-padding-medium: 9rem 4.5rem;
+// $section-padding-large: 18rem 6rem;
+
+// ### layout/hero
+// $hero-body-padding: 3rem 1.5rem;
+// $hero-body-padding-tablet: 3rem 3rem;
+// $hero-body-padding-small: 1.5rem;
+// $hero-body-padding-medium: 9rem 4.5rem;
+// $hero-body-padding-large: 18rem 6rem;
+// $hero-colors: $colors;
+
+// ### layout/footer
+// $footer-background-color: $scheme-main-bis;
+// $footer-color: false;
+// $footer-padding: 3rem 1.5rem 6rem;
+
+// Form variables
+// --------------------------------
+// ### form/shared
+// $form-colors: $colors;
+// $input-color: $text-strong;
+// $input-background-color: $scheme-main;
+// $input-border-color: $border;
+// $input-height: $control-height;
+// $input-shadow: inset 0 0.0625em 0.125em rgba($scheme-invert, 0.05);
+// $input-placeholder-color: bulmaRgba($input-color, 0.3);
+// $input-hover-color: $text-strong;
+// $input-hover-border-color: $border-hover;
+// $input-focus-color: $text-strong;
+// $input-focus-border-color: $link;
+// $input-focus-box-shadow-size: 0 0 0 0.125em;
+// $input-focus-box-shadow-color: bulmaRgba($link, 0.25);
+// $input-disabled-color: $text-light;
+// $input-disabled-background-color: $background;
+// $input-disabled-border-color: $background;
+// $input-disabled-placeholder-color: bulmaRgba($input-disabled-color, 0.3);
+// $input-arrow: $link;
+// $input-icon-color: $border;
+// $input-icon-active-color: $text;
+// $input-radius: $radius;
+
+// ### form/input-textarea
+// $textarea-padding: $control-padding-horizontal;
+// $textarea-max-height: 40em;
+// $textarea-min-height: 8em;
+// $textarea-colors: $form-colors;
+
+// ### form/select
+// $select-colors: $form-colors;
+
+// ### form/file
+// $file-border-color: $border;
+// $file-radius: $radius;
+// $file-cta-background-color: $scheme-main-ter;
+// $file-cta-color: $text;
+// $file-cta-hover-color: $text-strong;
+// $file-cta-active-color: $text-strong;
+// $file-name-border-color: $border;
+// $file-name-border-style: solid;
+// $file-name-border-width: 1px 1px 1px 0;
+// $file-name-max-width: 16em;
+// $file-colors: $form-colors;
+
+// ### form/tools
+// $label-color: $text-strong;
+// $label-weight: $weight-bold;
+// $help-size: $size-small;
+// $label-colors: $form-colors;
+
+// Helpers variable
+// --------------------------------
+// ### helpers/spacing
+// $spacing-shortcuts: ("margin": "m", "padding": "p");
+// $spacing-directions: ("top": "t","right": "r", "bottom": "b", "left": "l");
+$spacing-horizontal: "h";
+$spacing-vertical: "v";
+// $spacing-values: ("0": 0, "1": 0.25rem, "2": 0.5rem, "3": 0.75rem, "4": 1rem, "5": 1.5rem, "6": 3rem, "auto": auto);
+
+// Grid variables
+// --------------------------------
+// ### grid/tiles
+// $tile-spacing: 0.75rem;
+
+// ### grid/columns
+// $column-gap: 0.75rem;

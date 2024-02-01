@@ -1,0 +1,75 @@
+---
+### 折り返す行の長さ
+## https://prettier.io/docs/en/options#print-width
+printWidth: 120
+### インデントごとのスペースの数
+## https://prettier.io/docs/en/options#tab-width
+# tabWidth: 2
+### スペースではなくタブを使用してインデント
+# useTabs: false
+### ステートメントの末尾にセミコロンを付与する
+## https://prettier.io/docs/en/options#semicolons
+# semi: true
+### 二重引用符の代わりに一重引用符を使用する
+## https://prettier.io/docs/en/options#quotes
+singleQuote: true
+### オブジェクト内のプロパティが引用符で囲まれている場合のフォーマット
+## https://prettier.io/docs/en/options#quote-props
+# ------------
+# * as-needed：必要な場合にのみオブジェクトプロパティの前後に引用符を追加する
+# * consistent：オブジェクト内の少なくとも1つのプロパティに引用符が必要な場合は、すべてのプロパティを引用符で囲む
+# * preserve：変更しない
+# ------------
+# quoteProps: as-needed
+### JSX では二重引用符の代わりに一重引用符を使用する
+## https://prettier.io/docs/en/options#jsx-quotes
+# jsxSingleQuote: false
+### 複数行のカンマ区切りの構文構造では、可能な限り末尾のカンマを付与する
+## https://prettier.io/docs/en/options#trailing-commas
+# ------------
+# * all：可能な限り末尾のカンマの付与を行う
+# * es5：ES5で有効な末尾のカンマの付与を行う
+# * none：末尾のカンマを付与しない
+# ------------
+# trailingComma: all
+### オブジェクトリテラル内の括弧の間にスペースを付与する
+## https://prettier.io/docs/en/options#bracket-spacing
+# bracketSpacing: true
+### 複数行に渡るHTML開始タグの終了文字(>)を最後の行に単独配置するのではなく最後の行の末尾に付与する
+## https://prettier.io/docs/en/options#bracket-line
+# bracketSameLine: false
+### アロー関数式の括弧
+## https://prettier.io/docs/en/options#arrow-function-parentheses
+# ------------
+# * always：必ず括弧を含める
+# * avoid：可能な場合は括弧を省略する
+# ------------
+# arrowParens: always
+### HTMLのホワイトスペース
+## https://prettier.io/docs/en/options#html-whitespace-sensitivity
+# ------------
+# * css：CSSの`display`プロパティに準拠します
+#     * @see https://prettier.io/blog/2018/11/07/1.15.0#whitespace-sensitive-formatting
+# * strict：すべてのタグの周囲の空白(たは空白の欠如)は重要であるとみなされます
+# * ignore：すべてのタグの周囲に空白がある(または空白がない)ことは重要ではないとみなされます
+# ------------
+# htmlWhitespaceSensitivity: css
+### 改行コード
+## https://prettier.io/docs/en/options#end-of-line
+# endOfLine: lf
+### 1行に1つの属性を強制するか否か(※HTML/Vue/JSXの場合のみ)
+## https://prettier.io/docs/en/options#single-attribute-per-line
+# singleAttributePerLine: false
+### ---------------------------
+### 特定ファイルの個別設定
+### ---------------------------
+## Example
+# overrides:
+#   - files: "*.test.js"
+#     options:
+#       semi: true
+#   - files:
+#       - "*.html"
+#       - "legacy/**/*.js"
+#     options:
+#       tabWidth: 4
