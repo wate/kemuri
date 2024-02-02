@@ -11,8 +11,7 @@ import listPlugin from '@fullcalendar/list';
 //support view: multiMonthYear, multiMonth
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
-// import googleCalendarPlugin from '@fullcalendar/google-calendar';
-// import iCalendarPlugin from '@fullcalendar/icalendar';
+import iCalendarPlugin from '@fullcalendar/icalendar';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -30,8 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         listPlugin,
         multiMonthPlugin,
         interactionPlugin,
-        // googleCalendarPlugin,
-        // iCalendarPlugin,
+        iCalendarPlugin,
         bootstrapPlugin,
       ],
       initialView: 'dayGridMonth',
@@ -43,16 +41,11 @@ document.addEventListener('DOMContentLoaded', function () {
       contentHeight: 'auto',
       themeSystem: 'bootstrap',
       nowIndicator: true,
-      // @see https://fullcalendar.io/docs/google-calendar
-      // googleCalendarApiKey: '<YOUR API KEY>',
-      // events: {
-      //   googleCalendarId: 'ja.japanese#holiday@group.v.calendar.google.com',
-      // },
-      // @see https://fullcalendar.io/docs/icalendar
-      // events: {
-      //   url: 'https://calendar.google.com/calendar/ical/ja.japanese%23holiday%40group.v.calendar.google.com/public/basic.ics',
-      //   format: 'ics',
-      // },
+      events: {
+        // CORS対策でGoogleカレンダーのURLを直接指定できないため、サーバーサイドで取得して返す必要あり
+        url: 'https://calendar.google.com/calendar/ical/ja.japanese%23holiday%40group.v.calendar.google.com/public/basic.ics',
+        format: 'ics',
+      },
     });
     calendar.render();
   } else {
