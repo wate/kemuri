@@ -209,13 +209,13 @@
 #   #     type: iPhone 14 Pro
 #   #   mobile_landscape:
 #   #     type: iPhone 14 Pro landscape
-#   # ## 認証設定(experimental)
+#   # ## 認証設定
 #   # auth:
 #   #   ## Basic認証設定
 #   #   basic:
 #   #     username: null
 #   #     password: null
-#   #   ## フォーム(ログイン画面)認証設定
+#   #   ## フォーム(ログイン画面)認証設定(experimental)
 #   #   form:
 #   #     ### -----------
 #   #     ### Example
