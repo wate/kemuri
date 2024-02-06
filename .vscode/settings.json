@@ -6,7 +6,6 @@
   },
   // @see https://marketplace.visualstudio.com/items?itemName=ionutvmi.path-autocomplete
   "path-autocomplete.pathMappings": {
-    "$root": "${workspace}/src",
-    "/": "${workspace}/src",
+    "$root": "${folder}/src"
   },
 }
