@@ -4,6 +4,3 @@
 .test-load-package {
   content: str-replace('bootstrap-function', 'bootstrap-', 'kemuri-');
 }
-
-//Sass形式ファイルの読み込み
-@import "bulma/bulma";
