@@ -1,7 +1,7 @@
 ## Browserslist setting
 ## @see https://github.com/browserslist/browserslist#best-practices
 ##
-## Setting check
+## ### Setting check
 ##
 ## ```
 ## npx browserslist
@@ -10,11 +10,6 @@
 ## playground (https://browsersl.ist/)
 ## -----------------
 
+## Browserslist's default browsers(`> 0.5%, last 2 versions, Firefox ESR, not dead`)
 defaults
-
-## Browserslist's default browsers
-# > 0.5%
-# last 2 versions
-# Firefox ESR
-# not dead
 
