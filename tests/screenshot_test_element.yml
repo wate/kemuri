@@ -1,0 +1,6 @@
+---
+screenshot:
+  outputDir: tests/output/screenshot/flat
+  sitemapLocation: http://localhost:3000/sitemap.xml
+  saveFlatPath: true
+  element: .container-fluid

@@ -1,5 +1,6 @@
 ---
 server:
+  baseDir: tests/output/html/screenshot
   watch: false
   open: false
 html:
@@ -17,5 +18,5 @@ css:
   srcDir: tests/fixture/html
   outputDir: tests/output/html/screenshot/assets/css
 js:
-  srcDir: tests/fixture/html/events
+  srcDir: tests/fixture/html
   outputDir: tests/output/html/screenshot/assets/js
