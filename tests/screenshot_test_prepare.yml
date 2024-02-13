@@ -1,6 +1,7 @@
 ---
 server:
   watch: false
+  open: false
 html:
   srcDir: tests/fixture/html
   outputDir: tests/output/html/screenshot
