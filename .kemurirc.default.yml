@@ -8,19 +8,6 @@
 #   - html
 #   - copy
 ## ---------------
-## サーバーの設定
-## ---------------
-# server:
-#   baseDir: public
-#   port: 3000
-#   watch: true
-#   proxy: null
-#   ## proxyが設定されている場合はbaseDirの設定が適用されます
-#   watchFiles: []
-#   open: true
-#   browser: default
-#   notify: false
-## ---------------
 ## 共通設定項目
 ## ---------------
 # srcDir: src
@@ -147,22 +134,18 @@
 #   # - src: node_modules/@fortawesome/fontawesome-free/webfonts/*.{ttf,woff,woff2}
 #   #   dest: public/assets/webfont
 ## ---------------
-## スニペットのビルド設定
+## サーバーの設定
 ## ---------------
-# snippet:
-#   srcDir: docs/cheatsheet
-#   outputDir: .vscode
-#   exts:
-#     - md
-#   snippetHeaderLevel: 2
-#   extraSettingHeaderLevel: 3
-#   extraSettingHeaderTexts:
-#     - Snippet Setting
-#     - Snippet Settings
-#     - VSCode Extra Setting
-#     - VSCode Extra Settings
-#     - VSCode Snippet Setting
-#     - VSCode Snippet Settings
+# server:
+#   baseDir: public
+#   port: 3000
+#   watch: true
+#   proxy: null
+#   ## proxyが設定されている場合はbaseDirの設定が適用されます
+#   watchFiles: []
+#   open: true
+#   browser: default
+#   notify: false
 ## ---------------
 ## スクリーンショットの設定
 ## ---------------
@@ -176,10 +159,12 @@
 #     type: chromium
 #     width: 1920
 #     height: 1080
-#   ## ヘッドレスモードで実行するか否か
-#   headless: true
 #   ## ページ全体のスクリーンショットを取得するか否か
 #   fullPage: true
+#   ## スクリーンショットを取得するか要素(設定例：`.nav`)
+#   element: null
+#   ## ヘッドレスモードで実行するか否か
+#   headless: true
 #   ## 最大再試行回数
 #   retryLimit: 3
 #   ## ----------------
@@ -242,3 +227,20 @@
 #   #       ## ログインボタンをクリックする
 #   #       - selector: "#submit"
 #   #         action: click
+## ---------------
+## スニペットのビルド設定
+## ---------------
+# snippet:
+#   srcDir: docs/cheatsheet
+#   outputDir: .vscode
+#   exts:
+#     - md
+#   snippetHeaderLevel: 2
+#   extraSettingHeaderLevel: 3
+#   extraSettingHeaderTexts:
+#     - Snippet Setting
+#     - Snippet Settings
+#     - VSCode Extra Setting
+#     - VSCode Extra Settings
+#     - VSCode Snippet Setting
+#     - VSCode Snippet Settings
