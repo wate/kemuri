@@ -199,7 +199,7 @@ export class vscodeSnippetBuilder extends baseBuilder {
    * @returns
    */
   protected getSnippetDescription(startPosition: any): string | null {
-    let description = null;
+    let description = '';
     const nextSnippetPosition = findAfter(this.tree, startPosition, {
       type: 'heading',
       depth: this.snippetHeaderDeps,
@@ -221,12 +221,15 @@ export class vscodeSnippetBuilder extends baseBuilder {
       });
     }
     if (descriptionNode) {
-      // @ts-ignore
-      const descriptionTextNode = find(descriptionNode, { type: 'text' });
-      if (descriptionTextNode) {
-        // @ts-ignore
-        description = descriptionTextNode.value;
-      }
+      visit(
+        descriptionNode,
+        function (node) {
+          return ['text', 'inlineCode'].includes(node.type)
+        },
+        function (node) {
+          description += node.value
+        }
+      );
     }
     return description;
   }
@@ -383,9 +386,9 @@ export class vscodeSnippetBuilder extends baseBuilder {
                   ) {
                     console.warn(
                       'Duplicate snippet code: ' +
-                        snippetName +
-                        ' / ' +
-                        snippetLang,
+                      snippetName +
+                      ' / ' +
+                      snippetLang,
                     );
                     console.log(snippet);
                   }

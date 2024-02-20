@@ -183,7 +183,7 @@ class vscodeSnippetBuilder extends baseBuilder {
      * @returns
      */
     getSnippetDescription(startPosition) {
-        let description = null;
+        let description = '';
         const nextSnippetPosition = findAfter(this.tree, startPosition, {
             type: 'heading',
             depth: this.snippetHeaderDeps,
@@ -201,12 +201,11 @@ class vscodeSnippetBuilder extends baseBuilder {
             });
         }
         if (descriptionNode) {
-            // @ts-ignore
-            const descriptionTextNode = find(descriptionNode, { type: 'text' });
-            if (descriptionTextNode) {
-                // @ts-ignore
-                description = descriptionTextNode.value;
-            }
+            visit(descriptionNode, function (node) {
+                return ['text', 'inlineCode'].includes(node.type);
+            }, function (node) {
+                description += node.value;
+            });
         }
         return description;
     }
