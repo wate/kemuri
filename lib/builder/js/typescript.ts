@@ -105,7 +105,7 @@ export class typescriptBuilder extends baseBuilder {
     /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     allowJs: true,
     /* Enable error reporting in type-checked JavaScript files. */
-    checkJs: true,
+    // checkJs: true,
     /* ------------------- */
     /* Interop Constraints */
     /* ------------------- */
