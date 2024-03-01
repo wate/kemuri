@@ -6,11 +6,12 @@ import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
 import js_beautify from 'js-beautify';
 import console from '../../console';
-import { baseBuilder, builderOption } from '../base';
+import { baseBuilder, builderOption, ignoreOption } from '../base';
 
 const beautify = js_beautify.css;
 
 type sassBuilderIndexImportTypeOption = 'use' | 'forward';
+type generateIndexIgnore = Omit<ignoreOption, 'prefix' | 'suffix'>
 /**
  * CSSビルドの設定オプション
  */
@@ -20,6 +21,7 @@ export interface sassBuilderOption extends builderOption {
   generateIndex?: boolean;
   indexFileName?: string;
   indexImportType?: sassBuilderIndexImportTypeOption;
+  generateIndexIgnore?: generateIndexIgnore;
   loadPaths?: string[];
 }
 
@@ -56,17 +58,17 @@ export class sassBuilder extends baseBuilder {
   /**
    * 出力スタイルの設定
    */
-  private style?: sass.OutputStyle;
+  private style: sass.OutputStyle = 'expanded';
 
   /**
    * SourceMapファイル出力の可否
    */
-  private sourcemap?: boolean;
+  private sourcemap: boolean | null = null;
 
   /**
    * SassのloadPathsオプション
    */
-  private loadPaths?: string[];
+  private loadPaths: string[] = [];
 
   /**
    * インデックスファイルの自動生成の可否
@@ -82,6 +84,11 @@ export class sassBuilder extends baseBuilder {
    * インデックスファイルにインポートする際の方法
    */
   private indexImportType: sassBuilderIndexImportTypeOption = 'forward';
+
+  /**
+   * インデックスファイルの自動生成を行う際の除外設定
+   */
+  private generateIndexIgnore: generateIndexIgnore = {};
 
   /**
    * 出力スタイルの設定
@@ -124,6 +131,7 @@ export class sassBuilder extends baseBuilder {
   public setIndexFileName(indexFileName: string): void {
     this.indexFileName = indexFileName;
   }
+
   /**
    * インデックスファイルのインポート形式を設定する
    *
@@ -133,6 +141,15 @@ export class sassBuilder extends baseBuilder {
     importType: sassBuilderIndexImportTypeOption,
   ): void {
     this.indexImportType = importType;
+  }
+
+  /**
+   * インデックスファイル自動生成時に除外するファイル/ディレクトリ名の設定
+   *
+   * @param generateIndexIgnore
+   */
+  public setGenerateIndexIgnore(generateIndexIgnore: generateIndexIgnore): void {
+    this.generateIndexIgnore = generateIndexIgnore;
   }
 
   /**
@@ -236,11 +253,40 @@ export class sassBuilder extends baseBuilder {
     if (option.generateIndex !== undefined && option.generateIndex !== null) {
       this.setGenerateIndex(option.generateIndex);
     }
-    if (this.generateIndex && option.indexFileName !== undefined) {
-      this.setIndexFileName(option.indexFileName);
-    }
-    if (this.generateIndex && option.indexImportType !== undefined) {
-      this.setIndexImportType(option.indexImportType);
+    /**
+     * インデックスファイルの自動生成時の設定
+     */
+    if (this.generateIndex) {
+      if (option.indexFileName !== undefined) {
+        this.setIndexFileName(option.indexFileName);
+      }
+      if (option.indexImportType !== undefined) {
+        this.setIndexImportType(option.indexImportType);
+      }
+      let generateIndexIgnore: generateIndexIgnore = {};
+      if (option.generateIndexIgnore !== undefined) {
+        generateIndexIgnore = option.generateIndexIgnore;
+      } else {
+        if (this.ignoreFilePrefix !== '_') {
+          generateIndexIgnore.filePrefix = this.ignoreFilePrefix;
+        }
+        if (this.ignoreFileSuffix) {
+          generateIndexIgnore.fileSuffix = this.ignoreFileSuffix;
+        }
+        if (_.isArray(this.ignoreFileNames)) {
+          generateIndexIgnore.fileNames = this.ignoreFileNames;
+        }
+        if (this.ignoreDirPrefix) {
+          generateIndexIgnore.dirPrefix = this.ignoreDirPrefix;
+        }
+        if (this.ignoreDirSuffix) {
+          generateIndexIgnore.dirSuffix = this.ignoreDirSuffix;
+        }
+        if (_.isArray(this.ignoreDirNames)) {
+          generateIndexIgnore.dirNames = this.ignoreDirNames;
+        }
+      }
+      this.setGenerateIndexIgnore(generateIndexIgnore);
     }
     let sassLoadPaths = [this.srcDir, 'node_modules'];
     if (option.loadPaths !== undefined) {
