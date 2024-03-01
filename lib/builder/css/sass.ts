@@ -6,6 +6,7 @@ import postcss from 'postcss';
 import autoprefixer from 'autoprefixer';
 import js_beautify from 'js-beautify';
 import console from '../../console';
+import _ from 'lodash';
 import { baseBuilder, builderOption, ignoreOption } from '../base';
 
 const beautify = js_beautify.css;
@@ -161,8 +162,10 @@ export class sassBuilder extends baseBuilder {
     if (!this.generateIndex) {
       return;
     }
+    console.debug('Generate index file: ', targetDir, recursive);
+    const fileExtPattern = this.convertGlobPattern(this.fileExts);
     const indexMatchPatterns = [
-      './_*.' + this.convertGlobPattern(this.fileExts),
+      './_*.' + fileExtPattern,
       './*/' + this.indexFileName,
     ];
     const partialMatchFiles = glob
@@ -268,25 +271,29 @@ export class sassBuilder extends baseBuilder {
         generateIndexIgnore = option.generateIndexIgnore;
       } else {
         if (this.ignoreFilePrefix !== '_') {
-          generateIndexIgnore.filePrefix = this.ignoreFilePrefix;
+          generateIndexIgnore.filePrefix = _.clone(this.ignoreFilePrefix);
         }
         if (this.ignoreFileSuffix) {
-          generateIndexIgnore.fileSuffix = this.ignoreFileSuffix;
+          generateIndexIgnore.fileSuffix = _.clone(this.ignoreFileSuffix);
         }
         if (_.isArray(this.ignoreFileNames)) {
-          generateIndexIgnore.fileNames = this.ignoreFileNames;
+          generateIndexIgnore.fileNames = _.clone(this.ignoreFileNames);
         }
         if (this.ignoreDirPrefix) {
-          generateIndexIgnore.dirPrefix = this.ignoreDirPrefix;
+          generateIndexIgnore.dirPrefix = _.clone(this.ignoreDirPrefix);
         }
         if (this.ignoreDirSuffix) {
-          generateIndexIgnore.dirSuffix = this.ignoreDirSuffix;
+          generateIndexIgnore.dirSuffix = _.clone(this.ignoreDirSuffix);
         }
         if (_.isArray(this.ignoreDirNames)) {
-          generateIndexIgnore.dirNames = this.ignoreDirNames;
+          generateIndexIgnore.dirNames = _.clone(this.ignoreDirNames);
         }
       }
       this.setGenerateIndexIgnore(generateIndexIgnore);
+      const ignoreIndexFileName = path.basename(this.indexFileName, path.extname(this.indexFileName));
+      if (_.isArray(this.ignoreFileNames) && !this.ignoreFileNames.includes(ignoreIndexFileName)) {
+        this.ignoreFileNames.push(ignoreIndexFileName);
+      }
     }
     let sassLoadPaths = [this.srcDir, 'node_modules'];
     if (option.loadPaths !== undefined) {
@@ -297,12 +304,6 @@ export class sassBuilder extends baseBuilder {
      * インデックスファイルの自動生成を行う場合は、
      * インデックスファイルをエントリポイントから除外する
      */
-    if (
-      this.generateIndex &&
-      !this.ignoreFileNames.includes(this.indexFileName)
-    ) {
-      this.ignoreFileNames.push(this.indexFileName);
-    }
   }
 
   /**
