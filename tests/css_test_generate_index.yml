@@ -1,0 +1,16 @@
+---
+enable:
+  - css
+css:
+  srcDir: tests/fixture/scss_generate_index
+  outputDir: tests/output/css/generate_index
+  ignore:
+    fileSuffix: -bk
+    fileNames:
+      - _ignore
+    dirPrefix: ignore_
+    dirSuffix: _ignore
+    dirNames:
+      - example
+      - sample
+  generateIndex: true

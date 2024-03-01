@@ -48,3 +48,4 @@ screenshots/*
 
 ### test
 tests/output/*
+tests/fixture/scss_generate_index/**/_all.scss

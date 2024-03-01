@@ -114,6 +114,7 @@
     "test:css:default": "tsx lib/builder.ts --config=tests/css_test_default.yml",
     "test:css:beautify": "tsx lib/builder.ts --config=tests/css_test_beautify.yml",
     "test:css:beautify_compressed": "tsx lib/builder.ts --config=tests/css_test_beautify_compressed.yml",
+    "test:css:generate_index": "tsx lib/builder.ts --config=tests/css_test_generate_index.yml --watch",
     "test:css:style-expanded": "tsx lib/builder.ts --config=tests/css_test_style_expanded.yml",
     "test:css:style-compressed": "tsx lib/builder.ts --config=tests/css_test_style_compressed.yml",
     "test:copy": "run-s cleanup:test-output:copy test:copy:*",
