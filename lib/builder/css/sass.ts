@@ -163,7 +163,7 @@ export class sassBuilder extends baseBuilder {
     if (!this.generateIndex) {
       return;
     }
-    console.debug('Generate index file: ', targetDir, recursive);
+    // console.debug('Generate index file: ', targetDir, recursive);
     const fileExtPattern = this.convertGlobPattern(this.fileExts);
     const indexMatchPatterns = [
       './_*.' + fileExtPattern,
@@ -455,10 +455,10 @@ export class sassBuilder extends baseBuilder {
         this.srcDir,
         '**/_*.' + fileExtPattern,
       );
-      const partialFiles = glob.sync(partialFilePattern);
+      let partialFiles = glob.sync(partialFilePattern);
       let ignorePatterns: string[] = [];
       /**
-       * 除外するディレクトリパターンを生成
+       * インデックスファイル生成を除外するパターンを生成
        */
       if (this.generateIndexIgnore.dirPrefix) {
         ignorePatterns.push('**/' + this.generateIndexIgnore.dirPrefix + '*/**');
@@ -471,20 +471,32 @@ export class sassBuilder extends baseBuilder {
       }
       if (partialFiles.length > 0) {
         partialFiles
+          .sort((a: string, b: string) => b.length - a.length)
           .filter((generateIndexDir: string) => {
             // 除外パターンにマッチしないものを返す
             return !micromatch.isMatch(generateIndexDir, ignorePatterns);
           })
+          // ディレクトリ名のみに変換
           .map((partialFile: string) => {
             return path.dirname(partialFile);
           })
+          // 重複を除外
           .reduce((unique: string[], item: string) => {
             if (!unique.includes(item)) {
               unique.push(item);
             }
+            //最上位ディレクトリまでのパスを取得し重複を除外して追加
+            while (item.startsWith(this.srcDir) && item !== this.srcDir) {
+              item = path.dirname(item);
+              if (!unique.includes(item)) {
+                unique.push(item);
+              }
+            }
             return unique;
           }, [])
+          // インデックスファイルの生成/更新
           .forEach((generateIndexDir: string) => {
+            console.debug('Generate index file dir: ', generateIndexDir);
             this.generateIndexFile.bind(this)(generateIndexDir, false);
           });
       }
