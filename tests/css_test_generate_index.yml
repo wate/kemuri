@@ -7,10 +7,9 @@ css:
   ignore:
     fileSuffix: -bk
     fileNames:
-      - _ignore
-    dirPrefix: ignore_
-    dirSuffix: _ignore
+      - _ignorefile
+    dirPrefix: ignoreprefix_
+    dirSuffix: _ignoresuffix
     dirNames:
-      - example
-      - sample
+      - ignore_name
   generateIndex: true
