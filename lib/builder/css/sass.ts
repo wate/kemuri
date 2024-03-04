@@ -8,6 +8,7 @@ import js_beautify from 'js-beautify';
 import console from '../../console';
 import _ from 'lodash';
 import { baseBuilder, builderOption, ignoreOption } from '../base';
+import micromatch from 'micromatch';
 
 const beautify = js_beautify.css;
 
@@ -449,13 +450,31 @@ export class sassBuilder extends baseBuilder {
     const entries = this.getEntryPoint();
     if (this.generateIndex) {
       //インデックスファイルの生成/更新
+      const fileExtPattern = this.convertGlobPattern(this.fileExts);
       const partialFilePattern = path.join(
         this.srcDir,
-        '**/_*.' + this.convertGlobPattern(this.fileExts),
+        '**/_*.' + fileExtPattern,
       );
       const partialFiles = glob.sync(partialFilePattern);
+      let ignorePatterns: string[] = [];
+      /**
+       * 除外するディレクトリパターンを生成
+       */
+      if (this.generateIndexIgnore.dirPrefix) {
+        ignorePatterns.push('**/' + this.generateIndexIgnore.dirPrefix + '*/**');
+      }
+      if (this.generateIndexIgnore.dirSuffix) {
+        ignorePatterns.push('**/*' + this.generateIndexIgnore.dirSuffix + '/**');
+      }
+      if (this.generateIndexIgnore.dirNames && this.generateIndexIgnore.dirNames.length > 0) {
+        ignorePatterns.push('**/' + this.convertGlobPattern(this.generateIndexIgnore.dirNames) + '/**');
+      }
       if (partialFiles.length > 0) {
         partialFiles
+          .filter((generateIndexDir: string) => {
+            // 除外パターンにマッチしないものを返す
+            return !micromatch.isMatch(generateIndexDir, ignorePatterns);
+          })
           .map((partialFile: string) => {
             return path.dirname(partialFile);
           })
