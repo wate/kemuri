@@ -163,8 +163,35 @@ export class sassBuilder extends baseBuilder {
     if (!this.generateIndex) {
       return;
     }
-    // console.debug('Generate index file: ', targetDir, recursive);
     const fileExtPattern = this.convertGlobPattern(this.fileExts);
+    const ignorePatterns: string[] = [];
+    /**
+     * インデックスファイル生成から除外するパターンを生成
+     */
+    if (this.generateIndexIgnore.filePrefix) {
+      ignorePatterns.push('**/' + this.generateIndexIgnore.filePrefix + '*.' + fileExtPattern);
+    }
+    if (this.generateIndexIgnore.fileSuffix) {
+      ignorePatterns.push('**/*' + this.generateIndexIgnore.fileSuffix + '.' + fileExtPattern);
+    }
+    if (this.generateIndexIgnore.fileNames && this.generateIndexIgnore.fileNames.length > 0) {
+      ignorePatterns.push('**/' + this.convertGlobPattern(this.generateIndexIgnore.fileNames) + '.' + fileExtPattern);
+    }
+    if (this.generateIndexIgnore.dirPrefix) {
+      ignorePatterns.push('**/' + this.generateIndexIgnore.dirPrefix + '*/**');
+    }
+    if (this.generateIndexIgnore.dirSuffix) {
+      ignorePatterns.push('**/*' + this.generateIndexIgnore.dirSuffix + '/**');
+    }
+    if (this.generateIndexIgnore.dirNames && this.generateIndexIgnore.dirNames.length > 0) {
+      ignorePatterns.push('**/' + this.convertGlobPattern(this.generateIndexIgnore.dirNames) + '/**');
+    }
+    if (micromatch.isMatch(targetDir, ignorePatterns)) {
+      // 除外パターンに一致するディレクトリは処理しない
+      // console.debug('Ignore generate index file dir: ', targetDir);
+      return;
+    }
+
     const indexMatchPatterns = [
       './_*.' + fileExtPattern,
       './*/' + this.indexFileName,
@@ -174,10 +201,12 @@ export class sassBuilder extends baseBuilder {
         cwd: targetDir,
       })
       .filter((partialFile) => {
-        // 同一階層のインデックスファイルは除外
-        return partialFile !== this.indexFileName;
+        // カレントディレクトリのインデックスファイル、及び、除外パターンに一致するファイルを除外
+        return partialFile !== this.indexFileName && !micromatch.isMatch(partialFile, ignorePatterns);
       })
       .sort();
+    // console.debug('partialMatchFiles: ', partialMatchFiles);
+
     const indexFilePath = path.join(targetDir, this.indexFileName);
     if (partialMatchFiles.length === 0) {
       fs.remove(indexFilePath);
@@ -471,6 +500,7 @@ export class sassBuilder extends baseBuilder {
       }
       if (partialFiles.length > 0) {
         partialFiles
+          // パスの階層が深い順にソート
           .sort((a: string, b: string) => b.length - a.length)
           .filter((generateIndexDir: string) => {
             // 除外パターンにマッチしないものを返す
@@ -496,7 +526,7 @@ export class sassBuilder extends baseBuilder {
           }, [])
           // インデックスファイルの生成/更新
           .forEach((generateIndexDir: string) => {
-            console.debug('Generate index file dir: ', generateIndexDir);
+            // console.debug('Generate index file dir: ', generateIndexDir);
             this.generateIndexFile.bind(this)(generateIndexDir, false);
           });
       }
