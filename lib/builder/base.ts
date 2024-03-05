@@ -94,7 +94,7 @@ export abstract class baseBuilder {
   /**
    * エントリポイントから除外するファイル名
    */
-  protected ignoreFileNames: string[] = [];
+  protected ignoreFileNames: string[] | null = null;
 
   /**
    * エントリポイントから除外するディレクトリ名の接頭語
@@ -111,7 +111,7 @@ export abstract class baseBuilder {
    * エントリポイントから除外するディレクトリ名
    * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
    */
-  protected ignoreDirNames: string[] = [];
+  protected ignoreDirNames: string[] | null = null;
 
   /**
    * 出力時の拡張子
@@ -413,7 +413,7 @@ export abstract class baseBuilder {
    * @returns
    */
   public getIgnoreFileNamePattern(): string {
-    if (this.ignoreFileNames.length > 0) {
+    if (_.isArray(this.ignoreFileNames) && this.ignoreFileNames.length > 0) {
       return (
         this.convertGlobPattern(this.srcDir) +
         '/**/{' +
@@ -461,7 +461,7 @@ export abstract class baseBuilder {
    * @returns
    */
   public getIgnoreDirNamePattern(): string {
-    if (this.ignoreDirNames.length > 0) {
+    if (_.isArray(this.ignoreDirNames) && this.ignoreDirNames.length > 0) {
       return (
         this.convertGlobPattern(this.srcDir) +
         '/{' +
@@ -503,7 +503,7 @@ export abstract class baseBuilder {
       ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
       : false;
     return (
-      prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName)
+      prefixCheck || suffixCheck || (_.isArray(this.ignoreFileNames) && this.ignoreFileNames.includes(fileName))
     );
   }
 
@@ -521,7 +521,7 @@ export abstract class baseBuilder {
     const suffixCheck = this.ignoreDirSuffix
       ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName)
       : false;
-    return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
+    return prefixCheck || suffixCheck || (_.isArray(this.ignoreDirNames) && this.ignoreDirNames.includes(dirName));
   }
 
   /**

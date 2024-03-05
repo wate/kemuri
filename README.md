@@ -8,9 +8,9 @@ Mockup builder
 
 ```bash
 # npm
-npm install wate/kemuri -D
+npm install -D wate/kemuri
 # yarn
-yarn add wate/kemuri -D
+yarn add -D wate/kemuri
 # pnpm
 pnpm add -D wate/kemuri
 ```
@@ -24,12 +24,7 @@ pnpm add -D wate/kemuri
 必要に応じてコメントアウトを解除して設定を行ってください。
 
 ```bash
-# npm
 npx kemuri --init
-# yarn
-yarn exec kemuri --init
-# pnpm
-pnpm exec kemuri --init
 ```
 
 ディレクトリ構造
@@ -57,45 +52,25 @@ pnpm exec kemuri --init
 ### ファイルのビルド
 
 ```bash
-# npm
 npx kemuri
-# yarn
-yarn exec kemuri
-# pnpm
-pnpm exec kemuri
 ```
 
 #### サーバーも同時に起動する
 
 ```bash
-# npm
 npx kemuri --server
-# yarn
-yarn exec kemuri --server
-# pnpm
-pnpm exec kemuri --server
 ```
 
 ### ファイルの監視と変更されたファイルのビルド
 
 ```bash
-# npm
 npx kemuri --watch
-# yarn
-yarn exec kemuri --watch
-# pnpm
-pnpm exec kemuri --watch
 ```
 
 #### サーバーも同時に起動する
 
 ```bash
-# npm
 npx kemuri --watch --server
-# yarn
-yarn exec kemuri --watch --server
-# pnpm
-pnpm exec kemuri --watch --server
 ```
 
 ### スクリーンショットの取得
@@ -106,12 +81,7 @@ Playwrightの各バージョンが動作するには、特定のバージョン�
 ※ブラウザのインストール方法は「ブラウザバイナリのインストール」を参照してください。
 
 ```bash
-# npm
 npx kemuri-screenshot
-# yarn
-yarn exec kemuri-screenshot
-# pnpm
-pnpm exec kemuri-screenshot
 ```
 
 #### ブラウザバイナリのインストール
@@ -121,23 +91,13 @@ Playwrightはリリースのたびにサポートするブラウザのバージ�
 つまり、Playwrightを更新するたびに、以下のインストールコマンドを再実行する必要がある可能性があります。
 
 ```bash
-# npm
 npx playwright install
-# yarn
-yarn exec playwright install
-# pnpm
-pnpm exec playwright install
 ```
 
 ### スニペットファイルのビルド
 
 ```bash
-# npm
 npx kemuri-snippet
-# yarn
-yarn exec kemuri-snippet
-# pnpm
-pnpm exec kemuri-snippet
 ```
 
 Tips
@@ -151,12 +111,7 @@ Tips
 環境変数名の詳細は[.env.example](.env.example)を参照してください。
 
 ```bash
-# npm
 KEMURI_SERVER_PORT=8080 npx kemuri --server
-# yarn
-KEMURI_SERVER_PORT=8080 yarn exec kemuri --server
-# pnpm
-KEMURI_SERVER_PORT=8080 pnpm exec kemuri --server
 ```
 
 ### パッケージマネージャー(npm/yarn/pnpm)ごとの実行方法の違い

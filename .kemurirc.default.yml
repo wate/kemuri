@@ -35,10 +35,10 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
-#     dirNames: []
+#     dirNames: null
 #   compileOption: {}
 #   beautify: true
 #   beautifyOption: {}
@@ -76,15 +76,22 @@
 #   ignore:
 #     filePrefix: _
 #     fileSuffix: null
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
-#     dirNames: []
+#     dirNames: null
 #   compileOption: {}
 #   beautify: false
 #   beautifyOption: {}
 #   style: null
 #   generateIndex: false
+#   generateIndexIgnore:
+#     filePrefix: null
+#     fileSuffix: "{{ css.ignore.fileSuffix }}"
+#     fileNames: "{{ css.ignore.fileNames }}"
+#     dirPrefix: "{{ css.ignore.dirPrefix }}"
+#     dirSuffix: "{{ css.ignore.dirSuffix }}"
+#     dirNames: "{{ css.ignore.dirNames }}"
 #   indexFileName: _all.scss
 #   indexImportType: forward
 #   sourcemap: null
@@ -108,7 +115,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: ".d"
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames:
