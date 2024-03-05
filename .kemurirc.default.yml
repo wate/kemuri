@@ -85,6 +85,13 @@
 #   beautifyOption: {}
 #   style: null
 #   generateIndex: false
+#   generateIndexIgnore:
+#     filePrefix: null
+#     fileSuffix: "{{ css.ignore.fileSuffix }}"
+#     fileNames: "{{ css.ignore.fileNames }}"
+#     dirPrefix: "{{ css.ignore.dirPrefix }}"
+#     dirSuffix: "{{ css.ignore.dirSuffix }}"
+#     dirNames: "{{ css.ignore.dirNames }}"
 #   indexFileName: _all.scss
 #   indexImportType: forward
 #   sourcemap: null

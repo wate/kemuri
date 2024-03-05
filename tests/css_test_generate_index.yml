@@ -13,3 +13,12 @@ css:
     dirNames:
       - ignore_name
   generateIndex: true
+  # generateIndexIgnore:
+  #   filePrefix: null
+  #   fileSuffix: "{{ css.ignore.fileSuffix }}"
+  #   fileNames:
+  #     - _ignore_name
+  #   dirPrefix: "{{ css.ignore.dirPrefix }}"
+  #   dirSuffix: "{{ css.ignore.dirSuffix }}"
+  #   dirNames:
+  #     - ignore
