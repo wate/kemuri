@@ -42,7 +42,7 @@ class baseBuilder {
         /**
          * エントリポイントから除外するファイル名
          */
-        this.ignoreFileNames = [];
+        this.ignoreFileNames = null;
         /**
          * エントリポイントから除外するディレクトリ名の接頭語
          * (この接頭語を持つディレクトリ以下に配置されているファイルはエントリポイントから除外される)
@@ -56,7 +56,7 @@ class baseBuilder {
          * エントリポイントから除外するディレクトリ名
          * (このディレクトリ名以下に配置されているファイルはエントリポイントから除外される)
          */
-        this.ignoreDirNames = [];
+        this.ignoreDirNames = null;
         /**
          * 出力時の拡張子
          */
@@ -346,7 +346,7 @@ class baseBuilder {
      * @returns
      */
     getIgnoreFileNamePattern() {
-        if (this.ignoreFileNames.length > 0) {
+        if (_.isArray(this.ignoreFileNames) && this.ignoreFileNames.length > 0) {
             return (this.convertGlobPattern(this.srcDir) +
                 '/**/{' +
                 this.ignoreFileNames.join(',') +
@@ -387,7 +387,7 @@ class baseBuilder {
      * @returns
      */
     getIgnoreDirNamePattern() {
-        if (this.ignoreDirNames.length > 0) {
+        if (_.isArray(this.ignoreDirNames) && this.ignoreDirNames.length > 0) {
             return (this.convertGlobPattern(this.srcDir) +
                 '/{' +
                 this.ignoreDirNames.join(',') +
@@ -426,7 +426,7 @@ class baseBuilder {
         const suffixCheck = this.ignoreFileSuffix
             ? RegExp(_.escapeRegExp(this.ignoreFileSuffix) + '$').test(fileName)
             : false;
-        return (prefixCheck || suffixCheck || this.ignoreFileNames.includes(fileName));
+        return (prefixCheck || suffixCheck || (_.isArray(this.ignoreFileNames) && this.ignoreFileNames.includes(fileName)));
     }
     /**
      * エントリポイントからの除外ディレクトリ判定処理
@@ -442,7 +442,7 @@ class baseBuilder {
         const suffixCheck = this.ignoreDirSuffix
             ? RegExp(_.escapeRegExp(this.ignoreDirSuffix) + '$').test(dirName)
             : false;
-        return prefixCheck || suffixCheck || this.ignoreDirNames.includes(dirName);
+        return prefixCheck || suffixCheck || (_.isArray(this.ignoreDirNames) && this.ignoreDirNames.includes(dirName));
     }
     /**
      * エントリポイントの対象ファイル一覧を取得する

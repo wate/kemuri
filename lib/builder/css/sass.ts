@@ -330,10 +330,6 @@ export class sassBuilder extends baseBuilder {
       sassLoadPaths = option.loadPaths;
     }
     this.setLoadPaths(sassLoadPaths);
-    /**
-     * インデックスファイルの自動生成を行う場合は、
-     * インデックスファイルをエントリポイントから除外する
-     */
   }
 
   /**
