@@ -35,10 +35,10 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: null
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
-#     dirNames: []
+#     dirNames: null
 #   compileOption: {}
 #   beautify: true
 #   beautifyOption: {}
@@ -76,10 +76,10 @@
 #   ignore:
 #     filePrefix: _
 #     fileSuffix: null
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
-#     dirNames: []
+#     dirNames: null
 #   compileOption: {}
 #   beautify: false
 #   beautifyOption: {}
@@ -108,7 +108,7 @@
 #   ignore:
 #     filePrefix: null
 #     fileSuffix: ".d"
-#     fileNames: []
+#     fileNames: null
 #     dirPrefix: null
 #     dirSuffix: null
 #     dirNames:
