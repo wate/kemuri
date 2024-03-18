@@ -668,7 +668,6 @@ export abstract class baseBuilder {
       }
     } catch (error) {
       console.error(error);
-      process.exit(1);
     }
     console.groupEnd();
   }
@@ -688,7 +687,6 @@ export abstract class baseBuilder {
       }
     } catch (error) {
       console.error(error);
-      process.exit(1);
     }
     console.groupEnd();
   }
