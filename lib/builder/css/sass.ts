@@ -378,7 +378,6 @@ export class sassBuilder extends baseBuilder {
       }
     } catch (error) {
       console.error(error);
-      process.exit(1);
     }
     console.groupEnd();
   }
@@ -406,7 +405,6 @@ export class sassBuilder extends baseBuilder {
       }
     } catch (error) {
       console.error(error);
-      process.exit(1);
     }
     console.groupEnd();
   }
@@ -556,6 +554,5 @@ export class sassBuilder extends baseBuilder {
         fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
       }
     });
-    // console.groupEnd();
   }
 }
