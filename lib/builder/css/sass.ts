@@ -80,7 +80,7 @@ export class sassBuilder extends baseBuilder {
   /**
    * インデックスファイルの名前
    */
-  private indexFileName = '_all.scss';
+  private indexFileName = '_index.scss';
 
   /**
    * インデックスファイルにインポートする際の方法
