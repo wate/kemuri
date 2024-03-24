@@ -685,7 +685,6 @@ export abstract class baseBuilder {
     }
     compileFiles.forEach((filePath) => {
       const outputPath = this.convertOutputPath(filePath);
-      console.log('Compile: ' + filePath + ' => ' + outputPath);
       this.buildFile(filePath, outputPath).catch((error) => {
         console.error(error);
       });
