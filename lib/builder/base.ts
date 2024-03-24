@@ -657,18 +657,19 @@ export abstract class baseBuilder {
    */
   protected watchAddCallBack(filePath: string) {
     console.group('Add file: ' + filePath);
-    try {
-      //エントリポイントを更新する
-      this.getEntryPoint();
-      if (Array.from(this.entryPoint.values()).includes(filePath)) {
-        const outputPath = this.convertOutputPath(filePath);
-        this.buildFile(filePath, outputPath);
-      } else {
-        this.buildAll();
-      }
-    } catch (error) {
-      console.error(error);
+    //エントリポイントを更新する
+    this.getEntryPoint();
+    const entryPointFiles = Array.from(this.entryPoint.values());
+    let compileFiles: string[] = [filePath];
+    if (!entryPointFiles.includes(filePath)) {
+      compileFiles = entryPointFiles;
     }
+    compileFiles.forEach((filePath) => {
+      const outputPath = this.convertOutputPath(filePath);
+      this.buildFile(filePath, outputPath).catch((error) => {
+        console.error(error);
+      });
+    });
     console.groupEnd();
   }
   /**
@@ -677,17 +678,18 @@ export abstract class baseBuilder {
    */
   protected watchChangeCallBack(filePath: string) {
     console.group('Update file: ' + filePath);
-    try {
-      if (Array.from(this.entryPoint.values()).includes(filePath)) {
-        const outputPath = this.convertOutputPath(filePath);
-        this.buildFile(filePath, outputPath);
-        console.log('Compile: ' + filePath + ' => ' + outputPath);
-      } else {
-        this.buildAll();
-      }
-    } catch (error) {
-      console.error(error);
+    const entryPointFiles = Array.from(this.entryPoint.values());
+    let compileFiles: string[] = [filePath];
+    if (!entryPointFiles.includes(filePath)) {
+      compileFiles = entryPointFiles;
     }
+    compileFiles.forEach((filePath) => {
+      const outputPath = this.convertOutputPath(filePath);
+      console.log('Compile: ' + filePath + ' => ' + outputPath);
+      this.buildFile(filePath, outputPath).catch((error) => {
+        console.error(error);
+      });
+    });
     console.groupEnd();
   }
   /**
