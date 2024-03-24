@@ -550,21 +550,19 @@ class baseBuilder {
      */
     watchAddCallBack(filePath) {
         console.group('Add file: ' + filePath);
-        try {
-            //エントリポイントを更新する
-            this.getEntryPoint();
-            if (Array.from(this.entryPoint.values()).includes(filePath)) {
-                const outputPath = this.convertOutputPath(filePath);
-                this.buildFile(filePath, outputPath);
-            }
-            else {
-                this.buildAll();
-            }
+        //エントリポイントを更新する
+        this.getEntryPoint();
+        const entryPointFiles = Array.from(this.entryPoint.values());
+        let compileFiles = [filePath];
+        if (!entryPointFiles.includes(filePath)) {
+            compileFiles = entryPointFiles;
         }
-        catch (error) {
-            console.error(error);
-            process.exit(1);
-        }
+        compileFiles.forEach((filePath) => {
+            const outputPath = this.convertOutputPath(filePath);
+            this.buildFile(filePath, outputPath).catch((error) => {
+                console.error(error);
+            });
+        });
         console.groupEnd();
     }
     /**
@@ -573,20 +571,17 @@ class baseBuilder {
      */
     watchChangeCallBack(filePath) {
         console.group('Update file: ' + filePath);
-        try {
-            if (Array.from(this.entryPoint.values()).includes(filePath)) {
-                const outputPath = this.convertOutputPath(filePath);
-                this.buildFile(filePath, outputPath);
-                console.log('Compile: ' + filePath + ' => ' + outputPath);
-            }
-            else {
-                this.buildAll();
-            }
+        const entryPointFiles = Array.from(this.entryPoint.values());
+        let compileFiles = [filePath];
+        if (!entryPointFiles.includes(filePath)) {
+            compileFiles = entryPointFiles;
         }
-        catch (error) {
-            console.error(error);
-            process.exit(1);
-        }
+        compileFiles.forEach((filePath) => {
+            const outputPath = this.convertOutputPath(filePath);
+            this.buildFile(filePath, outputPath).catch((error) => {
+                console.error(error);
+            });
+        });
         console.groupEnd();
     }
     /**

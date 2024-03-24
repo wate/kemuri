@@ -412,6 +412,7 @@ export class sassBuilder extends baseBuilder {
    */
   public async buildFile(srcPath: string, outputPath: string) {
     try {
+      console.log('Compile: ' + srcPath + ' => ' + outputPath);
       const compileOption = this.getCompileOption();
       const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
       const result = sass.compile(srcPath, compileOption);
