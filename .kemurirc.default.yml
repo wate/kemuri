@@ -92,7 +92,7 @@
 #     dirPrefix: "{{ css.ignore.dirPrefix }}"
 #     dirSuffix: "{{ css.ignore.dirSuffix }}"
 #     dirNames: "{{ css.ignore.dirNames }}"
-#   indexFileName: _all.scss
+#   indexFileName: _index.scss
 #   indexImportType: forward
 #   sourcemap: null
 #   loadPaths:

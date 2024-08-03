@@ -80,7 +80,7 @@ export class sassBuilder extends baseBuilder {
   /**
    * インデックスファイルの名前
    */
-  private indexFileName = '_all.scss';
+  private indexFileName = '_index.scss';
 
   /**
    * インデックスファイルにインポートする際の方法
@@ -362,25 +362,11 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.group('Add file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの生成/更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
     }
-    try {
-      //エントリポイントを更新
-      this.getEntryPoint();
-      if (Array.from(this.entryPoint.values()).includes(filePath)) {
-        const outputPath = this.convertOutputPath(filePath);
-        this.buildFile(filePath, outputPath);
-      } else {
-        this.buildAll();
-      }
-    } catch (error) {
-      console.error(error);
-      process.exit(1);
-    }
-    console.groupEnd();
+    super.watchAddCallBack(filePath);
   }
   /**
    * ファイル更新時のコールバック処理
@@ -391,24 +377,11 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.group('Update file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
     }
-    try {
-      if (Array.from(this.entryPoint.values()).includes(filePath)) {
-        const outputPath = this.convertOutputPath(filePath);
-        this.buildFile(filePath, outputPath);
-        console.log('Compile: ' + filePath + ' => ' + outputPath);
-      } else {
-        this.buildAll();
-      }
-    } catch (error) {
-      console.error(error);
-      process.exit(1);
-    }
-    console.groupEnd();
+    super.watchChangeCallBack(filePath);
   }
   /**
    * ファイル削除時のコールバック処理
@@ -419,18 +392,11 @@ export class sassBuilder extends baseBuilder {
     if (this.generateIndex && path.basename(filePath) === this.indexFileName) {
       return;
     }
-    console.group('Remove file: ' + filePath);
     if (this.generateIndex) {
       // インデックスファイルの更新
       this.generateIndexFile.bind(this)(path.dirname(filePath));
     }
-    if (Array.from(this.entryPoint.values()).includes(filePath)) {
-      this.entryPoint.delete(filePath);
-      const outputPath = this.convertOutputPath(filePath);
-      fs.remove(outputPath);
-      console.log('Remove: ' + outputPath);
-    }
-    console.groupEnd();
+    super.watchUnlinkCallBack(filePath);
   }
 
   /**
@@ -445,25 +411,49 @@ export class sassBuilder extends baseBuilder {
    * @param outputPath
    */
   public async buildFile(srcPath: string, outputPath: string) {
-    const compileOption = this.getCompileOption();
-    const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
-    const result = sass.compile(srcPath, compileOption);
-
-    postcss([autoprefixer])
-      .process(result.css, { from: srcPath })
-      .then((result) => {
-        result.warnings().forEach((warn) => {
-          console.warn(warn.toString());
+    try {
+      console.log('Compile: ' + srcPath + ' => ' + outputPath);
+      const compileOption = this.getCompileOption();
+      const beautifyOption = this.getBeautifyOption('dummy.' + this.outputExt);
+      const result = sass.compile(srcPath, compileOption);
+      postcss([autoprefixer])
+        .process(result.css, { from: srcPath })
+        .then((result) => {
+          result.warnings().forEach((warn) => {
+            console.warn(warn.toString());
+          });
+          let css = result.css.toString();
+          if (compileOption.style !== 'compressed' && this.beautify) {
+            css = beautify(css, beautifyOption);
+          }
+          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+          fs.writeFileSync(outputPath, css.trim() + '\n');
         });
-        let css = result.css.toString();
-        if (compileOption.style !== 'compressed' && this.beautify) {
-          css = beautify(css, beautifyOption);
-        }
-        fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-        fs.writeFileSync(outputPath, css.trim() + '\n');
-      });
-    if (result.sourceMap) {
-      fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+      if (result.sourceMap) {
+        fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
+      }
+    } catch (error) {
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      const cssErrorStyleContent = error
+        .toString()
+        .replace(/\x1b\[3[0-9]m/g, ' ')
+        .replace(/\x1b\[0m/g, '')
+        .replace(/╷/g, '\\2577')
+        .replace(/│/g, '\\2502')
+        .replace(/╵/g, '\\2575')
+        .replace(/\n/g, '\\A');
+      const cssContent = `@charset "UTF-8";
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: '${cssErrorStyleContent}';
+}`;
+      fs.writeFileSync(outputPath, cssContent + '\n');
+      throw error;
     }
   }
 
@@ -556,6 +546,5 @@ export class sassBuilder extends baseBuilder {
         fs.writeFileSync(outputPath + '.map', JSON.stringify(result.sourceMap));
       }
     });
-    // console.groupEnd();
   }
 }

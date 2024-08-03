@@ -333,8 +333,8 @@ export class nunjucksBuilder extends baseBuilder {
     const watchFilePattern = [
       this.varFileName,
       this.convertGlobPattern(this.srcDir) +
-        '/**/*.' +
-        this.convertGlobPattern(watchFileExts),
+      '/**/*.' +
+      this.convertGlobPattern(watchFileExts),
       this.convertGlobPattern(this.srcDir) + '/**/' + this.varFileName,
     ];
     return watchFilePattern;
@@ -346,38 +346,33 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected watchAddCallBack(filePath: string) {
     console.group('Add file: ' + filePath);
-    try {
-      const addFileName = path.basename(filePath);
-      if (addFileName !== this.varFileName) {
-        //エントリポイントを更新
-        this.getEntryPoint();
-        if (Array.from(this.entryPoint.values()).includes(filePath)) {
-          const outputPath = this.convertOutputPath(filePath);
-          this.buildFile(filePath, outputPath);
-          console.log('Compile: ' + filePath + ' => ' + outputPath);
-        } else {
-          this.buildAll();
-        }
+    const addFileName = path.basename(filePath);
+    let compileFiles: string[] = [];
+    if (addFileName !== this.varFileName) {
+      this.getEntryPoint();
+      const entryPointFiles = Array.from(this.entryPoint.values());
+      if (entryPointFiles.includes(filePath)) {
+        compileFiles.push(filePath);
       } else {
-        const isRootVarFile = this.isRootVarFile(filePath);
-        if (isRootVarFile) {
-          //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
-          this.buildAll();
-        } else {
-          //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
-          this.entryPoint.forEach((srcFile) => {
-            if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
-              const outputPath = this.convertOutputPath(srcFile);
-              this.buildFile(srcFile, outputPath);
-              console.log('Compile: ' + srcFile + ' => ' + outputPath);
-            }
-          });
-        }
+        compileFiles = entryPointFiles;
       }
-    } catch (error) {
-      console.error(error);
-      process.exit(1);
+    } else {
+      const isRootVarFile = this.isRootVarFile(filePath);
+      if (isRootVarFile) {
+        compileFiles = Array.from(this.entryPoint.values());
+      } else {
+        //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
+        this.entryPoint.forEach((srcFile) => {
+          if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+            compileFiles.push(srcFile);
+          }
+        });
+      }
     }
+    compileFiles.forEach((srcFile) => {
+      const outputPath = this.convertOutputPath(srcFile);
+      this.buildFile(srcFile, outputPath);
+    });
     console.groupEnd();
   }
   /**
@@ -386,36 +381,32 @@ export class nunjucksBuilder extends baseBuilder {
    */
   protected watchChangeCallBack(filePath: string) {
     console.group('Update file: ' + filePath);
-    try {
-      const changeFileName = path.basename(filePath);
-      if (changeFileName !== this.varFileName) {
-        if (Array.from(this.entryPoint.values()).includes(filePath)) {
-          const outputPath = this.convertOutputPath(filePath);
-          this.buildFile(filePath, outputPath);
-          console.log('Compile: ' + filePath + ' => ' + outputPath);
-        } else {
-          this.buildAll();
-        }
+    const changeFileName = path.basename(filePath);
+    let compileFiles: string[] = [];
+    if (changeFileName !== this.varFileName) {
+      const entryPointFiles = Array.from(this.entryPoint.values());
+      if (entryPointFiles.includes(filePath)) {
+        compileFiles.push(filePath);
       } else {
-        const isRootVarFile = this.isRootVarFile(filePath);
-        if (isRootVarFile) {
-          //ルートディレクトリの変数ファイルが追加された場合は全ファイルをビルド
-          this.buildAll();
-        } else {
-          //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
-          this.entryPoint.forEach((srcFile) => {
-            if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
-              const outputPath = this.convertOutputPath(srcFile);
-              this.buildFile(srcFile, outputPath);
-              console.log('Compile: ' + srcFile + ' => ' + outputPath);
-            }
-          });
-        }
+        compileFiles = entryPointFiles;
       }
-    } catch (error) {
-      console.error(error);
-      process.exit(1);
+    } else {
+      const isRootVarFile = this.isRootVarFile(filePath);
+      if (isRootVarFile) {
+        compileFiles = Array.from(this.entryPoint.values());
+      } else {
+        //指定階層以下の変数ファイルが更新された場合は、その階層以下のファイルのみビルド
+        this.entryPoint.forEach((srcFile) => {
+          if (srcFile.startsWith(path.dirname(filePath) + path.sep)) {
+            compileFiles.push(srcFile);
+          }
+        });
+      }
     }
+    compileFiles.forEach((srcFile) => {
+      const outputPath = this.convertOutputPath(srcFile);
+      this.buildFile(srcFile, outputPath);
+    });
     console.groupEnd();
   }
   /**
@@ -436,14 +427,32 @@ export class nunjucksBuilder extends baseBuilder {
     this.loadTemplateVars();
     const templatePath: string = path.relative(this.srcDir, srcPath);
     const templateVars = this.getTemplateVars(srcPath);
-    let html = nunjucks.render(templatePath, templateVars);
-    if (this.beautify) {
-      html = beautify(html, beautifyOption);
-    }
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+    nunjucks.render(templatePath, templateVars, (error, result) => {
+      console.log('  Compile: ' + srcPath + ' => ' + outputPath);
+      let html = '';
+      if (error) {
+        console.error(error);
+        html = '<html>';
+        html += '<head>';
+        html += '<title>' + error.name + '</title>';
+        html += '</head>';
+        html += '<body>';
+        html += '<h1>' + error.name + '</h1>';
+        html += '<p>';
+        html += '<pre>' + error.message + '</pre>';
+        html += '</p>';
+        html += '</body>';
+        html += '</html>';
+      } else {
+        html = result;
+        if (this.beautify) {
+          html = beautify(html, beautifyOption);
+        }
+      }
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+      fs.writeFileSync(outputPath, html.replace(/^\r?\n/gm, '').trim() + '\n');
+    });
   }
-
   /**
    * 全ファイルのビルド処理
    */
