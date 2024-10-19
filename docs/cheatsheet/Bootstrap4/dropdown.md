@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Dropdown)](https://getbootstrap.com/docs/4.6/components/dropdowns/)
 =====================
 
-bsdropdown-primary
+dropdown-primary
 ---------------------
 
 ```html
@@ -24,7 +25,7 @@ bsdropdown-primary
 </div>
 ```
 
-bsdropdown-secondary
+dropdown-secondary
 ---------------------
 
 ```html
@@ -42,7 +43,7 @@ bsdropdown-secondary
 </div>
 ```
 
-bsdropdown-success
+dropdown-success
 ---------------------
 
 ```html
@@ -60,7 +61,7 @@ bsdropdown-success
 </div>
 ```
 
-bsdropdown-info
+dropdown-info
 ---------------------
 
 ```html
@@ -78,7 +79,7 @@ bsdropdown-info
 </div>
 ```
 
-bsdropdown-warning
+dropdown-warning
 ---------------------
 
 ```html
@@ -97,7 +98,7 @@ bsdropdown-warning
 <!-- /.dropdown -->
 ```
 
-bsdropdown-danger
+dropdown-danger
 ---------------------
 
 ```html
@@ -116,14 +117,14 @@ bsdropdown-danger
 <!-- /.dropdown -->
 ```
 
-bsdropdown-item
+dropdown-item
 ---------------------
 
 ```html
 <a class="dropdown-item" href="${1:#}">${2:Action}</a>
 ```
 
-bsdropdown-divider
+dropdown-divider
 ---------------------
 
 ```html

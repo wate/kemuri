@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Form)](https://getbootstrap.com/docs/4.6/components/forms/)
 =====================
 
-bsfield
+field
 --------------------
 
 ```html
@@ -17,7 +18,7 @@ bsfield
 <!-- /.form-group -->
 ```
 
-bsin-text
+in-text
 --------------------
 
 ```html
@@ -28,7 +29,7 @@ bsin-text
 <!-- /.form-group -->
 ```
 
-bsin-number
+in-number
 --------------------
 
 ```html
@@ -39,7 +40,7 @@ bsin-number
 <!-- /.form-group -->
 ```
 
-bsin-select
+in-select
 --------------------
 
 ```html
@@ -53,7 +54,7 @@ bsin-select
 <!-- /.form-group -->
 ```
 
-bsin-checkbox
+in-checkbox
 --------------------
 
 ```html
@@ -73,7 +74,7 @@ bsin-checkbox
 <!-- /.form-group -->
 ```
 
-bsin-checkbox-inline
+in-checkbox-inline
 --------------------
 
 ```html
@@ -93,7 +94,7 @@ bsin-checkbox-inline
 <!-- /.form-group -->
 ```
 
-bsin-radio
+in-radio
 --------------------
 
 ```html
@@ -113,7 +114,7 @@ bsin-radio
 <!-- /.form-group -->
 ```
 
-bsin-radio-inline
+in-radio-inline
 --------------------
 
 ```html
@@ -133,7 +134,7 @@ bsin-radio-inline
 <!-- /.form-group -->
 ```
 
-bsin-email
+in-email
 --------------------
 
 ```html
@@ -144,7 +145,7 @@ bsin-email
 <!-- /.form-group -->
 ```
 
-bsin-file
+in-file
 --------------------
 
 ```html
@@ -155,7 +156,7 @@ bsin-file
 <!-- /.form-group -->
 ```
 
-bsin-tel
+in-tel
 --------------------
 
 ```html
@@ -166,7 +167,7 @@ bsin-tel
 <!-- /.form-group -->
 ```
 
-bsin-date
+in-date
 --------------------
 
 ```html
@@ -177,7 +178,7 @@ bsin-date
 <!-- /.form-group -->
 ```
 
-bsin-time
+in-time
 --------------------
 
 ```html
@@ -188,7 +189,7 @@ bsin-time
 <!-- /.form-group -->
 ```
 
-bsin-url
+in-url
 -----------
 
 ```html
@@ -199,7 +200,7 @@ bsin-url
 <!-- /.form-group -->
 ```
 
-bsin-color
+in-color
 -----------
 
 ```html
@@ -210,7 +211,7 @@ bsin-color
 <!-- /.form-group -->
 ```
 
-bsin-search
+in-search
 -----------
 
 ```html
@@ -221,7 +222,7 @@ bsin-search
 <!-- /.form-group -->
 ```
 
-bsin-range
+in-range
 -----------
 
 ```html
@@ -232,7 +233,7 @@ bsin-range
 <!-- /.form-group -->
 ```
 
-bsin-area
+in-area
 --------------------
 
 ```html
@@ -250,7 +251,7 @@ prefix:
   - bsin-textarea
 ```
 
-bsin-help
+in-help
 --------------------
 
 ```html

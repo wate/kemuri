@@ -1,7 +1,13 @@
-[Bootstrap4(Button)](https://getbootstrap.com/docs/4.6/getting-started/introduction/)
+---
+prefix: bs-
+scope: 
+  - twig
+  - nunjucks
+---
+[Bootstrap4(cdn)](https://getbootstrap.com/docs/4.6/getting-started/introduction/)
 =====================
 
-bscdn-js
+cdn-js
 -----------
 
 ```html
@@ -9,14 +15,14 @@ bscdn-js
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 ```
 
-bscdn-css
+cdn-css
 -----------
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css">
 ```
 
-bs-skel
+-skeleton
 -----------
 
 ```html

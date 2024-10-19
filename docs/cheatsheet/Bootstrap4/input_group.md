@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Input Group)](https://getbootstrap.com/docs/4.6/components/input-group/)
 =====================
 
-bsin-group-left
+in-group-left
 --------------------
 
 ```html
@@ -19,7 +20,7 @@ bsin-group-left
 <!-- /.input-group -->
 ```
 
-bsin-group-right
+in-group-right
 --------------------
 
 ```html
@@ -32,7 +33,7 @@ bsin-group-right
 <!-- /.input-group -->
 ```
 
-bsin-group-lr
+in-group-both
 --------------------
 
 ```html
@@ -46,11 +47,4 @@ bsin-group-lr
   </div>
 </div>
 <!-- /.input-group -->
-```
-
-### VSCode Snippet Setting
-
-```yml
-prefix:
-  - bsin-group-both
 ```

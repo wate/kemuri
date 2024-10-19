@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Collapse)](https://getbootstrap.com/docs/4.6/components/collapse/)
 =====================
 
-bscollapse
+collapse
 ---------------------
 
 ```html
@@ -26,7 +27,7 @@ bscollapse
 <!-- /.collapse -->
 ```
 
-bscollapse-trigger-link
+collapse-trigger-link
 ---------------------
 
 ```html
@@ -35,7 +36,7 @@ bscollapse-trigger-link
 </a>
 ```
 
-bscollapse-trigger-btn
+collapse-trigger-btn
 ---------------------
 
 ```html
@@ -44,7 +45,7 @@ bscollapse-trigger-btn
 </button>
 ```
 
-bscollapse-collapse
+collapse-collapse
 ---------------------
 
 ```html

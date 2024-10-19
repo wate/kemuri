@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Table)](https://getbootstrap.com/docs/4.6/content/tables/)
 =====================
 
-bstable
+table
 ---------------------
 
 ```html
@@ -34,7 +35,7 @@ bstable
 <!-- /.table-responsive -->
 ```
 
-bstable-bordered
+table-bordered
 ---------------------
 
 [Bordered table](https://getbootstrap.com/docs/4.6/content/tables/#bordered-table)
@@ -64,7 +65,7 @@ bstable-bordered
 <!-- /.table-responsive -->
 ```
 
-bstable-striped
+table-striped
 ---------------------
 
 [Striped rows](https://getbootstrap.com/docs/4.6/content/tables/#striped-rows)
@@ -94,7 +95,7 @@ bstable-striped
 <!-- /.table-responsive -->
 ```
 
-bstable-hover
+table-hover
 ---------------------
 
 [Hoverable rows](https://getbootstrap.com/docs/4.6/content/tables/#hoverable-rows)
@@ -124,7 +125,7 @@ bstable-hover
 <!-- /.table-responsive -->
 ```
 
-bstable-borderless
+table-borderless
 ---------------------
 
 [Borderless table](https://getbootstrap.com/docs/4.6/content/tables/#borderless-table)
@@ -155,7 +156,7 @@ bstable-borderless
 <!-- /.table-responsive -->
 ```
 
-bstable-sm
+table-sm
 ---------------------
 
 [Small table](https://getbootstrap.com/docs/4.6/content/tables/#small-table)
