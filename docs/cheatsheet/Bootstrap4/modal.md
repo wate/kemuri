@@ -13,7 +13,7 @@ modal
 ```html
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#${1}">
-  ${2:Launch demo modal}
+  ${2:Launch modal}
 </button>
 <!-- Modal -->
 <div class="modal fade" id="${1}" tabindex="-1" aria-labelledby="${1}Label" aria-hidden="true">
@@ -43,7 +43,7 @@ modal-trigger
 
 ```html
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#${1:modal-target}">
-   ${2:Launch demo modal}
+   ${2:Launch modal}
 </button>
 ```
 
@@ -52,7 +52,7 @@ modal-modal
 
 ```html
 <div class="modal fade" id="${1}" tabindex="-1" aria-labelledby="${1}Label" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable ${2:|,modal-sm,modal-lg,modal-xl|}">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="${1}Label">${2:Modal title}</h5>
@@ -72,4 +72,3 @@ modal-modal
 </div>
 <!-- /.modal -->
 ```
-
