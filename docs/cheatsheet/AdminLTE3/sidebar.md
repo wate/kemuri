@@ -1,4 +1,5 @@
 ---
+prefix: lte-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [AdminLte(Sidebar)](https://adminlte.io/docs/3.2/components/main-sidebar.html)
 =======================
 
-lteside-item
+menu-item
 -----------------------
 
 ```html
@@ -19,7 +20,7 @@ lteside-item
 <!-- /.nav-item -->
 ```
 
-lteside-item-tree
+menu-item-tree
 -----------------------
 
 [Treeview Plugin](https://adminlte.io/docs/3.2/javascript/treeview.html)

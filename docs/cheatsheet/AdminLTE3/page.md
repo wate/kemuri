@@ -1,4 +1,5 @@
 ---
+prefix: lte-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 AdminLTE(Page)
 =======================
 
-ltepage-login
+page-login
 -----------------------
 
 <https://adminlte.io/themes/v3/pages/examples/login-v2.html>
