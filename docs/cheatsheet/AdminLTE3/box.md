@@ -7,12 +7,12 @@ scope:
 [AdminLte(Box)](https://adminlte.io/docs/3.2/components/boxes.html)
 =======================
 
-infobox
+box
 ---------------------
 
 ```html
-<div class="info-box ${1|bg-primary,bg-secondary,bg-success,bg-info,bg-warning,bg-danger,bg-light,bg-dark|}">
-  <span class="info-box-icon"><i class="fas fa-question-circle"></i></span>
+<div class="info-box">
+  <span class="info-box-icon ${1|bg-primary,bg-secondary,bg-success,bg-info,bg-warning,bg-danger,bg-light,bg-dark|}"><i class="fas fa-question-circle"></i></span>
   <div class="info-box-content">
     <span class="info-box-text">${2:Name}</span>
     <span class="info-box-number">${3:123}</span>
@@ -20,7 +20,14 @@ infobox
 </div>
 ```
 
-smallbox
+### VSCode Extra Setting
+
+```yaml
+prefix:
+  - box-info
+```
+
+box-small
 ---------------------
 
 ```html

@@ -8,7 +8,7 @@ scope:
 [AdminLte(Header)](https://adminlte.io/docs/3.2/components/main-header.html)
 =======================
 
-head-item
+header-item
 -----------------------
 
 ```html
@@ -18,7 +18,7 @@ head-item
 <!-- /.nav-item -->
 ```
 
-head-item-dropdown
+header-item-dropdown
 -----------------------
 
 ```html
@@ -36,7 +36,7 @@ head-item-dropdown
 <!-- /.dropdown -->
 ```
 
-head-search
+header-search
 -----------------------
 
 ```html
@@ -63,7 +63,7 @@ head-search
 <!-- /search -->
 ```
 
-head-messages
+header-messages
 -----------------------
 
 ```html
@@ -95,7 +95,7 @@ head-messages
 <!-- /messages -->
 ```
 
-head-notifications
+header-notifications
 -----------------------
 
 ```html

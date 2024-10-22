@@ -7,7 +7,7 @@ scope:
 [AdminLte(Sidebar)](https://adminlte.io/docs/3.2/components/main-sidebar.html)
 =======================
 
-menu-item
+sidebar-item
 -----------------------
 
 ```html
@@ -20,7 +20,7 @@ menu-item
 <!-- /.nav-item -->
 ```
 
-menu-item-tree
+sidebar-item-tree
 -----------------------
 
 [Treeview Plugin](https://adminlte.io/docs/3.2/javascript/treeview.html)
@@ -46,14 +46,14 @@ menu-item-tree
 <!-- /.nav-item -->
 ```
 
-lteside-item-header
+sidebar-item-header
 -----------------------
 
 ```html
 <li class="nav-header">${1:Menu Header}</li>
 ```
 
-lteside-search
+sidebar-search
 -----------------------
 
 メニュー項目の検索に利用する場合は以下のURL参照  
@@ -73,7 +73,7 @@ lteside-search
 <!-- /search -->
 ```
 
-lteside-user
+sidebar-user
 -----------------------
 
 ```html
@@ -88,7 +88,7 @@ lteside-user
 <!-- /user-panel -->
 ```
 
-lteside-custom
+sidebar-item-custom
 -----------------------
 
 ```html

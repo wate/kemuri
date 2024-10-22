@@ -11,12 +11,12 @@ btn
 ---------------------
 
 ```html
-<button type="${1:submit}" class="btn btn-${2|primary,secondary,success,info,warning,danger,light,dark,link|}">${3}</button>
+<button type="${1:submit}" class="btn btn-${2|primary,secondary,success,info,warning,danger,light,dark,link|}">${3:Button}</button>
 ```
 
 btn-outline
 ---------------------
 
 ```html
-<button type="${1:submit}" class="btn btn-outline-${2|primary,secondary,success,info,warning,danger,light,dark|}">${3}</button>
+<button type="${1:submit}" class="btn btn-outline-${2|primary,secondary,success,info,warning,danger,light,dark|}">${3:Button}</button>
 ```

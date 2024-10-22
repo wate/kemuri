@@ -7,7 +7,7 @@ scope:
 [Bootstrap4(Form)](https://getbootstrap.com/docs/4.6/components/forms/)
 =====================
 
-field
+input-field
 --------------------
 
 ```html
@@ -18,7 +18,7 @@ field
 <!-- /.form-group -->
 ```
 
-in-text
+input
 --------------------
 
 ```html
@@ -29,7 +29,14 @@ in-text
 <!-- /.form-group -->
 ```
 
-in-number
+### VSCode Extra Setting
+
+```yaml
+prefix:
+  - input-text
+```
+
+input-number
 --------------------
 
 ```html
@@ -40,7 +47,7 @@ in-number
 <!-- /.form-group -->
 ```
 
-in-select
+input-select
 --------------------
 
 ```html
@@ -54,7 +61,7 @@ in-select
 <!-- /.form-group -->
 ```
 
-in-checkbox
+input-checkbox
 --------------------
 
 ```html
@@ -74,7 +81,7 @@ in-checkbox
 <!-- /.form-group -->
 ```
 
-in-checkbox-inline
+input-checkbox-inline
 --------------------
 
 ```html
@@ -94,7 +101,7 @@ in-checkbox-inline
 <!-- /.form-group -->
 ```
 
-in-radio
+input-radio
 --------------------
 
 ```html
@@ -114,7 +121,7 @@ in-radio
 <!-- /.form-group -->
 ```
 
-in-radio-inline
+input-radio-inline
 --------------------
 
 ```html
@@ -134,7 +141,7 @@ in-radio-inline
 <!-- /.form-group -->
 ```
 
-in-email
+input-email
 --------------------
 
 ```html
@@ -145,7 +152,7 @@ in-email
 <!-- /.form-group -->
 ```
 
-in-file
+input-file
 --------------------
 
 ```html
@@ -156,7 +163,7 @@ in-file
 <!-- /.form-group -->
 ```
 
-in-tel
+input-tel
 --------------------
 
 ```html
@@ -167,7 +174,7 @@ in-tel
 <!-- /.form-group -->
 ```
 
-in-date
+input-date
 --------------------
 
 ```html
@@ -178,7 +185,7 @@ in-date
 <!-- /.form-group -->
 ```
 
-in-time
+input-time
 --------------------
 
 ```html
@@ -189,7 +196,7 @@ in-time
 <!-- /.form-group -->
 ```
 
-in-url
+input-url
 -----------
 
 ```html
@@ -200,7 +207,7 @@ in-url
 <!-- /.form-group -->
 ```
 
-in-color
+input-color
 -----------
 
 ```html
@@ -211,7 +218,7 @@ in-color
 <!-- /.form-group -->
 ```
 
-in-search
+input-search
 -----------
 
 ```html
@@ -222,7 +229,7 @@ in-search
 <!-- /.form-group -->
 ```
 
-in-range
+input-range
 -----------
 
 ```html
@@ -233,7 +240,7 @@ in-range
 <!-- /.form-group -->
 ```
 
-in-area
+input-textarea
 --------------------
 
 ```html
@@ -244,14 +251,7 @@ in-area
 <!-- /.form-group -->
 ```
 
-### VSCode Extra Setting
-
-```yaml
-prefix:
-  - bsin-textarea
-```
-
-in-help
+input-help
 --------------------
 
 ```html

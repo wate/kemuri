@@ -88,7 +88,7 @@ card-tool-minus
 
 ```yaml
 prefix:
-  - ltecard-tool-collapse
+  - card-tool-collapse
 
 ```
 
@@ -106,7 +106,7 @@ card-tool-times
 
 ```yaml
 prefix:
-  - lte-card-tool-remove
+  - card-tool-remove
 ```
 
 card-tool-expand
@@ -123,7 +123,7 @@ card-tool-expand
 
 ```yaml
 prefix:
-  - lte-card-tool-maximize
+  - card-tool-maximize
 ```
 
 card-tool-refresh
