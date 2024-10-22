@@ -1,4 +1,5 @@
 ---
+prefix: lte-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 AdminLTE(Content)
 =======================
 
-ltecontent-list
+content-list
 -----------------------
 
 ```html

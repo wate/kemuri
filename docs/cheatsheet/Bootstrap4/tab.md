@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Tab)](https://getbootstrap.com/docs/4.6/components/navs/#javascript-behavior)
 =====================
 
-bstab
+tab
 ---------------------
 
 ```html
@@ -39,7 +40,7 @@ bstab
 <!-- /.tab-content -->
 ```
 
-bstab-tab
+tab-tab
 ---------------------
 
 ```html
@@ -56,7 +57,7 @@ bstab-tab
 </ul>
 ```
 
-bstab-tab-item
+tab-tab-item
 ---------------------
 
 ```html
@@ -65,7 +66,7 @@ bstab-tab-item
 </li>
 ```
 
-bstab-content
+tab-content
 ---------------------
 
 ```html
@@ -86,7 +87,7 @@ bstab-content
 <!-- /.tab-content -->
 ```
 
-bstab-content-item
+tab-content-item
 ---------------------
 
 ```html

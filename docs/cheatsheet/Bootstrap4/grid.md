@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Grid)](https://getbootstrap.com/docs/4.6/layout/grid/)
 =====================
 
-bsgrid
+grid
 ---------------------
 
 ```html
@@ -19,7 +20,7 @@ bsgrid
 <!-- /.row -->
 ```
 
-bsgrid-2
+grid-2
 ---------------------
 
 ```html
@@ -36,7 +37,7 @@ bsgrid-2
 <!-- /.row -->
 ```
 
-bsgrid-3
+grid-3
 ---------------------
 
 ```html
@@ -57,7 +58,7 @@ bsgrid-3
 <!-- /.row -->
 ```
 
-bsgrid-4
+grid-4
 ---------------------
 
 ```html

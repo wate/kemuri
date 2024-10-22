@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Breadcrumb)](https://getbootstrap.com/docs/4.6/components/breadcrumb/)
 =====================
 
-bsbreadcrumb
+breadcrumb
 ----------------------
 
 ```html
@@ -19,14 +20,14 @@ bsbreadcrumb
 <!-- /.breadcrumb -->
 ```
 
-bsbreadcrumb-item
+breadcrumb-item
 ----------------------
 
 ```html
 <li class="breadcrumb-item"><a href="${1:#}">${2:Item}</a></li>
 ```
 
-bsbreadcrumb-item-active
+breadcrumb-item-active
 ----------------------
 
 ```html

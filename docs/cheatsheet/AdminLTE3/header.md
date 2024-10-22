@@ -1,4 +1,5 @@
 ---
+prefix: lte-
 scope: 
   - twig
   - nunjucks
@@ -7,7 +8,7 @@ scope:
 [AdminLte(Header)](https://adminlte.io/docs/3.2/components/main-header.html)
 =======================
 
-ltehead-item
+header-item
 -----------------------
 
 ```html
@@ -17,7 +18,7 @@ ltehead-item
 <!-- /.nav-item -->
 ```
 
-ltehead:item-dropdown
+header-item-dropdown
 -----------------------
 
 ```html
@@ -35,7 +36,7 @@ ltehead:item-dropdown
 <!-- /.dropdown -->
 ```
 
-ltehead-search
+header-search
 -----------------------
 
 ```html
@@ -62,7 +63,7 @@ ltehead-search
 <!-- /search -->
 ```
 
-ltehead-messages
+header-messages
 -----------------------
 
 ```html
@@ -94,7 +95,7 @@ ltehead-messages
 <!-- /messages -->
 ```
 
-ltehead-notifications
+header-notifications
 -----------------------
 
 ```html

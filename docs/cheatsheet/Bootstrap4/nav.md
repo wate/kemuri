@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Nav)](https://getbootstrap.com/docs/4.6/components/navs/)
 =====================
 
-bsnav
+nav
 ---------------------
 
 ```html
@@ -24,20 +25,11 @@ bsnav
 <!-- /.nav -->
 ```
 
-bsnav-item
+nav-item
 ---------------------
 
 ```html
 <li class="nav-item">
   <a class="nav-link" href="${1:#}">${2:Item}</a>
-</li>
-```
-
-bsnav-item-active
----------------------
-
-```html
-<li class="nav-item">
-  <a class="nav-link active" href="${1:#}">${2:Active Item}</a>
 </li>
 ```

@@ -1,12 +1,13 @@
 ---
-scope: 
+prefix: bs-
+scope:
   - twig
   - nunjucks
 ---
 [Bootstrap4(Pagination)](https://getbootstrap.com/docs/4.6/components/pagination/)
 =====================
 
-bspagination
+pagination
 ---------------------
 
 ```html
@@ -20,35 +21,7 @@ bspagination
 <!-- /.pagination-->
 ```
 
-bspagination-sm
----------------------
-
-```html
-<ul class="pagination pagination-sm">
-  <li class="page-item disabled"><a class="page-link" href="#">前へ</a></li>
-  <li class="page-item active"><a class="page-link" href="#">1</a></li>
-  <li class="page-item"><a class="page-link" href="#">2</a></li>
-  <li class="page-item"><a class="page-link" href="#">3</a></li>
-  <li class="page-item"><a class="page-link" href="#">次へ</a></li>
-</ul>
-<!-- /.pagination-->
-```
-
-bspagination-lg
----------------------
-
-```html
-<ul class="pagination pagination-lg">
-  <li class="page-item disabled"><a class="page-link" href="#">前へ</a></li>
-  <li class="page-item active"><a class="page-link" href="#">1</a></li>
-  <li class="page-item"><a class="page-link" href="#">2</a></li>
-  <li class="page-item"><a class="page-link" href="#">3</a></li>
-  <li class="page-item"><a class="page-link" href="#">次へ</a></li>
-</ul>
-<!-- /.pagination-->
-```
-
-bspagination-center
+pagination-center
 ---------------------
 
 ```html
@@ -62,7 +35,7 @@ bspagination-center
 <!-- /.pagination-->
 ```
 
-bspagination-right
+pagination-right
 ---------------------
 
 ```html

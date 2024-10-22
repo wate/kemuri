@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 [Bootstrap4(Form)](https://getbootstrap.com/docs/4.6/components/forms/)
 =====================
 
-bsfield
+input-field
 --------------------
 
 ```html
@@ -17,7 +18,7 @@ bsfield
 <!-- /.form-group -->
 ```
 
-bsin-text
+input
 --------------------
 
 ```html
@@ -28,7 +29,14 @@ bsin-text
 <!-- /.form-group -->
 ```
 
-bsin-number
+### VSCode Extra Setting
+
+```yaml
+prefix:
+  - input-text
+```
+
+input-number
 --------------------
 
 ```html
@@ -39,7 +47,7 @@ bsin-number
 <!-- /.form-group -->
 ```
 
-bsin-select
+input-select
 --------------------
 
 ```html
@@ -53,7 +61,7 @@ bsin-select
 <!-- /.form-group -->
 ```
 
-bsin-checkbox
+input-checkbox
 --------------------
 
 ```html
@@ -73,7 +81,7 @@ bsin-checkbox
 <!-- /.form-group -->
 ```
 
-bsin-checkbox-inline
+input-checkbox-inline
 --------------------
 
 ```html
@@ -93,7 +101,7 @@ bsin-checkbox-inline
 <!-- /.form-group -->
 ```
 
-bsin-radio
+input-radio
 --------------------
 
 ```html
@@ -113,7 +121,7 @@ bsin-radio
 <!-- /.form-group -->
 ```
 
-bsin-radio-inline
+input-radio-inline
 --------------------
 
 ```html
@@ -133,7 +141,7 @@ bsin-radio-inline
 <!-- /.form-group -->
 ```
 
-bsin-email
+input-email
 --------------------
 
 ```html
@@ -144,7 +152,7 @@ bsin-email
 <!-- /.form-group -->
 ```
 
-bsin-file
+input-file
 --------------------
 
 ```html
@@ -155,7 +163,7 @@ bsin-file
 <!-- /.form-group -->
 ```
 
-bsin-tel
+input-tel
 --------------------
 
 ```html
@@ -166,7 +174,7 @@ bsin-tel
 <!-- /.form-group -->
 ```
 
-bsin-date
+input-date
 --------------------
 
 ```html
@@ -177,7 +185,7 @@ bsin-date
 <!-- /.form-group -->
 ```
 
-bsin-time
+input-time
 --------------------
 
 ```html
@@ -188,7 +196,7 @@ bsin-time
 <!-- /.form-group -->
 ```
 
-bsin-url
+input-url
 -----------
 
 ```html
@@ -199,7 +207,7 @@ bsin-url
 <!-- /.form-group -->
 ```
 
-bsin-color
+input-color
 -----------
 
 ```html
@@ -210,7 +218,7 @@ bsin-color
 <!-- /.form-group -->
 ```
 
-bsin-search
+input-search
 -----------
 
 ```html
@@ -221,7 +229,7 @@ bsin-search
 <!-- /.form-group -->
 ```
 
-bsin-range
+input-range
 -----------
 
 ```html
@@ -232,7 +240,7 @@ bsin-range
 <!-- /.form-group -->
 ```
 
-bsin-area
+input-textarea
 --------------------
 
 ```html
@@ -243,14 +251,7 @@ bsin-area
 <!-- /.form-group -->
 ```
 
-### VSCode Extra Setting
-
-```yaml
-prefix:
-  - bsin-textarea
-```
-
-bsin-help
+input-help
 --------------------
 
 ```html

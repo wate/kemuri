@@ -1,4 +1,5 @@
 ---
+prefix: lte-
 scope: 
   - twig
   - nunjucks
@@ -6,7 +7,7 @@ scope:
 AdminLTE(Layout)
 =======================
 
-ltelayout
+layout
 -----------------------
 
 ```html
@@ -154,7 +155,7 @@ ltelayout
 </html>
 ```
 
-ltelayout-header
+layout-header
 -----------------------
 
 [Main Header Component](https://adminlte.io/docs/3.2/components/main-header.html)
@@ -189,7 +190,7 @@ ltelayout-header
 </ul>
 ```
 
-ltelayout-sidebar
+layout-sidebar
 -----------------------
 
 [Main Sidebar Component](https://adminlte.io/docs/3.2/components/control-sidebar.html)
@@ -210,7 +211,7 @@ ltelayout-sidebar
 </ul>
 ```
 
-ltelayout-content-header
+layout-content-header
 -----------------------
 
 ```html
@@ -231,7 +232,7 @@ ltelayout-content-header
 <!-- /content-header -->
 ```
 
-ltelayout-aside
+layout-aside
 -----------------------
 
 [Control Sidebar Component](https://adminlte.io/docs/3.2/components/control-sidebar.html)
@@ -241,7 +242,7 @@ ltelayout-aside
 <p>Control Sidebar Content</p>
 ```
 
-ltelayout-footer
+layout-footer
 -----------------------
 
 ```html

@@ -1,4 +1,5 @@
 ---
+prefix: bs-
 scope: 
   - twig
   - nunjucks
@@ -6,27 +7,27 @@ scope:
 [Bootstrap4(Collapse)](https://getbootstrap.com/docs/4.6/components/collapse/)
 =====================
 
-bscollapse
+collapse
 ---------------------
 
 ```html
 <p>
-  <a class="btn btn-primary" data-toggle="collapse" href="#${1}" role="button" aria-expanded="false" aria-controls="${1:target}">
-    ${2:Link with href}
+  <a class="btn btn-${2|primary,secondary,success,info,warning,danger,light,dark,link|}" data-toggle="collapse" href="#${1:target}" role="button" aria-expanded="false" aria-controls="${1}">
+    ${2:Collapse trigger}
   </a>
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#${1}" aria-expanded="false" aria-controls="${1:target}">
-    ${3:Button with data-target}
+  <button class="btn btn-${2|primary,secondary,success,info,warning,danger,light,dark,link|}" type="button" data-toggle="collapse" data-target="#${1}" aria-expanded="false" aria-controls="${1}">
+    ${2:Collapse trigger}
   </button>
 </p>
-<div class="collapse" id="${1:target}">
+<div class="collapse" id="${1}">
   <div class="card card-body">
-    ${4:Some placeholder content for the collapse component}
+    ${3:Collapse content}
   </div>
 </div>
 <!-- /.collapse -->
 ```
 
-bscollapse-trigger-link
+collapse-trigger-link
 ---------------------
 
 ```html
@@ -35,7 +36,7 @@ bscollapse-trigger-link
 </a>
 ```
 
-bscollapse-trigger-btn
+collapse-trigger-btn
 ---------------------
 
 ```html
@@ -44,13 +45,13 @@ bscollapse-trigger-btn
 </button>
 ```
 
-bscollapse-collapse
+collapse-content
 ---------------------
 
 ```html
 <div class="collapse" id="${1:target}">
   <div class="card card-body">
-    ${2:Some placeholder content for the collapse component}
+    ${2:Collapse content}
   </div>
 </div>
 <!-- /.collapse -->

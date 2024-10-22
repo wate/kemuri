@@ -6,42 +6,56 @@ scope:
 HTML(form)
 =================
 
-frm-get
+form
 -----------
 
 ```html
 <form action="${1:#}" method="get">${2}</form>
 ```
 
-frm-post
+### VSCode Extra Setting
+
+```yaml
+prefix:
+  - form-get
+```
+
+form-post
 -----------
 
 ```html
 <form action="${1:#}" method="post">${2}</form>
 ```
 
-frm-multipart
+form-multipart
 -----------
 
 ```html
 <form action="${1:#}" method="post" enctype="multipart/form-data">${2}</form>
 ```
 
-in-text
+input
 -----------
 
 ```html
-<input type="text" name="${1:text_field}" id="${1:text_field}" value="">
+<input type="text" name="${1:text_field}" id="${1:text_field}" value="${2}">
 ```
 
-in-number
+### VSCode Extra Setting
+
+```yaml
+prefix:
+  - input-text
+```
+
+input-number
 -----------
 
 ```html
 <input type="number" name="${1:number_field}" id="${1:number_field}" value="" min="${2:1}">
 ```
 
-in-select
+input-select
 -----------
 
 ```html
@@ -50,14 +64,14 @@ in-select
 </select>
 ```
 
-in-option
+input-option
 -----------
 
 ```html
 <option value="${1}">${2:Option}</option>
 ```
 
-in-checkbox
+input-checkbox
 -----------
 
 ```html
@@ -65,7 +79,7 @@ in-checkbox
 <label for="${1:checkbox_field}-${2:1}">${3:Checkbox}</label>
 ```
 
-in-radio
+input-radio
 -----------
 
 ```html
@@ -73,77 +87,77 @@ in-radio
 <label for="${1:radio_field}-${2}">${3:Radio}</label>
 ```
 
-in-email
+input-email
 -----------
 
 ```html
 <input type="email" name="${1:email_field}" id="${1:email_field}" value="">
 ```
 
-in-hidden
+input-hidden
 -----------
 
 ```html
 <input type="hidden" name="${1:hidden_field}" id="${1:hidden_field}" value="${2}">
 ```
 
-in-file
+input-file
 -----------
 
 ```html
 <input type="file" name="${1:file_field}" id="${1:file_field}" accept="${2:image/*}">
 ```
 
-in-tel
+input-tel
 -----------
 
 ```html
 <input type="tel" name="${1:tel_field}" id="${1:tel_field}" value="">
 ```
 
-in-date
+input-date
 -----------
 
 ```html
 <input type="date" name="${1:date_field}" id="${1:date_field}" value="" pattern="[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}">
 ```
 
-in-time
+input-time
 -----------
 
 ```html
 <input type="time" name="${1:time_field}" id="${1:time_field}" value="" step="${2:1800}" pattern="[0-9]\{2\}:[0-9]\{2\}">
 ```
 
-in-url
+input-url
 -----------
 
 ```html
 <input type="url" name="${1:url_field}" id="${1:url_field}" value="">
 ```
 
-in-color
+input-color
 -----------
 
 ```html
 <input type="color" name="${1:color_field}" id="${1:color_field}" value="" pattern="#[a-fA-F0-9]\{6\}">
 ```
 
-in-range
+input-range
 -----------
 
 ```html
 <input type="range" name="${1:range_field}" id="${1:range_field}" value="" min="${2:1}" max="${3:100}" step="${4:1}">
 ```
 
-in-search
+input-search
 -----------
 
 ```html
 <input type="search" name="${1:search_field}" id="${1:search_field}" value="">
 ```
 
-in-area
+input-area
 -----------
 
 ```html
@@ -154,7 +168,14 @@ in-area
 
 ```yaml
 prefix:
-  - in-textarea
+  - input-textarea
+```
+
+btn
+-----------
+
+```html
+<button type="${1|submit,button,reset|}">${2:Button}</button>
 ```
 
 btn-submit
